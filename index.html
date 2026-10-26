@@ -88,8 +88,7 @@
   <script src="js/main.js"></script>
   <script>
     // Шапка и подвал уже прописаны в HTML этого файла — только инициализируем их
-    document.getElementById("gsCat").innerHTML =
-      // Сначала пользователь и корзина (не зависят от данных каталога)
+    // Сначала пользователь и корзина (не зависят от данных каталога)
     renderCartCount();
     renderUserChip();
     // Заполнение категорий поиска — в защищённом блоке
@@ -100,8 +99,8 @@
     initSearch();
 
     const container = document.getElementById("topProducts");
-    const top = PRODUCTS.filter(p=>p.badge==="Хит");
-    container.innerHTML = top.map(p=>cardHtml(p)).join("");
+    const topItems = PRODUCTS.filter(p=>p.badge==="Хит");
+    container.innerHTML = topItems.map(p=>cardHtml(p)).join("");
 
     function cardHtml(p){
       return `
@@ -112,7 +111,7 @@
         <div class="card__body">
           <span class="card__cat">${escapeHtml(p.cat)}</span>
           <a class="card__name" href="product.html?id=${p.id}">${escapeHtml(p.name)}</a>
-          <div class="card__price">${fmtPrice(p.price)}</div>
+          <div class="card__price">${fmtPrice(p.price)} ${p.oldPrice?`<s class="card__old">${fmtPrice(p.oldPrice)}</s>`:""}</div>
           <div class="card__row">
             ${buyButton(p.id)}
             <a class="btn--view" href="product.html?id=${p.id}">Подробнее</a>

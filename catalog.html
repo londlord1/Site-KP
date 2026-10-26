@@ -101,7 +101,7 @@
         <div class="card__body">
           <span class="card__cat">${escapeHtml(p.cat)}</span>
           <a class="card__name" href="product.html?id=${p.id}">${escapeHtml(p.name)}</a>
-          <div class="card__price">${fmtPrice(p.price)}</div>
+          <div class="card__price">${fmtPrice(p.price)} ${p.oldPrice?`<s class="card__old">${fmtPrice(p.oldPrice)}</s>`:""}</div>
           <div class="card__row">
             ${buyButton(p.id)}
             <a class="btn--view" href="product.html?id=${p.id}">Подробнее</a>

@@ -30,14 +30,16 @@ function headerHtml(active){
   </div></header>`;
 }
 
-/* ----- Глобальный поиск: 5 самых подходящих товаров ----- */
+/* ----- Глобальный поиск: 5 самых подходящих товаров (показывается, когда строка поиска в фокусе) ----- */
 function initSearch(){
   const input = document.getElementById("gsInput");
   const catSel = document.getElementById("gsCat");
   const box = document.getElementById("gsResults");
   if(!input || !box) return;
+  let focused = false;
 
   function run(){
+    if(!focused){ box.classList.remove("open"); return; }
     const q = input.value.trim().toLowerCase();
     const cat = catSel.value;
     const list = (Array.isArray(window.PRODUCTS)?window.PRODUCTS:PRODUCTS).filter(p=>{
@@ -58,8 +60,12 @@ function initSearch(){
     box.classList.add("open");
   }
 
+  input.addEventListener("focus", ()=>{ focused=true; run(); });
   input.addEventListener("input", run);
+  catSel.addEventListener("focus", ()=>{ focused=true; run(); });
   catSel.addEventListener("change", run);
+  input.addEventListener("blur", ()=>{ setTimeout(()=>{ focused=false; box.classList.remove("open"); }, 150); });
+  catSel.addEventListener("blur", ()=>{ setTimeout(()=>{ focused=false; box.classList.remove("open"); }, 150); });
   document.addEventListener("click", e=>{
     if(!document.getElementById("globalSearch").contains(e.target)) box.classList.remove("open");
   });

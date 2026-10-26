@@ -303,9 +303,25 @@ button{font-family:inherit;cursor:pointer}
   .product h1{font-size:20px}
   .product__price{font-size:26px}
 
-  .cart-layout{grid-template-columns:1fr;overflow-x:auto}
-  .cart-table{min-width:620px}
-  .cart-summary{position:static}
+  .cart-layout{grid-template-columns:1fr;overflow-x:visible}
+  .cart-table{min-width:0;display:block;border:0}
+  .cart-table thead{display:none}
+  .cart-table tbody{display:flex;flex-direction:column;gap:12px}
+  .cart-table tr{display:grid;grid-template-columns:1fr auto;grid-auto-flow:row;
+    gap:8px 12px;border:1px solid var(--line);border-radius:14px;padding:14px;
+    background:#fff;box-shadow:var(--shadow)}
+  .cart-table td{display:flex;align-items:center;gap:8px;border:none!important;padding:0}
+  .cart-table tr td:nth-child(1){grid-column:1/-1;border-bottom:1px solid var(--line);padding-bottom:10px;margin-bottom:2px}
+  .cart-table tr td:nth-child(2){grid-column:1;color:var(--muted);font-size:13px}
+  .cart-table tr td:nth-child(3){grid-column:2;justify-content:flex-end}
+  .cart-table tr td:nth-child(4){grid-column:1;font-size:16px}
+  .cart-table tr td:nth-child(5){grid-column:2;justify-content:flex-end}
+  .cart-summary{position:static;padding:16px;border-radius:14px}
+  .cart-summary h3{font-size:16px;margin-bottom:10px}
+  .sum-row{font-size:14px}
+  .sum-row--total{font-size:17px}
+  .cart-item__thumb{width:52px;height:52px;font-size:24px}
+  .cart-item b{font-size:14px}
 
   .contacts{grid-template-columns:1fr}
   .map-frame{height:260px}
@@ -323,4 +339,8 @@ button{font-family:inherit;cursor:pointer}
   /* бейджи и цена: не перегружаем */
   .badges{top:6px;left:6px}
   .card__badge{font-size:10px}
+}
+@media(max-width:640px){
+  /* Подсказка у ФИО не должна выходить за экран */
+  .help .tip{left:0;right:auto;transform:none;width:min(240px,calc(100vw - 40px));top:calc(100% + 8px)}
 }
