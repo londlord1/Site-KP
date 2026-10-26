@@ -56,7 +56,9 @@
     window.buy = function(btn){
       if(!p) return;
       addToCart(p.id, qty());
-      btn.style.background = "var(--ok)";
+      btn.style.background = "#eef0f6";
+      btn.style.color = "var(--ink)";
+      btn.style.border = "1px solid var(--line)";
       btn.textContent = "В корзине ✓";
       btn.title = "Перейти в корзину";
       btn.onclick = () => { location.href = "cart.html"; };

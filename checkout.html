@@ -35,11 +35,11 @@
       <form class="auth-wrap" id="orderForm" style="max-width:100%">
         <div class="form-msg" id="msg"></div>
         <div class="field"><label>ФИО</label>
-          <input type="text" id="oName" value="${escapeHtml(u?u.name:"")}" required></div>
+          <input type="text" id="oName" placeholder="Фамилия Имя Отчество" value="${escapeHtml(u?u.name:"")}" required></div>
         <div class="field"><label>Телефон</label>
           <input type="tel" id="oPhone" placeholder="+7 (900) 000-00-00" required></div>
         <div class="field"><label>Email</label>
-          <input type="email" id="oEmail" value="${escapeHtml(u?u.email:"")}" required></div>
+          <input type="email" id="oEmail" placeholder="you@example.ru" value="${escapeHtml(u?u.email:"")}" required></div>
         <div class="field"><label>Адрес доставки</label>
           <input type="text" id="oAddr" placeholder="Город, улица, дом, квартира" required></div>
         <div class="field"><label>Способ оплаты</label>

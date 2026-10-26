@@ -72,7 +72,8 @@ button{font-family:inherit;cursor:pointer}
 .card:hover{box-shadow:var(--shadow);transform:translateY(-3px)}
 .card__img{position:relative;aspect-ratio:4/3;display:flex;align-items:center;justify-content:center;
   font-size:64px;background-size:cover;background-position:center;background-color:#eef0f6}
-.card__badge{position:absolute;top:10px;left:10px;background:#dc2626;color:#fff;
+.badges{position:absolute;top:10px;left:10px;display:flex;flex-direction:column;gap:6px;align-items:flex-start}
+.card__badge{background:#dc2626;color:#fff;
   font-size:12px;font-weight:800;padding:4px 9px;border-radius:8px}
 .card__body{padding:14px 16px 16px;display:flex;flex-direction:column;gap:8px;flex:1}
 .card__cat{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.6px}
@@ -82,7 +83,11 @@ button{font-family:inherit;cursor:pointer}
 .card__row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .btn--buy{background:var(--ink);color:#fff;flex:1;padding:9px 12px;border-radius:10px;font-weight:700}
 .btn--buy:hover{background:var(--brand)}
-.btn--bought{background:var(--ok) !important;color:#fff;flex:1;padding:9px 12px;border-radius:10px;font-weight:700}
+.btn--bought{background:#eef0f6;color:var(--ink);border:1px solid var(--line);
+  flex:1;padding:9px 12px;border-radius:10px;font-weight:600;font-size:0}
+.btn--bought:hover{border-color:var(--ok);color:var(--ok);background:#fff}
+.btn--bought::before{font-size:14px;content:"В корзине ✓"}
+.btn--bought:hover::before{content:"Перейти в корзину"}
 .price-hint{font-size:12px;color:var(--muted);margin-top:4px}
 .btn--view{border:1px solid var(--line);padding:9px 12px;border-radius:10px;font-weight:600;color:var(--ink)}
 .btn--view:hover{border-color:var(--brand);color:var(--brand)}
@@ -240,10 +245,10 @@ button{font-family:inherit;cursor:pointer}
 /* --- Тултип '?' у ФИО --- */
 .help{position:relative;display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;
   border-radius:50%;background:#eef0f6;color:var(--muted);font-size:12px;font-weight:800;cursor:help;vertical-align:middle;margin-left:6px}
-.help .tip{position:absolute;bottom:160%;left:50%;transform:translateX(-50%);width:230px;background:#1a1d29;color:#fff;
+.help .tip{position:absolute;top:150%;left:50%;transform:translateX(-50%);width:230px;background:#1a1d29;color:#fff;
   font-weight:400;font-size:12px;line-height:1.45;padding:10px 12px;border-radius:10px;box-shadow:var(--shadow);
   opacity:0;visibility:hidden;transition:.18s;z-index:80;text-align:left;pointer-events:none;white-space:normal}
-.help:hover .tip{opacity:1;visibility:visible}
+.help:hover .tip,.help:focus .tip{opacity:1;visibility:visible}
 
 /* --- Оформление заказа: итог у кнопки, большой --- */
 .field textarea{resize:vertical;max-width:100%}

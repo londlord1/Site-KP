@@ -22,11 +22,13 @@
             <select id="fCat"></select>
           </div>
           <div class="field">
-            <label>Цена до, ₽</label>
-            <div class="range-row">
-              <input type="number" id="fPrice" min="0" step="500" placeholder="напр. 30000">
-            </div>
+            <label>Цена от, ₽</label>
+            <input type="number" id="fPriceFrom" min="0" step="500" placeholder="напр. 10000">
             <div id="priceHint" class="price-hint"></div>
+          </div>
+          <div class="field">
+            <label>Цена до, ₽</label>
+            <input type="number" id="fPriceTo" min="0" step="500" placeholder="напр. 30000">
           </div>
           <div class="field">
             <label>Сортировка</label>
@@ -65,14 +67,16 @@
     function filterProducts(){
       const search = document.getElementById("fSearch").value.trim().toLowerCase();
       const cat = document.getElementById("fCat").value;
-      const maxPrice = moneyToNum(document.getElementById("fPrice").value);
+      const from = moneyToNum(document.getElementById("fPriceFrom").value);
+      const to = moneyToNum(document.getElementById("fPriceTo").value);
       const sort = document.getElementById("fSort").value;
 
       let arr = PRODUCTS.filter(p=>{
         const okSearch = !search || p.name.toLowerCase().includes(search) || p.cat.toLowerCase().includes(search);
         const okCat = cat==="Все" || p.cat===cat;
-        const okPrice = !maxPrice || p.price <= maxPrice;
-        return okSearch && okCat && okPrice;
+        const okFrom = !from || p.price >= from;
+        const okTo = !to || p.price <= to;
+        return okSearch && okCat && okFrom && okTo;
       });
 
       if(sort==="price-asc") arr = arr.sort((a,b)=>a.price-b.price);
@@ -93,16 +97,17 @@
       return `
       <article class="card">
         <a class="card__img" href="product.html?id=${p.id}" style="font-size:64px">${p.icon}
-          ${disc?`<span class="card__badge">−${disc}%</span>`:(p.badge?`<span class="card__badge">${escapeHtml(p.badge)}</span>`:"")}</a>
+          <span class="badges">
+            ${p.badge?`<span class="card__badge">${escapeHtml(p.badge)}</span>`:""}
+            ${disc?`<span class="card__badge" style="background:var(--ok)">−${disc}%</span>`:""}
+          </span>
+        </a>
         <div class="card__body">
           <span class="card__cat">${escapeHtml(p.cat)}</span>
           <a class="card__name" href="product.html?id=${p.id}">${escapeHtml(p.name)}</a>
-          <div class="price-block">
-            <div class="card__price">${fmtPrice(p.price)}</div>
-            ${disc?`<div class="discount">Скидка −${disc}% · <span class="card__old">${fmtPrice(p.oldPrice)}</span></div>`:""}
-          </div>
+          <div class="card__price">${fmtPrice(p.price)}</div>
           <div class="card__row">
-            <button class="btn--buy" data-id="${p.id}" onclick="buyToggle(this)">В корзину</button>
+            ${buyButton(p.id)}
             <a class="btn--view" href="product.html?id=${p.id}">Подробнее</a>
           </div>
         </div>
@@ -112,24 +117,26 @@
     window.resetFilters = function(){
       document.getElementById("fSearch").value="";
       document.getElementById("fCat").value="Все";
-      document.getElementById("fPrice").value="";
+      document.getElementById("fPriceFrom").value="";
+      document.getElementById("fPriceTo").value="";
+      document.getElementById("priceHint").textContent="";
       document.getElementById("fSort").value="default";
       filterProducts();
     };
 
-    ["fSearch","fPrice","fSort"].forEach(id=>
+    ["fSearch","fPriceFrom","fPriceTo","fSort"].forEach(id=>
       document.getElementById(id).addEventListener("input", filterProducts));
 
-    // При выборе категории поле «Цена до» = минимальная цена в этой категории
+    // При выборе категории поле «Цена от» = минимальная цена в этой категории
     document.getElementById("fCat").addEventListener("change", ()=>{
       const cat = document.getElementById("fCat").value;
       const hint = document.getElementById("priceHint");
       if(cat!=="Все"){
         const min = Math.min(...PRODUCTS.filter(p=>p.cat===cat).map(p=>p.price));
-        document.getElementById("fPrice").value = min;
+        document.getElementById("fPriceFrom").value = min;
         hint.textContent = "Мин. цена категории: " + fmtPrice(min);
       } else {
-        document.getElementById("fPrice").value = "";
+        document.getElementById("fPriceFrom").value = "";
         hint.textContent = "";
       }
       filterProducts();

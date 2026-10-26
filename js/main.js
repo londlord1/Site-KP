@@ -4,7 +4,6 @@
 const NAV_LINKS = [
   ["index.html","Главная"],
   ["catalog.html","Каталог"],
-  ["contacts.html","Контакты"],
 ];
 
 function navHtml(active){
@@ -113,14 +112,21 @@ function addToCart(id, qty){
 
 /* Кнопка «В корзину» -> «В корзине ✓» со ссылкой на корзину */
 window.buyToggle = function(btn){
-  const id = parseInt(btn.dataset.id);
-  addToCart(id, 1);
+  addToCart(parseInt(btn.dataset.id), 1);
   btn.classList.add("btn--bought");
-  btn.innerHTML = "В корзине ✓";
+  btn.textContent = "";
   btn.title = "Перейти в корзину";
   btn.onclick = () => { location.href = "cart.html"; };
 };
 function discountOf(p){ return p.oldPrice ? Math.max(1, Math.round((1 - p.price/p.oldPrice) * 100)) : 0; }
+
+/* Кнопка покупа: отражает фактическое состояние корзины (не сбрасывается при перезагрузке/сбросе) */
+function isInCart(id){ return getCart().some(i=>i.id===id); }
+function buyButton(id){
+  return isInCart(id)
+    ? `<button class="btn--buy btn--bought" data-id="${id}" onclick="location.href='cart.html'" title="Перейти в корзину"></button>`
+    : `<button class="btn--buy" data-id="${id}" onclick="buyToggle(this)">В корзину</button>`;
+}
 
 /* ----- Пользователь (localStorage) ----- */
 function getUsers(){ try{ return JSON.parse(localStorage.getItem("sc_users")||"[]"); }catch(e){ return []; } }
