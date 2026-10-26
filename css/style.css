@@ -107,7 +107,7 @@ button{font-family:inherit;cursor:pointer}
 .field{margin-bottom:14px}
 .field label{font-size:13px;color:var(--muted);display:block;margin-bottom:6px}
 .field input[type=text],.field input[type=search],.field input[type=email],.field input[type=password],
-.field input[type=tel],.field select,.field textarea{
+.field input[type=tel],.field input[type=number],.field select,.field textarea{
   width:100%;border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-size:14px;
   font-family:inherit;background:#fff}
 .field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:var(--brand);box-shadow:0 0 0 3px rgba(79,70,229,.14)}
