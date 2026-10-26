@@ -31,7 +31,7 @@ button{font-family:inherit;cursor:pointer}
 .header__row{display:flex;align-items:center;gap:24px;height:64px}
 .logo{font-weight:800;font-size:22px;letter-spacing:.3px;white-space:nowrap}
 .logo b{color:var(--accent)}
-.nav{display:flex;gap:6px;flex:1}
+.nav{display:flex;gap:6px;flex:0 0 auto}
 .nav a{padding:8px 14px;border-radius:9px;font-weight:600;font-size:15px;transition:.15s}
 .nav a:hover,.nav a.active{background:rgba(255,255,255,.12)}
 .header__right{display:flex;align-items:center;gap:12px}
@@ -195,7 +195,7 @@ button{font-family:inherit;cursor:pointer}
 /* ============ Новое: поиск, банеры, карта, тултип, заказ ============ */
 
 /* --- Поиск в header (глобально) --- */
-.search{position:relative;flex:1;max-width:430px}
+.search{position:relative;flex:1 1 auto;min-width:180px;max-width:700px}
 .search__row{display:flex;background:rgba(255,255,255,.1);border-radius:10px;overflow:hidden}
 .search__row input{flex:1;min-width:80px;background:transparent;border:none;color:#fff;padding:10px 12px;outline:none;font-size:14px;font-family:inherit}
 .search__row input::placeholder{color:#9aa2b1}
