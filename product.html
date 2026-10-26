@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Товар — SoundCraft</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <section class="section">
+    <div class="container">
+      <nav class="breadcrumbs"><a href="index.html">Главная</a> / <a href="catalog.html">Каталог</a> / <span id="bcCat"></span></nav>
+      <div class="product" id="product"></div>
+    </div>
+  </section>
+
+  <script src="js/data.js"></script>
+  <script src="js/main.js"></script>
+  <script>
+    renderPage("catalog.html");
+
+    const id = parseInt(new URLSearchParams(location.search).get("id"));
+    const p = PRODUCTS.find(x=>x.id===id);
+
+    if(!p){
+      document.getElementById("product").innerHTML =
+        '<div class="empty">Товар не найден. <a href="catalog.html" style="color:var(--brand)">Вернуться в каталог</a></div>';
+    } else {
+      document.getElementById("bcCat").textContent = p.cat;
+      document.getElementById("product").innerHTML = `
+        <div class="product__img">${p.icon}</div>
+        <div>
+          <span class="card__cat">${escapeHtml(p.cat)}</span>
+          <h1>${escapeHtml(p.name)}</h1>
+          <div class="product__price">${fmtPrice(p.price)} <span class="card__old">${p.oldPrice?fmtPrice(p.oldPrice):""}</span></div>
+          <dl class="product__meta">
+            <dt>Категория</dt><dd>${escapeHtml(p.cat)}</dd>
+            <dt>Наличие</dt><dd style="color:var(--ok)">В наличии</dd>
+            <dt>Гарантия</dt><dd>2 года</dd>
+          </dl>
+          <p>${escapeHtml(p.desc)}</p>
+          <div class="product__actions">
+            <div class="qty">
+              <button onclick="decQty()">−</button>
+              <input id="qty" type="number" value="1" min="1">
+              <button onclick="incQty()">+</button>
+            </div>
+            <button class="btn" onclick="buy()">Добавить в корзину</button>
+          </div>
+        </div>`;
+    }
+
+    function qty(){ return Math.max(1, parseInt(document.getElementById("qty").value)||1); }
+    window.incQty = function(){ document.getElementById("qty").value = qty()+1; };
+    window.decQty = function(){ document.getElementById("qty").value = Math.max(1, qty()-1); };
+    window.buy = function(){ if(p) addToCart(p.id, qty()); };
+  </script>
+</body>
+</html>

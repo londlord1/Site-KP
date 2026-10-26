@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Каталог — SoundCraft</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <section class="section">
+    <div class="container">
+      <h1 style="margin:0 0 20px">Каталог товаров</h1>
+      <div class="catalog">
+        <aside class="filters">
+          <h3>Фильтры</h3>
+          <div class="field">
+            <label>Поиск</label>
+            <input type="search" id="fSearch" placeholder="Гитара, микрофон...">
+          </div>
+          <div class="field">
+            <label>Категория</label>
+            <select id="fCat"></select>
+          </div>
+          <div class="field">
+            <label>Цена до, ₽</label>
+            <div class="range-row">
+              <input type="number" id="fPrice" min="0" step="500" placeholder="напр. 30000">
+            </div>
+          </div>
+          <div class="field">
+            <label>Сортировка</label>
+            <select id="fSort">
+              <option value="default">По умолчанию</option>
+              <option value="price-asc">Сначала дешевле</option>
+              <option value="price-desc">Сначала дороже</option>
+              <option value="name">По алфавиту</option>
+            </select>
+          </div>
+          <button class="btn btn--sm" style="background:var(--line);color:var(--ink);box-shadow:none" onclick="resetFilters()">Сбросить</button>
+        </aside>
+
+        <div>
+          <div class="sort-bar">
+            <span class="result-hint" id="resultHint"></span>
+          </div>
+          <div class="grid grid--cards" id="productList"></div>
+          <div class="empty" id="emptyState" style="display:none">По вашему запросу ничего не найдено. Попробуйте изменить фильтры.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script src="js/data.js"></script>
+  <script src="js/main.js"></script>
+  <script>
+    renderPage("catalog.html");
+
+    const catSelect = document.getElementById("fCat");
+    catSelect.innerHTML = CATEGORIES.map(c=>`<option value="${c}">${c}</option>`).join("");
+
+    const list = document.getElementById("productList");
+    const hint = document.getElementById("resultHint");
+
+    function filterProducts(){
+      const search = document.getElementById("fSearch").value.trim().toLowerCase();
+      const cat = document.getElementById("fCat").value;
+      const maxPrice = moneyToNum(document.getElementById("fPrice").value);
+      const sort = document.getElementById("fSort").value;
+
+      let arr = PRODUCTS.filter(p=>{
+        const okSearch = !search || p.name.toLowerCase().includes(search) || p.cat.toLowerCase().includes(search);
+        const okCat = cat==="Все" || p.cat===cat;
+        const okPrice = !maxPrice || p.price <= maxPrice;
+        return okSearch && okCat && okPrice;
+      });
+
+      if(sort==="price-asc") arr = arr.sort((a,b)=>a.price-b.price);
+      if(sort==="price-desc") arr = arr.sort((a,b)=>b.price-a.price);
+      if(sort==="name") arr = arr.sort((a,b)=>a.name.localeCompare(b.name,"ru"));
+
+      renderList(arr);
+    }
+
+    function renderList(arr){
+      hint.textContent = `Найдено товаров: ${arr.length}`;
+      list.innerHTML = arr.map(cardHtml).join("");
+      document.getElementById("emptyState").style.display = arr.length ? "none" : "block";
+    }
+
+    function cardHtml(p){
+      return `
+      <article class="card">
+        <a class="card__img" href="product.html?id=${p.id}" style="font-size:64px">${p.icon}
+          ${p.badge?`<span class="card__badge">${escapeHtml(p.badge)}</span>`:""}</a>
+        <div class="card__body">
+          <span class="card__cat">${escapeHtml(p.cat)}</span>
+          <a class="card__name" href="product.html?id=${p.id}">${escapeHtml(p.name)}</a>
+          <div class="card__price">${fmtPrice(p.price)} <span class="card__old">${p.oldPrice?fmtPrice(p.oldPrice):""}</span></div>
+          <div class="card__row">
+            <button class="btn--buy" onclick="addToCart(${p.id})">В корзину</button>
+            <a class="btn--view" href="product.html?id=${p.id}">Подробнее</a>
+          </div>
+        </div>
+      </article>`;
+    }
+
+    window.resetFilters = function(){
+      document.getElementById("fSearch").value="";
+      document.getElementById("fCat").value="Все";
+      document.getElementById("fPrice").value="";
+      document.getElementById("fSort").value="default";
+      filterProducts();
+    };
+
+    ["fSearch","fCat","fPrice","fSort"].forEach(id=>
+      document.getElementById(id).addEventListener("input", filterProducts));
+
+    filterProducts();
+  </script>
+</body>
+</html>

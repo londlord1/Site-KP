@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Контакты — SoundCraft</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <section class="section">
+    <div class="container">
+      <h1 style="margin:0 0 24px">Контакты</h1>
+      <div class="contacts">
+        <div>
+          <div class="info-card">
+            <h3>Как нас найти</h3>
+            <ul class="info-list">
+              <li>📍 г. Юрга, ул. Ленина, 12</li>
+              <li>📞 8-800-123-45-67 (бесплатно по РФ)</li>
+              <li>✉️ shop@soundcraft.ru</li>
+              <li>🕘 Пн–Сб: 10:00–20:00, Вс: 10:00–18:00</li>
+            </ul>
+          </div>
+          <div class="info-card" style="margin-top:20px">
+            <h3>Реквизиты</h3>
+            <ul class="info-list">
+              <li>ООО «SoundCraft»</li>
+              <li>ИНН 4230000000, КПП 423001001</li>
+              <li>ОГРН 1234200000000</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="info-card" id="feedback">
+          <h3>Напишите нам</h3>
+          <form id="contactForm">
+            <div class="form-msg" id="msg"></div>
+            <div class="field"><label>Ваше имя</label><input type="text" id="cName" required></div>
+            <div class="field"><label>Email</label><input type="email" id="cEmail" required></div>
+            <div class="field"><label>Тема обращения</label>
+              <select id="cTopic">
+                <option>Подбор товара</option>
+                <option>Вопрос по заказу</option>
+                <option>Гарантия и возврат</option>
+                <option>Сотрудничество</option>
+              </select></div>
+            <div class="field"><label>Сообщение</label>
+              <textarea id="cMsg" rows="5" placeholder="Опишите ваш вопрос..." required></textarea></div>
+            <button class="btn btn--block" type="submit">Отправить сообщение</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script src="js/data.js"></script>
+  <script src="js/main.js"></script>
+  <script>
+    renderPage("contacts.html");
+
+    document.getElementById("contactForm").addEventListener("submit", e=>{
+      e.preventDefault();
+      const name = document.getElementById("cName").value.trim();
+      const email = document.getElementById("cEmail").value.trim();
+      const topic = document.getElementById("cTopic").value;
+      const msgText = document.getElementById("cMsg").value.trim();
+
+      const list = JSON.parse(localStorage.getItem("sc_messages")||"[]");
+      list.push({name, email, topic, msgText, date:new Date().toLocaleString("ru-RU")});
+      localStorage.setItem("sc_messages", JSON.stringify(list));
+
+      const m = document.getElementById("msg");
+      m.className = "form-msg show form-msg--ok";
+      m.textContent = "✔ Сообщение отправлено! Мы ответим на " + email + " в течение дня.";
+      e.target.reset();
+    });
+  </script>
+</body>
+</html>

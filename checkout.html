@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Оформление заказа — SoundCraft</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <section class="section">
+    <div class="container centre">
+      <h1 style="margin:0 0 8px">Оформление заказа</h1>
+      <p style="color:var(--muted);margin:0 0 24px" id="checkoutInfo"></p>
+
+      <div id="checkoutBody"></div>
+    </div>
+  </section>
+
+  <script src="js/data.js"></script>
+  <script src="js/main.js"></script>
+  <script>
+    renderPage("cart.html");
+
+    const det = getCart().map(i=>({item:i, prod:PRODUCTS.find(p=>p.id===i.id)})).filter(x=>x.prod);
+    const total = det.reduce((s,x)=>s+x.prod.price*x.item.qty,0);
+
+    if(!det.length){
+      document.getElementById("checkoutBody").innerHTML =
+        `<div class="cart-empty">Корзина пуста.<br><a class="btn" style="margin-top:14px" href="catalog.html">В каталог</a></div>`;
+      document.getElementById("checkoutInfo").textContent = "Добавьте товары, чтобы оформить заказ";
+    } else {
+      const u = getCurrentUser();
+      document.getElementById("checkoutInfo").textContent = `Итого к оплате: ${fmtPrice(total)} · доставка бесплатно`;
+      document.getElementById("checkoutBody").innerHTML = `
+      <form class="auth-wrap" id="orderForm" style="max-width:100%">
+        <div class="form-msg" id="msg"></div>
+        <div class="field"><label>ФИО</label>
+          <input type="text" id="oName" value="${escapeHtml(u?u.name:"")}" required></div>
+        <div class="field"><label>Телефон</label>
+          <input type="tel" id="oPhone" placeholder="+7 (900) 000-00-00" required></div>
+        <div class="field"><label>Email</label>
+          <input type="email" id="oEmail" value="${escapeHtml(u?u.email:"")}" required></div>
+        <div class="field"><label>Адрес доставки</label>
+          <input type="text" id="oAddr" placeholder="Город, улица, дом, квартира" required></div>
+        <div class="field"><label>Способ оплаты</label>
+          <select id="oPay">
+            <option>Картой онлайн</option>
+            <option>При получении</option>
+            <option>СБП</option>
+          </select></div>
+        <div class="field"><label>Комментарий к заказу</label>
+          <textarea id="oComment" rows="3" placeholder="Пожелания по доставке..."></textarea></div>
+        <button class="btn btn--block" type="submit">Подтвердить заказ</button>
+      </form>`;
+
+      document.getElementById("orderForm").addEventListener("submit", e=>{
+        e.preventDefault();
+        const order = {
+          name: document.getElementById("oName").value.trim(),
+          phone: document.getElementById("oPhone").value.trim(),
+          email: document.getElementById("oEmail").value.trim(),
+          addr: document.getElementById("oAddr").value.trim(),
+          pay: document.getElementById("oPay").value,
+          comment: document.getElementById("oComment").value.trim(),
+          items: det.map(x=>({name:x.prod.name, price:x.prod.price, qty:x.item.qty})),
+          total, date: new Date().toLocaleString("ru-RU")
+        };
+        const hist = JSON.parse(localStorage.getItem("sc_orders")||"[]");
+        hist.push(order);
+        localStorage.setItem("sc_orders", JSON.stringify(hist));
+        setCart([]);
+
+        const msg = document.getElementById("msg");
+        msg.className = "form-msg show form-msg--ok";
+        msg.textContent = "✔ Заказ принят! Номер заказа: " + (1000+hist.length);
+        document.getElementById("orderForm").innerHTML =
+          `<div style="text-align:center;padding:20px 0">
+            <div style="font-size:52px">🎸</div>
+            <h3 style="margin:10px 0">Спасибо, ${escapeHtml(order.name)}!</h3>
+            <p style="color:var(--muted)">Заказ ${1000+hist.length} на сумму ${fmtPrice(total)} скоро передадим курьеру.</p>
+            <a class="btn" href="catalog.html">Продолжить покупки</a>
+          </div>`;
+        // простая демонстрация: через toast не вставляем сюда, всё в msg
+      });
+    }
+  </script>
+</body>
+</html>

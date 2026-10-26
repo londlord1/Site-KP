@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Корзина — SoundCraft</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <section class="section">
+    <div class="container">
+      <h1 style="margin:0 0 20px">Корзина</h1>
+      <div id="cartWrap"></div>
+    </div>
+  </section>
+
+  <script src="js/data.js"></script>
+  <script src="js/main.js"></script>
+  <script>
+    renderPage("cart.html");
+
+    function renderCart(){
+      const wrap = document.getElementById("cartWrap");
+      const cart = getCart();
+      if(!cart.length){
+        wrap.innerHTML = `<div class="cart-empty">🛒 Корзина пуста.<br>
+          <a class="btn" style="margin-top:14px" href="catalog.html">Перейти в каталог</a></div>`;
+        return;
+      }
+      const det = cart.map(i=>({item:i, prod:PRODUCTS.find(p=>p.id===i.id)})).filter(x=>x.prod);
+      const total = det.reduce((s,x)=>s+x.prod.price*x.item.qty,0);
+      const oldTotal = det.reduce((s,x)=>s+(x.prod.oldPrice||x.prod.price)*x.item.qty,0);
+
+      wrap.innerHTML = `
+      <div class="cart-layout">
+        <table class="cart-table">
+          <thead><tr><th>Товар</th><th>Цена</th><th>Кол-во</th><th>Сумма</th><th></th></tr></thead>
+          <tbody>
+            ${det.map(x=>`
+              <tr>
+                <td><div class="cart-item">
+                  <div class="cart-item__thumb">${x.prod.icon}</div>
+                  <div><b>${escapeHtml(x.prod.name)}</b><span>${escapeHtml(x.prod.cat)}</span></div>
+                </div></td>
+                <td>${fmtPrice(x.prod.price)}</td>
+                <td><div class="qty">
+                  <button onclick="chgQty(${x.prod.id},-1)">−</button>
+                  <input type="number" value="${x.item.qty}" min="1" onchange="setQtyField(${x.prod.id},this.value)">
+                  <button onclick="chgQty(${x.prod.id},1)">+</button>
+                </div></td>
+                <td><b>${fmtPrice(x.prod.price*x.item.qty)}</b></td>
+                <td><button class="remove-btn" onclick="removeItem(${x.prod.id})">✕</button></td>
+              </tr>`).join("")}
+          </tbody>
+        </table>
+
+        <aside class="cart-summary">
+          <h3>Итого</h3>
+          <div class="sum-row"><span>Товары (${det.reduce((s,x)=>s+x.item.qty,0)} шт.)</span><span>${fmtPrice(total)}</span></div>
+          ${oldTotal>total ? `<div class="sum-row"><span>Скидка</span><span style="color:var(--err)">−${fmtPrice(oldTotal-total)}</span></div>`:""}
+          <div class="sum-row"><span>Доставка</span><span>Бесплатно</span></div>
+          <div class="sum-row sum-row--total"><span>К оплате</span><span>${fmtPrice(total)}</span></div>
+          <a class="btn btn--block" style="margin-top:14px" href="checkout.html">Оформить заказ</a>
+        </aside>
+      </div>`;
+    }
+
+    function safe(cart){ setCart(cart); renderCart(); }
+
+    window.chgQty = function(id, d){
+      const cart = getCart();
+      const f = cart.find(i=>i.id===id);
+      if(f){ f.qty + d > 0 ? f.qty += d : cart.splice(cart.indexOf(f),1); }
+      safe(cart);
+    };
+    window.setQtyField = function(id,val){
+      const cart = getCart();
+      const f = cart.find(i=>i.id===id);
+      if(f){ f.qty = Math.max(1,parseInt(val)||1); safe(cart); }
+    };
+    window.removeItem = function(id){
+      safe(getCart().filter(i=>i.id!==id));
+    };
+
+    renderCart();
+  </script>
+</body>
+</html>
