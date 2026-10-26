@@ -259,3 +259,68 @@ button{font-family:inherit;cursor:pointer}
 
 /* --- Каталог: скидка на хите --- */
 .price-block{display:flex;flex-direction:column;gap:2px}
+
+/* ============ Мобильная адаптация (до 640px) ============ */
+@media(max-width:640px){
+  body{font-size:15px}
+  .header__row{flex-wrap:wrap;height:auto;padding:10px 0 12px;gap:10px}
+  .logo{order:1;font-size:19px}
+  .header__right{order:2;margin-left:auto;gap:8px}
+  .cart-btn{font-size:14px;padding:8px 11px}
+  .search{order:3;flex:1 1 100%;max-width:100%;min-width:0}
+  .search-results{left:0;right:0;max-width:100%}
+  .nav{order:4;flex:1 1 100%;display:flex;gap:6px;flex-wrap:wrap;
+    justify-content:flex-start;overflow-x:auto;-webkit-overflow-scrolling:touch;padding-top:4px}
+  .nav a{font-size:13px;padding:6px 10px}
+  .user-name{max-width:90px}
+
+  .hero{padding:44px 0 54px}
+  .hero h1{font-size:27px}
+  .hero p{font-size:15px}
+  .btn{font-size:14px;padding:11px 18px}
+  .section h2{font-size:21px}
+
+  .banners{grid-template-columns:1fr;gap:12px}
+  .banner{min-height:120px;padding:16px 18px}
+  .banner b{font-size:15px}
+  .banner span{font-size:13px}
+
+  .grid--cards{grid-template-columns:repeat(2,1fr);gap:12px}
+  .card__name{font-size:13px}
+  .card__price{font-size:15px}
+  .card__img{font-size:44px}
+  .card__badge{font-size:10px;padding:3px 7px}
+  .btn--buy,.btn--view,.btn--bought{font-size:13px;padding:8px 6px}
+  .card__row{gap:6px}
+  .btn--view{padding:8px 6px}
+
+  .catalog{grid-template-columns:1fr;gap:0}
+  .filters{position:static;margin-bottom:18px}
+  .sort-bar{margin-bottom:14px}
+
+  .product{grid-template-columns:1fr;gap:22px}
+  .product__img{font-size:100px}
+  .product h1{font-size:20px}
+  .product__price{font-size:26px}
+
+  .cart-layout{grid-template-columns:1fr;overflow-x:auto}
+  .cart-table{min-width:620px}
+  .cart-summary{position:static}
+
+  .contacts{grid-template-columns:1fr}
+  .map-frame{height:260px}
+
+  .auth-wrap{padding:22px 18px;margin:20px auto}
+  .order-total{font-size:16px;padding:12px 14px}
+  .order-total b{font-size:20px}
+
+  .breadcrumbs{font-size:13px}
+  .price-hint{font-size:11px}
+  .footer__row{grid-template-columns:1fr 1fr;gap:20px;padding:28px 0}
+  .footer__bottom{font-size:12px;line-height:1.5}
+  #toast{width:90%;text-align:center;font-size:14px}
+
+  /* бейджи и цена: не перегружаем */
+  .badges{top:6px;left:6px}
+  .card__badge{font-size:10px}
+}
