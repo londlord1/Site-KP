@@ -120,12 +120,15 @@ window.buyToggle = function(btn){
 };
 function discountOf(p){ return p.oldPrice ? Math.max(1, Math.round((1 - p.price/p.oldPrice) * 100)) : 0; }
 
-/* Бейджи на карточке: «Хит» и скидка в одну строку, без дублей процента */
+/* Бейджи на карточке: скидка всегда зелёная, «Хит» остаётся красным, без дублей процента */
 function badgesHtml(p){
   const disc = discountOf(p);
   const isPercentBadge = p.badge && /^-\s?\d+\s?%$/.test(String(p.badge).trim());
   let h = '<span class="badges">';
-  if(p.badge) h += `<span class="card__badge">${escapeHtml(p.badge)}</span>`;
+  if(p.badge){
+    const green = isPercentBadge ? ' style="background:var(--ok)"' : "";
+    h += `<span class="card__badge"${green}>${escapeHtml(p.badge)}</span>`;
+  }
   if(disc && !isPercentBadge) h += `<span class="card__badge" style="background:var(--ok)">−${disc}%</span>`;
   h += '</span>';
   return h;
