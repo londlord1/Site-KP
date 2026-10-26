@@ -30,7 +30,7 @@
       document.getElementById("checkoutInfo").textContent = "Добавьте товары, чтобы оформить заказ";
     } else {
       const u = getCurrentUser();
-      document.getElementById("checkoutInfo").textContent = `Итого к оплате: ${fmtPrice(total)} · доставка бесплатно`;
+      document.getElementById("checkoutInfo").textContent = "Доставка по России бесплатно";
       document.getElementById("checkoutBody").innerHTML = `
       <form class="auth-wrap" id="orderForm" style="max-width:100%">
         <div class="form-msg" id="msg"></div>
@@ -49,7 +49,8 @@
             <option>СБП</option>
           </select></div>
         <div class="field"><label>Комментарий к заказу</label>
-          <textarea id="oComment" rows="3" placeholder="Пожелания по доставке..."></textarea></div>
+          <textarea id="oComment" rows="3" style="resize:vertical;max-width:100%" placeholder="Пожелания по доставке..."></textarea></div>
+        <div class="order-total"><span>Итого к оплате</span><b>${fmtPrice(total)}</b></div>
         <button class="btn btn--block" type="submit">Подтвердить заказ</button>
       </form>`;
 

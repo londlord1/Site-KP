@@ -17,11 +17,53 @@ function headerHtml(active){
   <header class="header"><div class="container header__row">
     <a class="logo" href="index.html">Sound<b>Craft</b></a>
     <nav class="nav">${navHtml(active)}</nav>
+    <div class="search" id="globalSearch">
+      <div class="search__row">
+        <input type="text" id="gsInput" placeholder="Поиск: гитара, микрофон..." autocomplete="off">
+        <select id="gsCat"><option value="Все">Категория</option>${CATEGORIES.map(c=>`<option value="${c}">${c}</option>`).join("")}</select>
+      </div>
+      <div class="search-results" id="gsResults"></div>
+    </div>
     <div class="header__right">
       <a class="cart-btn" href="cart.html">🛒 Корзина <span class="cart-count" id="cartCount"></span></a>
       <span class="user-chip" id="userChip"></span>
     </div>
   </div></header>`;
+}
+
+/* ----- Глобальный поиск: 5 самых подходящих товаров ----- */
+function initSearch(){
+  const input = document.getElementById("gsInput");
+  const catSel = document.getElementById("gsCat");
+  const box = document.getElementById("gsResults");
+  if(!input || !box) return;
+
+  function run(){
+    const q = input.value.trim().toLowerCase();
+    const cat = catSel.value;
+    const list = (Array.isArray(window.PRODUCTS)?window.PRODUCTS:PRODUCTS).filter(p=>{
+      const okCat = cat==="Все" || p.cat===cat;
+      const okQ = !q || p.name.toLowerCase().includes(q) || p.cat.toLowerCase().includes(q);
+      return okCat && okQ;
+    }).slice(0,5);
+
+    if(!q && cat==="Все"){ box.classList.remove("open"); box.innerHTML=""; return; }
+
+    box.innerHTML = `<div class="sr-head">Подходящие товары</div>` +
+      (list.length ? list.map(p=>`<a class="sr-item" href="product.html?id=${p.id}">
+        <div class="sr-item__ic">${p.icon}</div>
+        <span class="sr-item__name">${escapeHtml(p.name)}</span>
+        <span class="sr-item__price">${fmtPrice(p.price)}</span>
+      </a>`).join("")
+      : `<div class="sr-empty">Ничего не найдено по запросу</div>`);
+    box.classList.add("open");
+  }
+
+  input.addEventListener("input", run);
+  catSel.addEventListener("change", run);
+  document.addEventListener("click", e=>{
+    if(!document.getElementById("globalSearch").contains(e.target)) box.classList.remove("open");
+  });
 }
 
 function footerHtml(){
@@ -41,7 +83,6 @@ function footerHtml(){
       <div>
         <h4>Покупателям</h4>
         <ul><li><a href="auth.html">Вход и регистрация</a></li>
-        <li><a href="contacts.html">Контакты</a></li>
         <li><a href="contacts.html#feedback">Обратная связь</a></li></ul>
       </div>
       <div>
@@ -69,6 +110,17 @@ function addToCart(id, qty){
   setCart(cart);
   toast("Товар добавлен в корзину");
 }
+
+/* Кнопка «В корзину» -> «В корзине ✓» со ссылкой на корзину */
+window.buyToggle = function(btn){
+  const id = parseInt(btn.dataset.id);
+  addToCart(id, 1);
+  btn.classList.add("btn--bought");
+  btn.innerHTML = "В корзине ✓";
+  btn.title = "Перейти в корзину";
+  btn.onclick = () => { location.href = "cart.html"; };
+};
+function discountOf(p){ return p.oldPrice ? Math.max(1, Math.round((1 - p.price/p.oldPrice) * 100)) : 0; }
 
 /* ----- Пользователь (localStorage) ----- */
 function getUsers(){ try{ return JSON.parse(localStorage.getItem("sc_users")||"[]"); }catch(e){ return []; } }
@@ -115,4 +167,5 @@ function renderPage(active){
   bdy.insertAdjacentHTML("beforeend", footerHtml());
   renderCartCount();
   renderUserChip();
+  initSearch();
 }

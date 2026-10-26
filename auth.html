@@ -13,8 +13,10 @@
       <div class="form-msg" id="msg"></div>
 
       <form id="authForm">
-        <div class="field" id="regNameField" style="display:none"><label>Имя</label>
-          <input type="text" id="regName" placeholder="Как к вам обращаться?"></div>
+        <div class="field" id="regNameField" style="display:none"><label>ФИО
+          <span class="help">?<span class="tip">ФИО используется для адреса доставки и обращений к вам. После регистрации в аккаунте отображается только ваше имя — остальное останется в профиле.</span></span>
+        </label>
+          <input type="text" id="regName" placeholder="Фамилия Имя Отчество"></div>
         <div class="field"><label>Email</label>
           <input type="email" id="email" placeholder="you@example.ru" required></div>
         <div class="field"><label>Пароль</label>
@@ -68,12 +70,14 @@
       let users = getUsers();
 
       if(mode==="register"){
-        if(!name){ showMsg("Укажите имя"); return; }
+        if(!name){ showMsg("Укажите ФИО"); return; }
         if(users.some(u=>u.email===email)){ showMsg("Пользователь с таким email уже существует. Войдите."); mode="login"; renderForm(); return; }
-        users.push({name, email, pass});
+        const fullName = name;
+        const firstName = fullName.split(/\s+/)[0];
+        users.push({name: fullName, email, pass});
         setUsers(users);
-        setCurrentUser({name, email});
-        toast("Аккаунт создан. Добро пожаловать, " + name + "!");
+        setCurrentUser({name: firstName, email});
+        toast("Аккаунт создан. Добро пожаловать, " + firstName + "!");
         showMsg("Регистрация успешна! Вы вошли в аккаунт.", true);
         setTimeout(()=>location.href="index.html", 900);
         return;

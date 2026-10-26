@@ -40,12 +40,12 @@
               <tr>
                 <td><div class="cart-item">
                   <div class="cart-item__thumb">${x.prod.icon}</div>
-                  <div><b>${escapeHtml(x.prod.name)}</b><span>${escapeHtml(x.prod.cat)}</span></div>
+                  <div><b><a href="product.html?id=${x.prod.id}" style="color:var(--ink)">${escapeHtml(x.prod.name)}</a></b><span>${escapeHtml(x.prod.cat)}</span></div>
                 </div></td>
                 <td>${fmtPrice(x.prod.price)}</td>
                 <td><div class="qty">
                   <button onclick="chgQty(${x.prod.id},-1)">−</button>
-                  <input type="number" value="${x.item.qty}" min="1" onchange="setQtyField(${x.prod.id},this.value)">
+                  <input type="number" value="${x.item.qty}" min="1" max="999" onchange="setQtyField(${x.prod.id},this.value)">
                   <button onclick="chgQty(${x.prod.id},1)">+</button>
                 </div></td>
                 <td><b>${fmtPrice(x.prod.price*x.item.qty)}</b></td>
@@ -57,7 +57,7 @@
         <aside class="cart-summary">
           <h3>Итого</h3>
           <div class="sum-row"><span>Товары (${det.reduce((s,x)=>s+x.item.qty,0)} шт.)</span><span>${fmtPrice(total)}</span></div>
-          ${oldTotal>total ? `<div class="sum-row"><span>Скидка</span><span style="color:var(--err)">−${fmtPrice(oldTotal-total)}</span></div>`:""}
+          ${oldTotal>total ? `<div class="sum-row"><span>Скидка</span><span class="discount">−${fmtPrice(oldTotal-total)}</span></div>`:""}
           <div class="sum-row"><span>Доставка</span><span>Бесплатно</span></div>
           <div class="sum-row sum-row--total"><span>К оплате</span><span>${fmtPrice(total)}</span></div>
           <a class="btn btn--block" style="margin-top:14px" href="checkout.html">Оформить заказ</a>
@@ -70,13 +70,17 @@
     window.chgQty = function(id, d){
       const cart = getCart();
       const f = cart.find(i=>i.id===id);
-      if(f){ f.qty + d > 0 ? f.qty += d : cart.splice(cart.indexOf(f),1); }
+      if(f){
+        const n = f.qty + d;
+        if(n > 999) return;
+        if(n > 0) f.qty = n; else cart.splice(cart.indexOf(f),1);
+      }
       safe(cart);
     };
     window.setQtyField = function(id,val){
       const cart = getCart();
       const f = cart.find(i=>i.id===id);
-      if(f){ f.qty = Math.max(1,parseInt(val)||1); safe(cart); }
+      if(f){ f.qty = Math.min(999, Math.max(1, parseInt(val)||1)); safe(cart); }
     };
     window.removeItem = function(id){
       safe(getCart().filter(i=>i.id!==id));

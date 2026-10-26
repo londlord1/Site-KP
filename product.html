@@ -45,15 +45,22 @@
               <input id="qty" type="number" value="1" min="1">
               <button onclick="incQty()">+</button>
             </div>
-            <button class="btn" onclick="buy()">Добавить в корзину</button>
+            <button class="btn" onclick="buy(this)">Добавить в корзину</button>
           </div>
         </div>`;
     }
 
     function qty(){ return Math.max(1, parseInt(document.getElementById("qty").value)||1); }
-    window.incQty = function(){ document.getElementById("qty").value = qty()+1; };
+    window.incQty = function(){ document.getElementById("qty").value = Math.min(999, qty()+1); };
     window.decQty = function(){ document.getElementById("qty").value = Math.max(1, qty()-1); };
-    window.buy = function(){ if(p) addToCart(p.id, qty()); };
+    window.buy = function(btn){
+      if(!p) return;
+      addToCart(p.id, qty());
+      btn.style.background = "var(--ok)";
+      btn.textContent = "В корзине ✓";
+      btn.title = "Перейти в корзину";
+      btn.onclick = () => { location.href = "cart.html"; };
+    };
   </script>
 </body>
 </html>

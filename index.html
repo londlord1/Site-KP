@@ -15,18 +15,18 @@
       <p>Гитары, клавишные, ударные, микрофоны и акустика от мировых брендов. Поможем подобрать технику под вашу задачу и бюджет.</p>
       <div style="display:flex;gap:12px;flex-wrap:wrap">
         <a class="btn" href="catalog.html">Смотреть каталог</a>
-        <a class="btn btn--ghost" href="#advantages">Почему мы</a>
+        <a class="btn btn--ghost" href="#benefits">Наши преимущества</a>
       </div>
     </div>
   </section>
 
-  <section class="section" id="advantages">
+  <section class="section" id="benefits">
     <div class="container">
-      <div class="grid grid--adv">
-        <div class="adv"><div class="adv__ic">🚚</div><div><b>Быстрая доставка</b><span>по всей России за 2–5 дней</span></div></div>
-        <div class="adv"><div class="adv__ic">🛡️</div><div><b>Гарантия 2 года</b><span>на все инструменты и технику</span></div></div>
-        <div class="adv"><div class="adv__ic">🎧</div><div><b>Помощь в подборе</b><span>консультация музыканта-эксперта</span></div></div>
-        <div class="adv"><div class="adv__ic">↩️</div><div><b>Возврат 14 дней</b><span>если инструмент не подошёл</span></div></div>
+      <div class="banners">
+        <div class="banner"><div class="banner__content"><b>Быстрая доставка</b><span>по всей России за 2–5 дней, бережная упаковка инструментов</span></div><div class="banner__media">🚚</div></div>
+        <div class="banner"><div class="banner__content"><b>Гарантия 2 года</b><span>на все инструменты и звуковое оборудование</span></div><div class="banner__media">🛡️</div></div>
+        <div class="banner"><div class="banner__content"><b>Помощь в подборе</b><span>консультация музыканта-эксперта до и после покупки</span></div><div class="banner__media">🎧</div></div>
+        <div class="banner"><div class="banner__content"><b>Возврат 14 дней</b><span>если инструмент не подошёл — вернём деньги без вопросов</span></div><div class="banner__media">↩️</div></div>
       </div>
     </div>
   </section>
@@ -49,16 +49,20 @@
     container.innerHTML = top.map(p=>cardHtml(p)).join("");
 
     function cardHtml(p){
+      const disc = discountOf(p);
       return `
       <article class="card">
         <a class="card__img" href="product.html?id=${p.id}" style="font-size:64px">${p.icon}
-          ${p.badge?`<span class="card__badge">${escapeHtml(p.badge)}</span>`:""}</a>
+          ${disc?`<span class="card__badge">−${disc}%</span>`:(p.badge?`<span class="card__badge">${escapeHtml(p.badge)}</span>`:"")}</a>
         <div class="card__body">
           <span class="card__cat">${escapeHtml(p.cat)}</span>
           <a class="card__name" href="product.html?id=${p.id}">${escapeHtml(p.name)}</a>
-          <div class="card__price">${fmtPrice(p.price)} <span class="card__old">${p.oldPrice?fmtPrice(p.oldPrice):""}</span></div>
+          <div class="price-block">
+            <div class="card__price">${fmtPrice(p.price)}</div>
+            ${disc?`<div class="discount">Скидка −${disc}% · <span class="card__old">${fmtPrice(p.oldPrice)}</span></div>`:""}
+          </div>
           <div class="card__row">
-            <button class="btn--buy" onclick="addToCart(${p.id})">В корзину</button>
+            <button class="btn--buy" data-id="${p.id}" onclick="buyToggle(this)">В корзину</button>
             <a class="btn--view" href="product.html?id=${p.id}">Подробнее</a>
           </div>
         </div>
