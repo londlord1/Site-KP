@@ -152,10 +152,11 @@ function renderUserChip(){
   const chip = document.getElementById("userChip");
   if(!chip) return;
   const u = getCurrentUser();
-  if(u){
+  if(u && (u.name || u.email)){
     chip.innerHTML = `👤 <span class="user-name">${escapeHtml(u.name||u.email)}</span>
       <button class="btn-logout" onclick="logout()">Выход</button>`;
   } else {
+    if(u) setCurrentUser(null); // некорректная запись — сбрасываем
     chip.innerHTML = `<a href="auth.html" style="color:#fff;">🔑 Войти</a>`;
   }
 }
