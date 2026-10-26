@@ -9,6 +9,25 @@
 </head>
 <body>
 
+  <header class="header"><div class="container header__row">
+    <a class="logo" href="index.html">Sound<b>Craft</b></a>
+    <nav class="nav">
+      <a href="index.html" class="active">Главная</a>
+      <a href="catalog.html">Каталог</a>
+    </nav>
+    <div class="search" id="globalSearch">
+      <div class="search__row">
+        <input type="text" id="gsInput" placeholder="Поиск: гитара, микрофон..." autocomplete="off">
+        <select id="gsCat"><option value="Все">Категория</option></select>
+      </div>
+      <div class="search-results" id="gsResults"></div>
+    </div>
+    <div class="header__right">
+      <a class="cart-btn" href="cart.html">🛒 Корзина <span class="cart-count" id="cartCount"></span></a>
+      <span class="user-chip" id="userChip"></span>
+    </div>
+  </div></header>
+
   <section class="hero">
     <div class="container hero__inner">
       <h1>Музыкальные инструменты и звук для сцены и студии</h1>
@@ -39,10 +58,41 @@
     </div>
   </section>
 
+  <footer class="footer">
+    <div class="container footer__row">
+      <div>
+        <a class="logo" href="index.html" style="color:#fff">Sound<b>Craft</b></a>
+        <p style="font-size:14px;line-height:1.6;max-width:280px">Магазин музыкальных инструментов и звукового оборудования. Поможем выбрать технику для сцены и студии.</p>
+      </div>
+      <div>
+        <h4>Магазин</h4>
+        <ul><li><a href="catalog.html">Каталог</a></li>
+        <li><a href="cart.html">Корзина</a></li>
+        <li><a href="checkout.html">Оформление заказа</a></li></ul>
+      </div>
+      <div>
+        <h4>Покупателям</h4>
+        <ul><li><a href="auth.html">Вход и регистрация</a></li>
+        <li><a href="contacts.html#feedback">Обратная связь</a></li></ul>
+      </div>
+      <div>
+        <h4>Связь с нами</h4>
+        <ul><li>8-800-123-45-67</li><li>shop@soundcraft.ru</li>
+        <li>г. Юрга, ул. Ленина, 12</li></ul>
+      </div>
+    </div>
+    <div class="footer__bottom">© 2026 SoundCraft. Курсовой проект: разработка клиентской части интернет-магазина</div>
+  </footer>
+
   <script src="js/data.js"></script>
   <script src="js/main.js"></script>
   <script>
-    renderPage("index.html");
+    // Шапка и подвал уже прописаны в HTML этого файла — только инициализируем их
+    document.getElementById("gsCat").innerHTML =
+      '<option value="Все">Категория</option>' + CATEGORIES.map(c=>`<option value="${c}">${c}</option>`).join("");
+    renderCartCount();
+    renderUserChip();
+    initSearch();
 
     const container = document.getElementById("topProducts");
     const top = PRODUCTS.filter(p=>p.badge==="Хит");
