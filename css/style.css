@@ -72,7 +72,7 @@ button{font-family:inherit;cursor:pointer}
 .card:hover{box-shadow:var(--shadow);transform:translateY(-3px)}
 .card__img{position:relative;aspect-ratio:4/3;display:flex;align-items:center;justify-content:center;
   font-size:64px;background-size:cover;background-position:center;background-color:#eef0f6}
-.badges{position:absolute;top:10px;left:10px;display:flex;flex-direction:column;gap:6px;align-items:flex-start}
+.badges{position:absolute;top:10px;left:10px;display:flex;flex-direction:row;gap:6px;align-items:center;flex-wrap:wrap}
 .card__badge{background:#dc2626;color:#fff;
   font-size:12px;font-weight:800;padding:4px 9px;border-radius:8px}
 .card__body{padding:14px 16px 16px;display:flex;flex-direction:column;gap:8px;flex:1}
