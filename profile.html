@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Личный кабинет — SoundCraft</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <section class="section">
+    <div class="container">
+      <h1 style="margin:0 0 20px">Личный кабинет</h1>
+      <div id="profileBody">
+        <div class="empty">Загрузка...</div>
+      </div>
+    </div>
+  </section>
+
+  <script src="js/data.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/main.js"></script>
+  <script>
+    renderPage("profile.html");
+    renderCartCount();
+    renderUserChip();
+    initSearch();
+    if(window.loadProducts) loadProducts().then(fillSearchCats);
+
+    const wrap = document.getElementById("profileBody");
+    const u = getCurrentUser();
+    if(!u){
+      wrap.innerHTML = `<div class="empty">Для доступа в личный кабинет выполните вход.
+        <br><a class="btn" style="margin-top:14px" href="auth.html">Войти или зарегистрироваться</a></div>`;
+    } else {
+      wrap.innerHTML = `
+        <div class="info-card" style="margin-bottom:20px;max-width:420px">
+          <h3 style="margin:0 0 12px">Профиль</h3>
+          <ul class="info-list">
+            <li>👤 <b>${escapeHtml(u.name||"—")}</b></li>
+            <li>✉️ ${escapeHtml(u.email||"—")}</li>
+          </ul>
+        </div>
+        <h2 style="font-size:22px">История заказов</h2>
+        <div id="ordersList"></div>`;
+      const history = JSON.parse(localStorage.getItem("sc_orders")||"[]");
+      const ol = document.getElementById("ordersList");
+      if(!history.length){
+        ol.innerHTML = `<div class="empty" style="padding:24px 0">Заказов пока нет. <a href="catalog.html" style="color:var(--brand)">Перейти в каталог</a></div>`;
+      } else {
+        ol.innerHTML = history.reverse().map((o,i)=>`
+          <div class="sum-row" style="border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:12px;flex-wrap:wrap;gap:8px">
+            <span><b>Заказ №${1000+i+1}</b><br>${escapeHtml(o.date||"")}</span>
+            <span style="margin-left:auto;text-align:right"><b>${fmtPrice(o.total||0)}</b><br><span style="font-size:13px">${escapeHtml(o.pay||"")}</span></span>
+          </div>`).join("");
+      }
+    }
+  </script>
+</body>
+</html>

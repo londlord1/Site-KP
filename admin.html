@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Админ-панель — SoundCraft</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <section class="section">
+    <div class="container">
+      <h1 style="margin:0 0 8px">Админ-панель</h1>
+      <p style="color:var(--muted);margin:0 0 20px">Управление товарами и заказами</p>
+      <div class="sort-bar" style="margin-bottom:0">
+        <button class="btn btn--sm tab-btn active" data-tab="products">Товары</button>
+        <button class="btn btn--sm tab-btn" data-tab="orders">Заказы</button>
+        <a class="btn btn--ghost btn--sm" style="margin-left:auto;background:#1a1d29" href="index.html">На сайт</a>
+      </div>
+      <div id="tab-products" class="tab-pane"></div>
+      <div id="tab-orders" class="tab-pane" style="display:none"></div>
+    </div>
+  </section>
+
+  <script src="js/data.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/main.js"></script>
+  <script>
+    renderPage("admin.html");
+    renderCartCount();
+    renderUserChip();
+    initSearch();
+
+    function tab(name){
+      document.querySelectorAll(".tab-btn").forEach(b=>b.classList.toggle("active", b.dataset.tab===name));
+      document.getElementById("tab-products").style.display = name==="products"?"block":"none";
+      document.getElementById("tab-orders").style.display = name==="orders"?"block":"none";
+    }
+    document.querySelectorAll(".tab-btn").forEach(b=>b.addEventListener("click",()=>tab(b.dataset.tab)));
+
+    const prodPane = document.getElementById("tab-products");
+    const ordPane = document.getElementById("tab-orders");
+
+    function renderProducts(list){
+      prodPane.innerHTML = `<div class="empty">Загрузка товаров...</div>`;
+      if(!list.length) return;
+      prodPane.innerHTML = `<div class="table-scroll" style="overflow-x:auto">
+        <table class="cart-table">
+          <thead><tr><th>ID</th><th>Товар</th><th>Категория</th><th>Цена</th><th>Скидка</th></tr></thead>
+          <tbody>
+            ${list.map(p=>`<tr>
+              <td>${p.id}</td>
+              <td><div class="cart-item"><div class="cart-item__thumb">${p.icon}${p.img?`<img src="${p.img}" alt="" loading="lazy" onerror="this.remove()">`:""}</div><span>${escapeHtml(p.name)}</span></div></td>
+              <td>${escapeHtml(p.cat)}</td>
+              <td>${fmtPrice(p.price)}</td>
+              <td>${p.oldPrice?Math.round((1-p.price/p.oldPrice)*100)+" %":"—"}</td>
+            </tr>`).join("")}
+          </tbody>
+        </table></div>`;
+    }
+
+    loadProducts().then(()=>{
+      renderProducts(PRODUCTS.slice(0,40));
+      const orders = JSON.parse(localStorage.getItem("sc_orders")||"[]");
+      if(!orders.length){
+        ordPane.innerHTML = `<div class="empty">Заказов пока нет.</div>`;
+      } else {
+        ordPane.innerHTML = `<div class="table-scroll" style="overflow-x:auto">
+          <table class="cart-table">
+            <thead><tr><th>№</th><th>Дата</th><th>ФИО</th><th>Состав</th><th>Сумма</th></tr></thead>
+            <tbody>
+              ${orders.map((o,i)=>`<tr>
+                <td>${1000+i+1}</td><td>${escapeHtml(o.date||"")}</td><td>${escapeHtml(o.name||"")}</td>
+                <td>${(o.items||[]).map(it=>escapeHtml(it.name)+" ×"+it.qty).join("; ")}</td>
+                <td>${fmtPrice(o.total||0)}</td>
+              </tr>`).join("")}
+            </tbody>
+          </table></div>`;
+      }
+      if(window.loadProducts) fillSearchCats();
+    });
+  </script>
+</body>
+</html>

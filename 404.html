@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Страница не найдена — SoundCraft</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <section class="section">
+    <div class="container centre" style="text-align:center">
+      <div style="font-size:90px;line-height:1">404</div>
+      <h1 style="margin:10px 0">Страница не найдена</h1>
+      <p style="color:var(--muted)">Возможно, адрес указан неверно или страница была перемещена.</p>
+      <div style="margin-top:20px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+        <a class="btn" href="index.html">На главную</a>
+        <a class="btn btn--ghost" style="--bg:#1a1d29;background:#1a1d29" href="catalog.html">В каталог</a>
+      </div>
+    </div>
+  </section>
+
+  <script src="js/data.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/main.js"></script>
+  <script>
+    renderPage("404.html");
+    renderCartCount();
+    renderUserChip();
+    initSearch();
+    if(window.loadProducts) loadProducts().then(fillSearchCats);
+  </script>
+</body>
+</html>

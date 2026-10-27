@@ -25,10 +25,14 @@
   }
 
   async function fetchFromApi(){
-    const r = await fetch("https://dummyjson.com/products?limit=0");
-    if(!r.ok) throw new Error("API " + r.status);
-    const j = await r.json();
-    return (j.products || []).map(mapItem);
+    const ctrl = new AbortController();
+    const timer = setTimeout(()=>ctrl.abort(), 6000);   // таймаут: не даём каталогу висеть
+    try{
+      const r = await fetch("https://dummyjson.com/products?limit=0", {signal: ctrl.signal});
+      if(!r.ok) throw new Error("API " + r.status);
+      const j = await r.json();
+      return (j.products || []).map(mapItem);
+    } finally { clearTimeout(timer); }
   }
 
   let cache = null;

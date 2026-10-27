@@ -4,6 +4,8 @@
 const NAV_LINKS = [
   ["index.html","Главная"],
   ["catalog.html","Каталог"],
+  ["profile.html","Кабинет"],
+  ["admin.html","Админ"],
 ];
 
 function navHtml(active){
@@ -87,7 +89,8 @@ function footerHtml(){
       </div>
       <div>
         <h4>Покупателям</h4>
-        <ul><li><a href="auth.html">Вход и регистрация</a></li>
+        <ul><li><a href="profile.html">Личный кабинет</a></li>
+        <li><a href="auth.html">Вход и регистрация</a></li>
         <li><a href="contacts.html#feedback">Обратная связь</a></li></ul>
       </div>
       <div>
