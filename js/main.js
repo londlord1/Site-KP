@@ -140,6 +140,13 @@ function badgesHtml(p){
   return h;
 }
 
+/* Заполнить категории поиска (после загрузки товаров) */
+function fillSearchCats(){
+  const s = document.getElementById("gsCat");
+  if(!s) return;
+  s.innerHTML = '<option value="Все">Категория</option>' + CATEGORIES.map(c=>`<option value="${c}">${c}</option>`).join("");
+}
+
 /* Кнопка покупа: отражает фактическое состояние корзины (не сбрасывается при перезагрузке/сбросе) */
 function isInCart(id){ return getCart().some(i=>i.id===id); }
 function buyButton(id){
@@ -195,4 +202,5 @@ function renderPage(active){
   renderCartCount();
   renderUserChip();
   initSearch();
+  if(window.loadProducts) loadProducts().then(fillSearchCats);
 }

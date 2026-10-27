@@ -54,6 +54,7 @@
   </section>
 
   <script src="js/data.js"></script>
+  <script src="js/api.js"></script>
   <script src="js/main.js"></script>
   <script>
     renderPage("catalog.html");
@@ -173,7 +174,16 @@
       filterProducts();
     });
 
-    filterProducts();
+    // Начальная загрузка товаров с DummyJSON (резерв — локальные данные)
+    const emptyEl = document.getElementById("emptyState");
+    emptyEl.style.display = "block";
+    emptyEl.textContent = "Загрузка товаров...";
+    loadProducts().then(()=>{
+      fillSearchCats();
+      catSelect.innerHTML = CATEGORIES.map(c=>`<option value="${c}">${c}</option>`).join("");
+      emptyEl.textContent = "По вашему запросу ничего не найдено. Попробуйте изменить фильтры.";
+      filterProducts();
+    });
   </script>
 </body>
 </html>

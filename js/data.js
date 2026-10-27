@@ -1,5 +1,5 @@
 /* ============ SoundCraft — каталог товаров ============ */
-const PRODUCTS = [
+let PRODUCTS = [
   {id:1, name:"Электрогитара Fender Player Stratocaster", cat:"Гитары", price:74990, oldPrice:84900, icon:"🎸", badge:"Хит", img:"img/products/1.jpg",
    desc:"Электрогитара с классическим звучанием Stratocaster: 3 сингл-катушки, 22 лада, гриф из клёна. Подходит исполнителям любых стилей — от блюза до рока."},
   {id:2, name:"Акустическая гитара Yamaha FG800", cat:"Гитары", price:29990, oldPrice:null, icon:"🎶", badge:null, img:"img/products/2.jpg",
@@ -38,4 +38,4 @@ const PRODUCTS = [
    desc:"37-нотный цветной ксилофон с подставкой — яркий инструмент для педагогов и детей."},
 ];
 
-const CATEGORIES = ["Все", ...new Set(PRODUCTS.map(p => p.cat))];
+let CATEGORIES = ["Все", ...new Set(PRODUCTS.map(p => p.cat))];

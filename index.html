@@ -85,22 +85,22 @@
   </footer>
 
   <script src="js/data.js"></script>
+  <script src="js/api.js"></script>
   <script src="js/main.js"></script>
   <script>
     // Шапка и подвал уже прописаны в HTML этого файла — только инициализируем их
     // Сначала пользователь и корзина (не зависят от данных каталога)
     renderCartCount();
     renderUserChip();
-    // Заполнение категорий поиска — в защищённом блоке
-    try{
-      document.getElementById("gsCat").innerHTML =
-        '<option value="Все">Категория</option>' + CATEGORIES.map(c=>`<option value="${c}">${c}</option>`).join("");
-    }catch(e){}
     initSearch();
 
-    const container = document.getElementById("topProducts");
-    const topItems = PRODUCTS.filter(p=>p.badge==="Хит");
-    container.innerHTML = topItems.map(p=>cardHtml(p)).join("");
+    // Товары грузим с DummyJSON (резерв — локальные данные)
+    loadProducts().then(()=>{
+      fillSearchCats();
+      const container = document.getElementById("topProducts");
+      const topItems = PRODUCTS.slice(0, 8);
+      container.innerHTML = topItems.map(p=>cardHtml(p)).join("");
+    });
 
     function cardHtml(p){
       return `

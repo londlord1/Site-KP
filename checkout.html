@@ -17,10 +17,12 @@
   </section>
 
   <script src="js/data.js"></script>
+  <script src="js/api.js"></script>
   <script src="js/main.js"></script>
   <script>
     renderPage("cart.html");
 
+    loadProducts().then(()=>{
     const det = getCart().map(i=>({item:i, prod:PRODUCTS.find(p=>p.id===i.id)})).filter(x=>x.prod);
     const total = det.reduce((s,x)=>s+x.prod.price*x.item.qty,0);
 
@@ -84,6 +86,7 @@
         // простая демонстрация: через toast не вставляем сюда, всё в msg
       });
     }
+    });
   </script>
 </body>
 </html>

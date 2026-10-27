@@ -15,19 +15,21 @@
   </section>
 
   <script src="js/data.js"></script>
+  <script src="js/api.js"></script>
   <script src="js/main.js"></script>
   <script>
     renderPage("catalog.html");
 
     const id = parseInt(new URLSearchParams(location.search).get("id"));
-    const p = PRODUCTS.find(x=>x.id===id);
-
-    if(!p){
-      document.getElementById("product").innerHTML =
-        '<div class="empty">Товар не найден. <a href="catalog.html" style="color:var(--brand)">Вернуться в каталог</a></div>';
-    } else {
-      document.getElementById("bcCat").textContent = p.cat;
-      document.getElementById("product").innerHTML = `
+    let p = null;
+    loadProducts().then(()=>{
+      p = PRODUCTS.find(x=>x.id===id);
+      if(!p){
+        document.getElementById("product").innerHTML =
+          '<div class="empty">Товар не найден. <a href="catalog.html" style="color:var(--brand)">Вернуться в каталог</a></div>';
+      } else {
+        document.getElementById("bcCat").textContent = p.cat;
+        document.getElementById("product").innerHTML = `
         <div class="product__img">${p.icon}${p.img?`<img src="${p.img}" alt="${escapeHtml(p.name)}" onerror="this.remove()">`:""}</div>
         <div>
           <span class="card__cat">${escapeHtml(p.cat)}</span>
@@ -48,7 +50,8 @@
             <button class="btn" onclick="buy(this)">Добавить в корзину</button>
           </div>
         </div>`;
-    }
+      }
+    });
 
     function qty(){ return Math.max(1, parseInt(document.getElementById("qty").value)||1); }
     window.incQty = function(){ document.getElementById("qty").value = Math.min(999, qty()+1); };
