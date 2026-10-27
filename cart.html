@@ -39,7 +39,7 @@
             ${det.map(x=>`
               <tr>
                 <td><div class="cart-item">
-                  <div class="cart-item__thumb">${x.prod.icon}</div>
+                  <div class="cart-item__thumb">${x.prod.icon}${x.prod.img?`<img src="${x.prod.img}" alt="" loading="lazy" onerror="this.remove()">`:""}</div>
                   <div><b><a href="product.html?id=${x.prod.id}" style="color:var(--ink)">${escapeHtml(x.prod.name)}</a></b><span>${escapeHtml(x.prod.cat)}</span></div>
                 </div></td>
                 <td>${fmtPrice(x.prod.price)}</td>

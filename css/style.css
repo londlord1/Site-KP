@@ -71,7 +71,15 @@ button{font-family:inherit;cursor:pointer}
   overflow:hidden;transition:.18s;display:flex;flex-direction:column}
 .card:hover{box-shadow:var(--shadow);transform:translateY(-3px)}
 .card__img{position:relative;aspect-ratio:4/3;display:flex;align-items:center;justify-content:center;
-  font-size:64px;background-size:cover;background-position:center;background-color:#eef0f6}
+  font-size:64px;background-size:cover;background-position:center;background-color:#eef0f6;overflow:hidden}
+.card__icon{position:relative;z-index:0}
+.card__photo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:1}
+.cart-item__thumb{position:relative;overflow:hidden}
+.cart-item__thumb img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:1}
+.product__img{position:relative;overflow:hidden}
+.product__img img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:1}
+.sr-item__ic{position:relative;overflow:hidden}
+.sr-item__ic img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:8px;z-index:1}
 .badges{position:absolute;top:10px;left:10px;display:flex;flex-direction:row;gap:6px;align-items:center;flex-wrap:wrap}
 .card__badge{background:#dc2626;color:#fff;
   font-size:12px;font-weight:800;padding:4px 9px;border-radius:8px}

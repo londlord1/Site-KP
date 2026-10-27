@@ -52,7 +52,7 @@ function initSearch(){
 
     box.innerHTML = `<div class="sr-head">Подходящие товары</div>` +
       (list.length ? list.map(p=>`<a class="sr-item" href="product.html?id=${p.id}">
-        <div class="sr-item__ic">${p.icon}</div>
+        <div class="sr-item__ic">${p.icon}${p.img?`<img src="${p.img}" alt="" loading="lazy" onerror="this.remove()">`:""}</div>
         <span class="sr-item__name">${escapeHtml(p.name)}</span>
         <span class="sr-item__price">${fmtPrice(p.price)}</span>
       </a>`).join("")

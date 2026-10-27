@@ -28,7 +28,7 @@
     } else {
       document.getElementById("bcCat").textContent = p.cat;
       document.getElementById("product").innerHTML = `
-        <div class="product__img">${p.icon}</div>
+        <div class="product__img">${p.icon}${p.img?`<img src="${p.img}" alt="${escapeHtml(p.name)}" onerror="this.remove()">`:""}</div>
         <div>
           <span class="card__cat">${escapeHtml(p.cat)}</span>
           <h1>${escapeHtml(p.name)}</h1>

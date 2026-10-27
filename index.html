@@ -105,7 +105,9 @@
     function cardHtml(p){
       return `
       <article class="card">
-        <a class="card__img" href="product.html?id=${p.id}" style="font-size:64px">${p.icon}
+        <a class="card__img" href="product.html?id=${p.id}">
+          <span class="card__icon">${p.icon}</span>
+          ${p.img?`<img class="card__photo" src="${p.img}" alt="${escapeHtml(p.name)}" loading="lazy" onerror="this.remove()">`:""}
           ${badgesHtml(p)}
         </a>
         <div class="card__body">
