@@ -142,9 +142,19 @@ button{font-family:inherit;cursor:pointer}
 .cart-item img,.cart-item__thumb{width:56px;height:56px;border-radius:10px;background:#eef0f6;display:flex;align-items:center;justify-content:center;font-size:26px;flex:none}
 .cart-item b{display:block}
 .cart-item span{font-size:13px;color:var(--muted)}
-.remove-btn{background:none;border:none;color:var(--err);font-weight:700;font-size:18px;line-height:1;
-  padding:6px;border-radius:8px;transition:.15s}
-.remove-btn:hover{background:#fee2e2;transform:scale(1.1)}
+.remove-btn{position:relative;background:none;border:none;color:#718096;font-weight:700;
+  padding:7px;border-radius:9px;transition:.15s;line-height:0}
+.remove-btn:hover{color:#dc2626;background:#fee2e2}
+.remove-btn:active{transform:scale(.92)}
+.trash{display:block;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linejoin:round;stroke-linecap:round}
+.trash-lid{transform-origin:6px 7px;transition:transform .18s ease}
+.trash-body{stroke-width:1.9;fill:currentColor;fill-opacity:.12}
+.trash-slat{stroke-width:1.5}
+.remove-btn:hover .trash-lid{transform:rotate(-20deg) translate(-1px,-1px)}
+.remove-tip{position:absolute;bottom:calc(100% + 7px);left:50%;transform:translateX(-50%);
+  background:#1a1d29;color:#fff;font-size:11px;font-weight:600;padding:4px 9px;border-radius:7px;
+  white-space:nowrap;opacity:0;visibility:hidden;transition:.15s;pointer-events:none;line-height:1.4}
+.remove-btn:hover .remove-tip{opacity:1;visibility:visible}
 .cart-summary{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:22px;position:sticky;top:84px}
 .cart-summary h3{margin:0 0 14px}
 .sum-row{display:flex;justify-content:space-between;margin:8px 0}
