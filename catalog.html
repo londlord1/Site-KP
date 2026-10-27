@@ -86,10 +86,43 @@
       renderList(arr);
     }
 
+    /* ==== Ленивая подгрузка товаров при прокрутке ==== */
+    const BATCH = 9;
+    let dataArr = [];
+    let seen = 0;
+    let sentinel = null;
+    let sentinelObs = null;
+
+    function makeSentinel(){
+      const s = document.createElement("div");
+      s.id = "loadSentinel";
+      s.style.height = "1px";
+      list.parentNode.appendChild(s);
+      const obs = new IntersectionObserver((es)=>{
+        if(es[0].isIntersecting) loadMore();
+      }, {rootMargin: "320px"});
+      obs.observe(s);
+      return {s, obs};
+    }
+
+    function loadMore(){
+      const slice = dataArr.slice(seen, seen + BATCH);
+      if(slice.length) list.insertAdjacentHTML("beforeend", slice.map(cardHtml).join(""));
+      seen += slice.length;
+      if(sentinel){
+        sentinel.s.style.display = (seen >= dataArr.length) ? "none" : "block";
+      }
+    }
+
     function renderList(arr){
+      dataArr = arr;
+      seen = 0;
       hint.textContent = `Найдено товаров: ${arr.length}`;
-      list.innerHTML = arr.map(cardHtml).join("");
+      list.innerHTML = "";
       document.getElementById("emptyState").style.display = arr.length ? "none" : "block";
+      if(sentinelObs){ sentinelObs.disconnect(); sentinelObs = null; }
+      if(sentinel){ sentinel.s.remove(); sentinel = null; }
+      if(arr.length){ sentinel = makeSentinel(); loadMore(); }
     }
 
     function cardHtml(p){
