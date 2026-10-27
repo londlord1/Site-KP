@@ -56,7 +56,7 @@
 
         <aside class="cart-summary">
           <h3>Итого</h3>
-          <div class="sum-row"><span>Товары (${det.reduce((s,x)=>s+x.item.qty,0)} шт.)</span><span>${fmtPrice(total)}</span></div>
+          <div class="sum-row"><span>Товары (${det.reduce((s,x)=>s+x.item.qty,0)} шт.)</span><span>${fmtPrice(oldTotal)}</span></div>
           ${oldTotal>total ? `<div class="sum-row"><span>Скидка</span><span class="discount">−${fmtPrice(oldTotal-total)}</span></div>`:""}
           <div class="sum-row"><span>Доставка</span><span>Бесплатно</span></div>
           <div class="sum-row sum-row--total"><span>К оплате</span><span>${fmtPrice(total)}</span></div>
