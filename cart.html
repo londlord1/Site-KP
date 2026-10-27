@@ -49,7 +49,7 @@
                   <button onclick="chgQty(${x.prod.id},1)">+</button>
                 </div></td>
                 <td><b>${fmtPrice(x.prod.price*x.item.qty)}</b></td>
-                <td><button class="remove-btn" onclick="removeItem(${x.prod.id})">✕</button></td>
+                <td><button class="remove-btn" onclick="removeItem(${x.prod.id})" title="Удалить">🗑️</button></td>
               </tr>`).join("")}
           </tbody>
         </table>
