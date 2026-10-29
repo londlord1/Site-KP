@@ -182,6 +182,17 @@ window.logout = function(){ setCurrentUser(null); toast("Вы вышли из а
 function escapeHtml(s){
   return String(s||"").replace(/[&<>"']/g, m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
 }
+
+/* ----- Администратор (вход по email/паролю, он же обычный пользователь) ----- */
+const ADMIN_EMAIL = "admin@ya.ru";
+const ADMIN_PASS  = "admin@ya.ru";
+window.adminCreds = (e, p) => e.toLowerCase()===ADMIN_EMAIL && p===ADMIN_PASS;
+window.isAdmin = () => sessionStorage.getItem("sc_admin")==="1";
+window.grantAdmin = function(){
+  sessionStorage.setItem("sc_admin","1");
+  setCurrentUser({ name:"Администратор", email: ADMIN_EMAIL });
+  toast("Вход выполнен");
+};
 function fmtPrice(p){ return String(p).replace(/\B(?=(\d{3})+(?!\d))/g," ") + " ₽"; }
 function moneyToNum(s){ return parseFloat(String(s).replace(/[^\d.]/g,""))||0; }
 

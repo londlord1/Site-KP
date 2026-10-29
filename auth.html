@@ -72,6 +72,7 @@
 
       if(mode==="register"){
         if(!name){ showMsg("Укажите ФИО"); return; }
+        if(email===ADMIN_EMAIL){ showMsg("Этот email зарезервирован для администратора"); return; }
         if(users.some(u=>u.email===email)){ showMsg("Пользователь с таким email уже существует. Войдите."); mode="login"; renderForm(); return; }
         const fullName = name.trim();
         const parts = fullName.split(/\s+/);
@@ -82,6 +83,13 @@
         toast("Аккаунт создан. Добро пожаловать, " + firstName + "!");
         showMsg("Регистрация успешна! Вы вошли в аккаунт.", true);
         setTimeout(()=>location.href="index.html", 900);
+        return;
+      }
+
+      if(window.adminCreds && window.adminCreds(email, pass)){
+        window.grantAdmin();
+        showMsg("Вход администратора выполнен.", true);
+        setTimeout(()=>location.href="admin.html", 900);
         return;
       }
 

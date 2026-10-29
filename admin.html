@@ -21,8 +21,7 @@
     renderCartCount();
     renderUserChip();
 
-    // ---------- Вход в админку (admin / admin123) ----------
-    const ADMIN_USER="admin", ADMIN_PASS="admin123";
+    // ---------- Вход в админку (admin@ya.ru / admin@ya.ru) ----------
     window.isAdmin = () => sessionStorage.getItem("sc_admin")==="1";
 
     const wrap = document.getElementById("adminWrap");
@@ -33,7 +32,7 @@
         <h1>Вход в админ-панель</h1>
         <div class="form-msg" id="amsg"></div>
         <form id="alform">
-          <div class="field"><label>Логин</label><input type="text" id="alogin" autocomplete="username"></div>
+          <div class="field"><label>Email</label><input type="email" id="alogin" autocomplete="username" placeholder="admin@ya.ru"></div>
           <div class="field"><label>Пароль</label><input type="password" id="apass" autocomplete="current-password"></div>
           <button class="btn btn--block" type="submit">Войти</button>
         </form>
@@ -41,16 +40,15 @@
       </div>`;
       document.getElementById("alform").addEventListener("submit", e=>{
         e.preventDefault();
-        const u = document.getElementById("alogin").value.trim();
+        const u = document.getElementById("alogin").value.trim().toLowerCase();
         const p = document.getElementById("apass").value;
-        if(u===ADMIN_USER && p===ADMIN_PASS){
-          sessionStorage.setItem("sc_admin","1");
-          toast("Вход выполнен");
+        if(window.adminCreds(u, p)){
+          window.grantAdmin();
           initAdmin();
         } else {
           const m = document.getElementById("amsg");
           m.className = "form-msg show form-msg--err";
-          m.textContent = "Неверный логин или пароль";
+          m.textContent = "Неверный email или пароль";
         }
       });
     }
@@ -63,7 +61,7 @@
         <div class="sort-bar" style="margin-bottom:0">
           <button class="btn btn--sm tab-btn active" data-tab="products">Товары</button>
           <button class="btn btn--sm tab-btn" data-tab="orders">Заказы</button>
-          <button class="btn btn--ghost btn--sm" style="margin-left:auto;background:#1a1d29" onclick="sessionStorage.removeItem('sc_admin');location.reload()">Выйти</button>
+          <button class="btn btn--ghost btn--sm" style="margin-left:auto;background:#1a1d29" onclick="sessionStorage.removeItem('sc_admin');setCurrentUser(null);location.reload()">Выйти</button>
         </div>
         <div id="tab-products" class="tab-pane"></div>
         <div id="tab-orders" class="tab-pane" style="display:none"></div>`;
