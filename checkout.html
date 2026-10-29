@@ -45,25 +45,64 @@
         <div class="field"><label>Адрес доставки</label>
           <input type="text" id="oAddr" placeholder="Город, улица, дом, квартира" required></div>
         <div class="field"><label>Способ оплаты</label>
-          <select id="oPay">
+          <select id="oPay" onchange="togglePay()">
             <option>Картой онлайн</option>
             <option>При получении</option>
             <option>СБП</option>
           </select></div>
+        <div class="field" id="cardBlock" style="display:none">
+          <label>Данные карты</label>
+          <input type="text" id="oCard" placeholder="0000 0000 0000 0000" inputmode="numeric">
+          <div style="display:flex;gap:10px;margin-top:10px">
+            <input style="flex:1" type="text" id="oExp" placeholder="ММ/ГГ">
+            <input style="flex:1" type="password" id="oCvc" placeholder="CVC">
+          </div>
+        </div>
         <div class="field"><label>Комментарий к заказу</label>
           <textarea id="oComment" rows="3" style="resize:vertical;max-width:100%" placeholder="Пожелания по доставке..."></textarea></div>
         <div class="order-total"><span>Итого к оплате</span><b>${fmtPrice(total)}</b></div>
         <button class="btn btn--block" type="submit">Подтвердить заказ</button>
       </form>`;
 
+      window.togglePay = function(){
+        const block = document.getElementById("cardBlock");
+        block.style.display = document.getElementById("oPay").value==="Картой онлайн" ? "block" : "none";
+      };
+      togglePay();
+
       document.getElementById("orderForm").addEventListener("submit", e=>{
         e.preventDefault();
+        if(document.getElementById("oPay").value==="Картой онлайн"){
+          const card = document.getElementById("oCard").value.replace(/\D/g,"");
+          const exp = document.getElementById("oExp").value.trim();
+          const cvc = document.getElementById("oCvc").value.trim();
+          const msg = document.getElementById("msg");
+          if(card.length<16){ msg.className="form-msg show form-msg--err"; msg.textContent="Введите корректный номер карты (16 цифр)"; return; }
+          if(!/^\d{2}\/\d{2}$/.test(exp)){ msg.className="form-msg show form-msg--err"; msg.textContent="Введите срок действия в формате ММ/ГГ"; return; }
+          if(!/^\d{3}$/.test(cvc)){ msg.className="form-msg show form-msg--err"; msg.textContent="Введите CVC (3 цифры)"; return; }
+          // имитация оплаты
+          const btn = document.querySelector("#orderForm button[type=submit]");
+          msg.className="form-msg show form-msg--ok";
+          msg.textContent="Оплата выполняется...";
+          btn.disabled=true; btn.textContent="Оплачиваю...";
+          setTimeout(()=>{
+            msg.textContent="✔ Оплата прошла успешно";
+            btn.textContent="Оплачено ✓";
+            finalizeOrder();
+          }, 1200);
+          return;
+        }
+        finalizeOrder();
+      });
+
+      function finalizeOrder(){
         const order = {
           name: document.getElementById("oName").value.trim(),
           phone: document.getElementById("oPhone").value.trim(),
           email: document.getElementById("oEmail").value.trim(),
           addr: document.getElementById("oAddr").value.trim(),
           pay: document.getElementById("oPay").value,
+          status: "Новый",
           comment: document.getElementById("oComment").value.trim(),
           items: det.map(x=>({name:x.prod.name, price:x.prod.price, qty:x.item.qty})),
           total, date: new Date().toLocaleString("ru-RU")
@@ -84,7 +123,7 @@
             <a class="btn" href="catalog.html">Продолжить покупки</a>
           </div>`;
         // простая демонстрация: через toast не вставляем сюда, всё в msg
-      });
+      }
     }
     });
   </script>

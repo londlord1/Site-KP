@@ -40,8 +40,18 @@
             <li>✉️ ${escapeHtml(u.email||"—")}</li>
           </ul>
         </div>
-        <h2 style="font-size:22px">История заказов</h2>
+        <h2 style="font-size:22px">Уведомления</h2>
+        <div id="notifsList"></div>
+        <h2 style="font-size:22px;margin-top:24px">История заказов</h2>
         <div id="ordersList"></div>`;
+      const notifs = JSON.parse(localStorage.getItem("sc_notifications")||"[]");
+      const nl = document.getElementById("notifsList");
+      nl.innerHTML = notifs.length
+        ? notifs.slice().reverse().map(n=>`<div class="sum-row" style="border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-bottom:10px">
+            <span>🔔 ${escapeHtml(n.text||"")}</span>
+            <span style="margin-left:auto;font-size:13px;color:var(--muted)">${escapeHtml(n.date||"")}</span>
+          </div>`).join("")
+        : `<div class="empty" style="padding:12px 0">Уведомлений нет.</div>`;
       const history = JSON.parse(localStorage.getItem("sc_orders")||"[]");
       const ol = document.getElementById("ordersList");
       if(!history.length){
@@ -51,6 +61,7 @@
           <div class="sum-row" style="border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:12px;flex-wrap:wrap;gap:8px">
             <span><b>Заказ №${1000+i+1}</b><br>${escapeHtml(o.date||"")}</span>
             <span style="margin-left:auto;text-align:right"><b>${fmtPrice(o.total||0)}</b><br><span style="font-size:13px">${escapeHtml(o.pay||"")}</span></span>
+            <span style="flex-basis:100%;font-size:13px;color:var(--ok)">Статус: <b>${escapeHtml(o.status||"Новый")}</b></span>
           </div>`).join("");
       }
     }

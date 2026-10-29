@@ -8,16 +8,8 @@
 </head>
 <body>
   <section class="section">
-    <div class="container">
-      <h1 style="margin:0 0 8px">Админ-панель</h1>
-      <p style="color:var(--muted);margin:0 0 20px">Управление товарами и заказами</p>
-      <div class="sort-bar" style="margin-bottom:0">
-        <button class="btn btn--sm tab-btn active" data-tab="products">Товары</button>
-        <button class="btn btn--sm tab-btn" data-tab="orders">Заказы</button>
-        <a class="btn btn--ghost btn--sm" style="margin-left:auto;background:#1a1d29" href="index.html">На сайт</a>
-      </div>
-      <div id="tab-products" class="tab-pane"></div>
-      <div id="tab-orders" class="tab-pane" style="display:none"></div>
+    <div class="container" id="adminWrap">
+      <div class="empty">Загрузка...</div>
     </div>
   </section>
 
@@ -28,56 +20,153 @@
     renderPage("admin.html");
     renderCartCount();
     renderUserChip();
-    initSearch();
 
-    function tab(name){
-      document.querySelectorAll(".tab-btn").forEach(b=>b.classList.toggle("active", b.dataset.tab===name));
-      document.getElementById("tab-products").style.display = name==="products"?"block":"none";
-      document.getElementById("tab-orders").style.display = name==="orders"?"block":"none";
+    // ---------- Вход в админку (admin / admin123) ----------
+    const ADMIN_USER="admin", ADMIN_PASS="admin123";
+    window.isAdmin = () => sessionStorage.getItem("sc_admin")==="1";
+
+    const wrap = document.getElementById("adminWrap");
+
+    function loginScreen(){
+      wrap.innerHTML = `
+      <div class="auth-wrap">
+        <h1>Вход в админ-панель</h1>
+        <div class="form-msg" id="amsg"></div>
+        <form id="alform">
+          <div class="field"><label>Логин</label><input type="text" id="alogin" autocomplete="username"></div>
+          <div class="field"><label>Пароль</label><input type="password" id="apass" autocomplete="current-password"></div>
+          <button class="btn btn--block" type="submit">Войти</button>
+        </form>
+        <div class="auth-link">Доступ только для администратора</div>
+      </div>`;
+      document.getElementById("alform").addEventListener("submit", e=>{
+        e.preventDefault();
+        const u = document.getElementById("alogin").value.trim();
+        const p = document.getElementById("apass").value;
+        if(u===ADMIN_USER && p===ADMIN_PASS){
+          sessionStorage.setItem("sc_admin","1");
+          toast("Вход выполнен");
+          initAdmin();
+        } else {
+          const m = document.getElementById("amsg");
+          m.className = "form-msg show form-msg--err";
+          m.textContent = "Неверный логин или пароль";
+        }
+      });
     }
-    document.querySelectorAll(".tab-btn").forEach(b=>b.addEventListener("click",()=>tab(b.dataset.tab)));
 
-    const prodPane = document.getElementById("tab-products");
-    const ordPane = document.getElementById("tab-orders");
+    // ---------- Панель администратора ----------
+    function initAdmin(){
+      wrap.innerHTML = `
+        <h1 style="margin:0 0 8px">Админ-панель</h1>
+        <p style="color:var(--muted);margin:0 0 20px">Управление товарами и заказами</p>
+        <div class="sort-bar" style="margin-bottom:0">
+          <button class="btn btn--sm tab-btn active" data-tab="products">Товары</button>
+          <button class="btn btn--sm tab-btn" data-tab="orders">Заказы</button>
+          <button class="btn btn--ghost btn--sm" style="margin-left:auto;background:#1a1d29" onclick="sessionStorage.removeItem('sc_admin');location.reload()">Выйти</button>
+        </div>
+        <div id="tab-products" class="tab-pane"></div>
+        <div id="tab-orders" class="tab-pane" style="display:none"></div>`;
 
-    function renderProducts(list){
-      prodPane.innerHTML = `<div class="empty">Загрузка товаров...</div>`;
-      if(!list.length) return;
-      prodPane.innerHTML = `<div class="table-scroll" style="overflow-x:auto">
+      document.querySelectorAll(".tab-btn").forEach(b=>b.addEventListener("click",()=>{
+        document.querySelectorAll(".tab-btn").forEach(x=>x.classList.toggle("active", x===b));
+        document.getElementById("tab-products").style.display = b.dataset.tab==="products"?"block":"none";
+        document.getElementById("tab-orders").style.display = b.dataset.tab==="orders"?"block":"none";
+      }));
+
+      renderAdminProducts();
+      renderAdminOrders();
+    }
+
+    // ---------- Товары: список + добавить + удалить ----------
+    function renderAdminProducts(){
+      if(window.loadProducts) loadProducts().then(()=>{
+        const pane = document.getElementById("tab-products");
+        pane.innerHTML = `
+          <h2 style="font-size:20px;margin:20px 0 10px">Добавить товар</h2>
+          <form id="addForm" class="auth-wrap" style="max-width:100%;padding:16px">
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px">
+              <div class="field"><label>Название</label><input id="nName" required></div>
+              <div class="field"><label>Категория</label><input id="nCat" placeholder="Гитары" required></div>
+              <div class="field"><label>Цена, ₽</label><input id="nPrice" type="number" min="0" required></div>
+              <div class="field"><label>Старая цена, ₽</label><input id="nOld" type="number" min="0" placeholder="0 = нет скидки"></div>
+              <div class="field"><label>Иконка/эмодзи</label><input id="nIcon" value="🎸"></div>
+              <div class="field"><label>Изображение (URL)</label><input id="nImg" placeholder="https://..."></div>
+            </div>
+            <button class="btn btn--block" style="margin-top:4px" type="submit">Добавить товар</button>
+          </form>
+          <h2 style="font-size:20px;margin:24px 0 10px">Все товары (${PRODUCTS.length})</h2>
+          <div style="overflow-x:auto">
+          <table class="cart-table">
+            <thead><tr><th>ID</th><th>Товар</th><th>Категория</th><th>Цена</th><th></th></tr></thead>
+            <tbody>${PRODUCTS.map(prodRow).join("")}</tbody>
+          </table></div>`;
+
+        document.getElementById("addForm").addEventListener("submit", e=>{
+          e.preventDefault();
+          window.addProduct({
+            name: document.getElementById("nName").value.trim(),
+            cat: document.getElementById("nCat").value.trim()||"Разное",
+            price: +document.getElementById("nPrice").value || 0,
+            oldPrice: +document.getElementById("nOld").value || null,
+            icon: document.getElementById("nIcon").value || "🎸",
+            img: document.getElementById("nImg").value.trim() || null,
+            badge: null, desc: ""
+          });
+          toast("Товар добавлен в каталог");
+          e.target.reset();
+          renderAdminProducts();
+        });
+      });
+    }
+    function prodRow(p){
+      return `<tr>
+        <td>${p.id}</td>
+        <td><div class="cart-item"><div class="cart-item__thumb">${p.icon}${p.img?`<img src="${p.img}" alt="" loading="lazy" onerror="this.remove()">`:""}</div><span>${escapeHtml(p.name)}</span></div></td>
+        <td>${escapeHtml(p.cat)}</td><td>${fmtPrice(p.price)}</td>
+        <td><button class="btn btn--sm" style="background:#fee2e2;color:#b91c1c;border:none" onclick="delProd(${p.id})">Удалить</button></td>
+      </tr>`;
+    }
+    window.delProd = function(id){ window.deleteProduct(id); toast("Товар удалён"); renderAdminProducts(); };
+
+    // ---------- Заказы: список + смена статуса + уведомление клиенту ----------
+    function renderAdminOrders(){
+      const pane = document.getElementById("tab-orders");
+      const orders = JSON.parse(localStorage.getItem("sc_orders")||"[]");
+      if(!orders.length){ pane.innerHTML = `<div class="empty">Заказов пока нет.</div>`; return; }
+      pane.innerHTML = `<div style="overflow-x:auto">
         <table class="cart-table">
-          <thead><tr><th>ID</th><th>Товар</th><th>Категория</th><th>Цена</th><th>Скидка</th></tr></thead>
-          <tbody>
-            ${list.map(p=>`<tr>
-              <td>${p.id}</td>
-              <td><div class="cart-item"><div class="cart-item__thumb">${p.icon}${p.img?`<img src="${p.img}" alt="" loading="lazy" onerror="this.remove()">`:""}</div><span>${escapeHtml(p.name)}</span></div></td>
-              <td>${escapeHtml(p.cat)}</td>
-              <td>${fmtPrice(p.price)}</td>
-              <td>${p.oldPrice?Math.round((1-p.price/p.oldPrice)*100)+" %":"—"}</td>
-            </tr>`).join("")}
-          </tbody>
+          <thead><tr><th>№</th><th>Дата</th><th>Клиент</th><th>Состав</th><th>Сумма</th><th>Статус</th></tr></thead>
+          <tbody>${orders.map((o,i)=>orderRow(o,i)).join("")}</tbody>
         </table></div>`;
     }
-
-    loadProducts().then(()=>{
-      renderProducts(PRODUCTS.slice(0,40));
+    const STATUSES = ["Новый","Подтверждён","Собран","Отправлен","Доставлен","Отменён"];
+    function orderRow(o,i){
+      const num = 1000+i+1;
+      const st = o.status || "Новый";
+      return `<tr>
+        <td>${num}</td><td>${escapeHtml(o.date||"")}</td><td>${escapeHtml(o.name||"")}</td>
+        <td>${(o.items||[]).map(it=>escapeHtml(it.name)+" ×"+it.qty).join("; ")}</td>
+        <td>${fmtPrice(o.total||0)}</td>
+        <td><select onchange="setStatus(${i},this.value)">
+          ${STATUSES.map(s=>`<option value="${s}" ${s===st?"selected":""}>${s}</option>`).join("")}
+        </select></td>
+      </tr>`;
+    }
+    window.setStatus = function(i, st){
       const orders = JSON.parse(localStorage.getItem("sc_orders")||"[]");
-      if(!orders.length){
-        ordPane.innerHTML = `<div class="empty">Заказов пока нет.</div>`;
-      } else {
-        ordPane.innerHTML = `<div class="table-scroll" style="overflow-x:auto">
-          <table class="cart-table">
-            <thead><tr><th>№</th><th>Дата</th><th>ФИО</th><th>Состав</th><th>Сумма</th></tr></thead>
-            <tbody>
-              ${orders.map((o,i)=>`<tr>
-                <td>${1000+i+1}</td><td>${escapeHtml(o.date||"")}</td><td>${escapeHtml(o.name||"")}</td>
-                <td>${(o.items||[]).map(it=>escapeHtml(it.name)+" ×"+it.qty).join("; ")}</td>
-                <td>${fmtPrice(o.total||0)}</td>
-              </tr>`).join("")}
-            </tbody>
-          </table></div>`;
-      }
-      if(window.loadProducts) fillSearchCats();
-    });
+      const o = orders[i]; if(!o) return;
+      o.status = st;
+      localStorage.setItem("sc_orders", JSON.stringify(orders));
+      // уведомление клиенту (имитация email-уведомления)
+      const notif = JSON.parse(localStorage.getItem("sc_notifications")||"[]");
+      notif.push({ orderNo:1000+i+1, status:st, text:"Статус вашего заказа изменён на «"+st+"»", date:new Date().toLocaleString("ru-RU") });
+      localStorage.setItem("sc_notifications", JSON.stringify(notif));
+      toast("Статус обновлён, клиенту отправлено уведомление");
+    };
+
+    // ---------- запуск ----------
+    if(window.isAdmin()) initAdmin(); else loginScreen();
   </script>
 </body>
 </html>
