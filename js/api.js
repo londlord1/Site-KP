@@ -1,38 +1,14 @@
-/* ===== Бэкенд через DummyJSON API (товары грузятся с сервера) ===== */
+/* ===== Данные сайта: локальный JSON (без внешнего API) ===== */
 (function(){
   const LOCAL = (typeof PRODUCTS !== "undefined") ? PRODUCTS : [];
 
-  const ICON = {
-    smartphones:"📱", laptops:"💻", fragrances:"🧴", skincare:"🧴", groceries:"🛒",
-    "home-decoration":"🏠", furniture:"🛋️", tops:"👕", "womens-dresses":"👗",
-    "womens-shoes":"👠", "mens-shirts":"👔", "mens-shoes":"👞", "mens-watches":"⌚",
-    "womens-watches":"⌚", "womens-bags":"👜", "womens-jewellery":"💍", sunglasses:"🕶️",
-    automotive:"🚗", motorcycle:"🏍️", lighting:"💡"
-  };
-  const iconFor = c => ICON[(c||"").toLowerCase()] || "📦";
-
-  function mapItem(it){
-    const price = it.price || 0;
-    const disc = it.discountPercentage || 0;
-    const original = disc>0 ? Math.round(price/(1 - disc/100)) : price;
-    return {
-      id: it.id, name: it.title, cat: it.category || "Разное",
-      price: Math.round(price), oldPrice: disc>0 ? original : null,
-      icon: iconFor(it.category), badge: null,
-      img: it.thumbnail || (it.images && it.images[0]) || null,
-      desc: it.description || "", stock: it.stock || 0, rating: it.rating || 0,
-    };
-  }
-
-  async function fetchFromApi(){
-    const ctrl = new AbortController();
-    const timer = setTimeout(()=>ctrl.abort(), 6000);   // таймаут: не даём каталогу висеть
-    try{
-      const r = await fetch("https://dummyjson.com/products?limit=0", {signal: ctrl.signal});
-      if(!r.ok) throw new Error("API " + r.status);
-      const j = await r.json();
-      return (j.products || []).map(mapItem);
-    } finally { clearTimeout(timer); }
+  /* Загрузка каталога из локального JSON-файла */
+  async function loadLocalJson(){
+    const r = await fetch("data/products.json", {cache:"no-store"});
+    if(!r.ok) throw new Error("HTTP " + r.status);
+    const arr = await r.json();
+    if(!Array.isArray(arr)) throw new Error("not an array");
+    return arr;
   }
 
   let cache = null;
@@ -65,8 +41,8 @@
     if(!cache){
       cache = (async()=>{
         let base;
-        try { base = await fetchFromApi(); }
-        catch(e){ base = LOCAL; }               // резерв: локальные товары
+        try { base = await loadLocalJson(); }      // из data/products.json
+        catch(e){ base = LOCAL; }                  // резерв: встроенные данные в js/data.js
         window.BASE_PRODUCTS = base.slice();
         return window.applyCatalog(base);
       })();
