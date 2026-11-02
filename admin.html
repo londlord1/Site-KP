@@ -129,7 +129,9 @@
             <button class="btn btn--block" type="submit">Добавить товар</button>
           </form>
           <div id="editWrap"></div>
-          <h2 style="font-size:20px;margin:24px 0 10px">Все товары (${PRODUCTS.length})</h2>
+          <h2 style="font-size:20px;margin:24px 0 10px;display:flex;align-items:center;gap:12px;flex-wrap:wrap">Все товары (${PRODUCTS.length})
+            <button class="btn btn--sm" style="background:var(--line);color:var(--ink)" onclick="resetCatalogChanges()">Сбросить локальные изменения каталога</button>
+          </h2>
           <div style="overflow-x:auto">
             <table class="cart-table">
               <thead><tr><th>ID</th><th>Товар</th><th>Категория</th><th>Цена</th><th>Действия</th></tr></thead>
@@ -174,6 +176,14 @@
       </tr>`;
     }
     window.delProd = function(id){ window.deleteProduct(id); toast("Товар удалён"); renderAdminProducts(); };
+    window.resetCatalogChanges = function(){
+      localStorage.removeItem("sc_extra");
+      localStorage.removeItem("sc_deleted");
+      localStorage.removeItem("sc_edits");
+      window.applyCatalog(window.BASE_PRODUCTS);
+      renderAdminProducts();
+      toast("Каталог восстановлен к исходному виду");
+    };
     window.editProd = function(id){
       const p = PRODUCTS.find(x=>x.id===id); if(!p) return;
       const st = { imgs: (p.images && p.images.length ? p.images : (p.img ? [p.img] : [])).slice() };
