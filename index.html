@@ -7,7 +7,7 @@
   <link rel="icon" type="image/svg+xml" href="img/favicon.svg">
   <link rel="preload" as="image" href="img/hero.jpg">
   <meta name="description" content="SoundCraft — интернет-магазин музыкальных инструментов, акустики, микрофонов и студийного оборудования. Доставка по всей России.">
-  <link rel="stylesheet" href="css/style.css?v=26">
+  <link rel="stylesheet" href="css/style.css?v=27">
 </head>
 <body>
 
@@ -18,8 +18,6 @@
     <nav class="nav" id="topNav">
       <a href="index.html" class="active">Главная</a>
       <a href="catalog.html">Каталог</a>
-      <a href="profile.html">Кабинет</a>
-      <a href="admin.html">Админ</a>
     </nav>
     <div class="search" id="globalSearch">
       <div class="search__row">
@@ -36,7 +34,10 @@
       <a class="fav-head" href="favorites.html" title="Избранное" aria-label="Избранное">♥<span class="fav-badge" id="favCount"></span></a>
       <button class="toggle" onclick="toggleTheme()" aria-label="Сменить тему" title="Тема">☾</button>
       <a class="cart-btn" href="cart.html">🛒 Корзина <span class="cart-count" id="cartCount"></span></a>
-      <span class="user-chip" id="userChip"></span>
+      <div class="user-menu" id="userMenu">
+        <button class="user-btn" onclick="toggleUserMenu()" aria-label="Меню пользователя" title="Мой профиль">👤</button>
+        <div class="user-drop" id="userDrop"></div>
+      </div>
     </div>
   </div></header>
 
@@ -154,14 +155,14 @@
   </footer>
   <div class="mob-bar" id="mobBar"></div>
 
-  <script src="js/data.js?v=26"></script>
-  <script src="js/api.js?v=26"></script>
-  <script src="js/main.js?v=26"></script>
+  <script src="js/data.js?v=27"></script>
+  <script src="js/api.js?v=27"></script>
+  <script src="js/main.js?v=27"></script>
   <script>
     // Шапка и подвал уже прописаны в HTML этого файла — только инициализируем их
     // Сначала пользователь и корзина (не зависят от данных каталога)
     renderCartCount();
-    renderUserChip();
+    renderUserMenu();
     renderFavCount();
     seedReviews();
     applyTheme();

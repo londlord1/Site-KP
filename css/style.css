@@ -695,3 +695,18 @@ input,select,textarea{font-family:inherit}
 .nav a.active{position:relative}
 .nav a.active::after{content:"";position:absolute;left:13px;right:13px;bottom:3px;height:2px;border-radius:2px;background:var(--brand)}
 @media (prefers-reduced-motion: reduce){.header{transition:none}}
+
+/* ===== Меню пользователя (иконка + выпадающий список) ===== */
+.user-menu{position:relative}
+.user-btn{width:38px;height:38px;border:none;border-radius:10px;background:rgba(255,255,255,.12);color:#fff;font-size:19px;cursor:pointer;transition:.15s;line-height:1}
+.user-btn:hover{background:rgba(255,255,255,.22)}
+.user-drop{position:absolute;top:calc(100% + 8px);right:0;min-width:200px;background:var(--card);color:var(--ink);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);padding:6px;display:none;z-index:120}
+.user-drop.open{display:block}
+.user-drop a{display:block;padding:9px 12px;border-radius:8px;font-size:14px;font-weight:600;color:var(--ink)}
+.user-drop a:hover{background:var(--bg,#f6f7fb)}
+.user-drop-name{display:flex;align-items:center;gap:8px;padding:9px 12px;border-bottom:1px solid var(--line);margin-bottom:4px;font-weight:700;font-size:14px}
+[data-theme="dark"] .user-drop-name{border-bottom-color:#272e3d}
+[data-theme="dark"] .user-drop a:hover{background:#1d2430}
+@keyframes cart-bump{0%{transform:scale(1)}40%{transform:scale(1.18)}100%{transform:scale(1)}}
+.cart-count.bump{animation:cart-bump .35s ease}
+@media (prefers-reduced-motion: reduce){.cart-count.bump{animation:none}}

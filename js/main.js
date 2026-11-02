@@ -4,8 +4,6 @@
 const NAV_LINKS = [
   ["index.html","Главная"],
   ["catalog.html","Каталог"],
-  ["profile.html","Кабинет"],
-  ["admin.html","Админ"],
 ];
 
 function navHtml(active){
@@ -35,7 +33,10 @@ return `
       <a class="fav-head" href="favorites.html" title="Избранное" aria-label="Избранное">♥<span class="fav-badge" id="favCount"></span></a>
       <button class="toggle" onclick="toggleTheme()" aria-label="Сменить тему" title="Тема">☾</button>
       <a class="cart-btn" href="cart.html">🛒 Корзина <span class="cart-count" id="cartCount"></span></a>
-      <span class="user-chip" id="userChip"></span>
+      <div class="user-menu" id="userMenu">
+        <button class="user-btn" onclick="toggleUserMenu()" aria-label="Меню пользователя" title="Мой профиль">👤</button>
+        <div class="user-drop" id="userDrop"></div>
+      </div>
     </div>
   </div></header>`;
 }
@@ -133,6 +134,8 @@ function addToCart(id, qty){
   const n = qty||1, cart = getCart(), f = cart.find(i=>i.id===id);
   if(f) f.qty += n; else cart.push({id, qty:n});
   setCart(cart);
+  const cc = document.getElementById("cartCount");
+  if(cc){ cc.classList.remove("bump"); void cc.offsetWidth; cc.classList.add("bump"); }
   toast("Товар добавлен в корзину");
 }
 
@@ -245,22 +248,40 @@ function buyButton(id){
 function getUsers(){ try{ return JSON.parse(localStorage.getItem("sc_users")||"[]"); }catch(e){ return []; } }
 function setUsers(u){ localStorage.setItem("sc_users", JSON.stringify(u)); }
 function getCurrentUser(){ try{ return JSON.parse(localStorage.getItem("sc_user")||"null"); }catch(e){ return null; } }
-function setCurrentUser(u){ u ? localStorage.setItem("sc_user", JSON.stringify(u)) : localStorage.removeItem("sc_user"); renderUserChip(); }
+function setCurrentUser(u){ u ? localStorage.setItem("sc_user", JSON.stringify(u)) : localStorage.removeItem("sc_user"); renderUserMenu(); }
 
-function renderUserChip(){
-  const chip = document.getElementById("userChip");
-  if(!chip) return;
+function renderUserMenu(){
+  const drop = document.getElementById("userDrop");
+  if(!drop) return;
   const u = getCurrentUser();
+  const favs = getFavs().length;
+  const links = [];
   if(u && (u.name || u.email)){
     const initials = String(u.name||u.email||"U").trim().split(/\s+/).map(w=>w[0]||"").join("").substring(0,2).toUpperCase();
-    chip.innerHTML = `<span class="mini-avatar">${escapeHtml(initials)}</span>
-      <span class="user-name">${escapeHtml(u.name||u.email)}</span>
-      <button class="btn-logout" onclick="logout()">Выход</button>`;
+    links.push(`<div class="user-drop-name"><span class="mini-avatar">${escapeHtml(initials)}</span> ${escapeHtml(u.name||u.email)}</div>`);
+    links.push(`<a href="profile.html">Личный кабинет</a>`);
+    links.push(`<a href="favorites.html">Избранное (${favs})</a>`);
+    links.push(`<a href="admin.html">Админ-панель</a>`);
+    links.push(`<a href="#" onclick="event.preventDefault();logout();">Выйти</a>`);
   } else {
-    if(u) setCurrentUser(null);
-chip.innerHTML = `<span class="mini-avatar" style="font-size:14px">👤</span><a href="auth.html" style="color:#fff;font-weight:600;white-space:nowrap">Войти</a>`;
+    links.push(`<a href="auth.html">Войти / Регистрация</a>`);
+    links.push(`<a href="favorites.html">Избранное (${favs})</a>`);
+    links.push(`<a href="catalog.html">Каталог</a>`);
   }
+  drop.innerHTML = links.join("");
 }
+window.toggleUserMenu = function(){
+  const d = document.getElementById("userDrop");
+  if(!d) return;
+  const open = d.classList.toggle("open");
+  renderUserMenu();
+  if(open) d.classList.add("open");
+};
+document.addEventListener("click", ev=>{
+  const d = document.getElementById("userDrop");
+  const m = document.getElementById("userMenu");
+  if(d && m && !m.contains(ev.target)) d.classList.remove("open");
+});
 window.logout = function(){ setCurrentUser(null); toast("Вы вышли из аккаунта"); };
 
 /* ----- Утилиты ----- */
@@ -343,7 +364,7 @@ function renderPage(active){
   const sec = document.querySelector("main, .section");
   if(sec && !sec.id) sec.id = "content";
   renderCartCount();
-  renderUserChip();
+  renderUserMenu();
   initSearch();
   seedReviews();
   renderFavCount();
