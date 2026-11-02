@@ -28,7 +28,6 @@
     </div>
     <div class="header__right">
       <a class="fav-wrap" href="favorites.html" title="Избранное" aria-label="Избранное">♥<span class="fav-badge" id="favCount"></span></a>
-      <button class="toggle" onclick="toggleTheme()" title="Сменить тему">☾</button>
       <a class="cart-btn" href="cart.html">🛒 Корзина <span class="cart-count" id="cartCount"></span></a>
       <span class="user-chip" id="userChip"></span>
     </div>
@@ -100,7 +99,6 @@
     renderCartCount();
     renderUserChip();
     renderFavCount();
-    applyTheme();
     const firstSec = document.querySelector(".section"); if(firstSec && !firstSec.id) firstSec.id = "content";
     initSearch();
 

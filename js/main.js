@@ -1,4 +1,4 @@
-/* ============ SoundCraft — общая логика: шапка, корзина, авторизация ============ */
+﻿/* ============ SoundCraft — общая логика: шапка, корзина, авторизация ============ */
 
 /* ----- Шапка и подвал (вставляются на все страницы) ----- */
 const NAV_LINKS = [
@@ -29,7 +29,7 @@ function headerHtml(active){
     </div>
     <div class="header__right">
       <a class="fav-wrap" href="favorites.html" title="Избранное" aria-label="Избранное">♥<span class="fav-badge" id="favCount"></span></a>
-      <button class="toggle" onclick="toggleTheme()" title="Сменить тему">☾</button>
+      
       <a class="cart-btn" href="cart.html">🛒 Корзина <span class="cart-count" id="cartCount"></span></a>
       <span class="user-chip" id="userChip"></span>
     </div>
@@ -217,18 +217,6 @@ function renderFavCount(){ const el = document.getElementById("favCount"); if(!e
 function favBtn(id){ return `<button class="fav-btn ${isFav(id)?'active':''}" data-id="${id}" onclick="toggleFavBtn(this)" aria-label="В избранное" aria-pressed="${isFav(id)}">♥</button>`; }
 window.toggleFavBtn = function(btn){ const id = +btn.dataset.id; toggleFav(id); btn.classList.toggle("active", isFav(id)); btn.setAttribute("aria-pressed", isFav(id)); renderFavCount(); };
 
-/* ===== Тема (светлая/тёмная) ===== */
-window.applyTheme = function(){
-  const t = localStorage.getItem("sc_theme") || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
-  document.documentElement.setAttribute("data-theme", t);
-};
-window.toggleTheme = function(){
-  const t = document.documentElement.getAttribute("data-theme")==="dark" ? "light" : "dark";
-  localStorage.setItem("sc_theme", t);
-  applyTheme();
-  toast(t==="dark" ? "Тёмная тема" : "Светлая тема");
-};
-
 /* ===== Поиск: очистить ===== */
 window.clearSearch = function(){
   const i = document.getElementById("gsInput"); if(!i) return;
@@ -261,6 +249,6 @@ function renderPage(active){
   renderUserChip();
   initSearch();
   renderFavCount();
-  applyTheme();
+  
   if(window.loadProducts) loadProducts().then(fillSearchCats);
 }
