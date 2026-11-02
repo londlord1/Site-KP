@@ -98,7 +98,7 @@ function footerHtml(){
       </div>
       <div>
         <h4>Связь с нами</h4>
-        <ul><li>8-800-123-45-67</li><li>shop@soundcraft.ru</li>
+        <ul><li>+7 (800) 123-45-67</li><li>shop@soundcraft.ru</li>
         <li>г. Юрга, ул. Ленина, 12</li></ul>
       </div>
     </div>
