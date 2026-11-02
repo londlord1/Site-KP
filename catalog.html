@@ -120,7 +120,14 @@
       seen = 0;
       hint.textContent = `Найдено товаров: ${arr.length}`;
       list.innerHTML = "";
-      document.getElementById("emptyState").style.display = arr.length ? "none" : "block";
+      const emptyEl = document.getElementById("emptyState");
+      if(arr.length){
+        emptyEl.style.display = "none";
+        emptyEl.innerHTML = "";
+      } else {
+        emptyEl.style.display = "block";
+        emptyEl.innerHTML = `<div class="empty-state"><div class="empty-ico">🎯</div>Товары не найдены.<br><button class="btn btn--sm" style="margin-top:14px" onclick="resetFilters()">Сбросить фильтры</button></div>`;
+      }
       if(sentinelObs){ sentinelObs.disconnect(); sentinelObs = null; }
       if(sentinel){ sentinel.s.remove(); sentinel = null; }
       if(arr.length){ sentinel = makeSentinel(); loadMore(); }
@@ -174,14 +181,13 @@
       filterProducts();
     });
 
-    // Начальная загрузка товаров с DummyJSON (резерв — локальные данные)
+    // Начальная загрузка: показываем скелетоны, затем товары
     const emptyEl = document.getElementById("emptyState");
-    emptyEl.style.display = "block";
-    emptyEl.textContent = "Загрузка товаров...";
+    emptyEl.style.display = "none";
+    document.getElementById("productList").innerHTML = skeletonCards(6);
     loadProducts().then(()=>{
       fillSearchCats();
       catSelect.innerHTML = CATEGORIES.map(c=>`<option value="${c}">${c}</option>`).join("");
-      emptyEl.textContent = "По вашему запросу ничего не найдено. Попробуйте изменить фильтры.";
       filterProducts();
     });
   </script>

@@ -95,7 +95,8 @@
     renderUserChip();
     initSearch();
 
-    // Товары грузим с DummyJSON (резерв — локальные данные)
+    // Скелетоны на время загрузки, затем — популярные товары
+    document.getElementById("topProducts").innerHTML = skeletonCards(4);
     loadProducts().then(()=>{
       fillSearchCats();
       const container = document.getElementById("topProducts");

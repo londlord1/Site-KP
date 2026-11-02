@@ -151,6 +151,10 @@ function fillSearchCats(){
 }
 
 /* Кнопка покупа: отражает фактическое состояние корзины (не сбрасывается при перезагрузке/сбросе) */
+function skeletonCards(n){
+  return Array.from({length:n}).map(()=>
+    `<div class="card sk-card"><div class="sk sk-img"></div><div class="sk sk-line w60"></div><div class="sk sk-line w40"></div></div>`).join("");
+}
 function isInCart(id){ return getCart().some(i=>i.id===id); }
 function buyButton(id){
   return isInCart(id)
