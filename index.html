@@ -7,7 +7,7 @@
   <link rel="icon" type="image/svg+xml" href="img/favicon.svg">
   <link rel="preload" as="image" href="img/hero.jpg">
   <meta name="description" content="SoundCraft — интернет-магазин музыкальных инструментов, акустики, микрофонов и студийного оборудования. Доставка по всей России.">
-  <link rel="stylesheet" href="css/style.css?v=28">
+  <link rel="stylesheet" href="css/style.css?v=29">
 </head>
 <body>
 
@@ -58,7 +58,15 @@
           <a class="chip" href="catalog.html?fCat=%D0%90%D0%BA%D1%83%D1%81%D1%82%D0%B8%D0%BA%D0%B0">Акустика</a>
         </div>
       </div>
-      <div class="hero__media"><img src="img/hero.jpg" alt="Музыкальные инструменты в студии" loading="lazy"></div>
+      <div class="hero-3d" id="hero3d">
+        <div class="h3d-rotor" id="h3dRotor">
+          <div class="h3d-card"><img src="img/hero.jpg" alt="Музыкальные инструменты в студии" loading="lazy"></div>
+        </div>
+        <span class="h3d-float h3d-f1" aria-hidden="true">🎸</span>
+        <span class="h3d-float h3d-f2" aria-hidden="true">🎧</span>
+        <span class="h3d-float h3d-f3" aria-hidden="true">🎹</span>
+        <span class="h3d-float h3d-f4" aria-hidden="true">🎤</span>
+      </div>
     </div>
   </section>
 
@@ -155,9 +163,9 @@
   </footer>
   <div class="mob-bar" id="mobBar"></div>
 
-  <script src="js/data.js?v=28"></script>
-  <script src="js/api.js?v=28"></script>
-  <script src="js/main.js?v=28"></script>
+  <script src="js/data.js?v=29"></script>
+  <script src="js/api.js?v=29"></script>
+  <script src="js/main.js?v=29"></script>
   <script>
     // Шапка и подвал уже прописаны в HTML этого файла — только инициализируем их
     // Сначала пользователь и корзина (не зависят от данных каталога)
@@ -169,6 +177,7 @@
     const firstSec = document.querySelector(".section"); if(firstSec && !firstSec.id) firstSec.id = "content";
     initSearch();
     initHeaderGlobal();
+    initHero3D();
     const mbx = document.getElementById("mobBar");
     if(mbx) mbx.innerHTML = `<a href="index.html" class="on">🏠<span>Главная</span></a><a href="catalog.html">🔍<span>Каталог</span></a><a href="cart.html">🛒<span>Корзина</span></a><a href="profile.html">👤<span>Профиль</span></a>`;
 

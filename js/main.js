@@ -370,7 +370,21 @@ function renderPage(active){
   renderFavCount();
   applyTheme();
   initHeaderGlobal();
+  initHero3D();
   if(window.loadProducts) loadProducts().then(fillSearchCats);
+}
+function initHero3D(){
+  const sc2 = document.getElementById("hero3d");
+  const rot = document.getElementById("h3dRotor");
+  if(!sc2 || !rot) return;
+  const move = e=>{
+    const r = sc2.getBoundingClientRect();
+    const px = (e.clientX - r.left)/r.width - .5;
+    const py = (e.clientY - r.top)/r.height - .5;
+    rot.style.transform = "rotateY(" + (px*22).toFixed(1) + "deg) rotateX(" + (-py*18).toFixed(1) + "deg)";
+  };
+  sc2.addEventListener("mousemove", move, {passive:true});
+  sc2.addEventListener("mouseleave", ()=>{ rot.style.transform = "rotateY(0deg) rotateX(0deg)"; });
 }
 function initHeaderGlobal(){
   if(window.__headerInit) return;
