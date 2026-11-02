@@ -480,3 +480,43 @@ input,select,textarea{font-family:inherit}
 .admin-search{max-width:340px;margin:0 0 12px}
 .admin-toolbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:0 0 12px}
 .admin-toolbar .spacer{margin-left:auto}
+
+
+/* ===== ГЛАВНАЯ: герой-сплит, чипы, категории, акция, отзывы, reveal ===== */
+.hero__grid{display:grid;grid-template-columns:1fr 1fr;gap:32px;align-items:center}
+.hero__text{position:relative;z-index:2}
+.hero__eyebrow{display:inline-block;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);color:#c8f5e3;font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:6px 12px;border-radius:999px;margin-bottom:16px}
+.hero__media{position:relative;z-index:1;border-radius:22px;overflow:hidden;box-shadow:0 30px 60px rgba(0,0,0,.45);height:360px}
+.hero__media img{width:100%;height:100%;object-fit:cover}
+.hero-chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:22px}
+.chip{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);color:#fff;padding:7px 14px;border-radius:999px;font-size:13px;font-weight:600;transition:.15s}
+.chip:hover{background:rgba(255,255,255,.22)}
+
+.cat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px}
+.cat-card{display:flex;flex-direction:column;align-items:center;text-align:center;gap:6px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px 12px;transition:.18s}
+.cat-card:hover{transform:translateY(-3px);box-shadow:var(--shadow-hover);border-color:rgba(11,157,106,.4)}
+.cat-ic{width:56px;height:56px;border-radius:16px;background:var(--brand-soft, #e4f6ee);color:var(--brand-dark);display:flex;align-items:center;justify-content:center;font-size:28px}
+.cat-card b{font-size:16px}
+.cat-card span{color:var(--muted);font-size:13px}
+
+.promo-strip{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;background:linear-gradient(120deg,var(--brand-dark),var(--brand));color:#fff;border-radius:16px;padding:20px 26px}
+.promo-tag{background:rgba(255,255,255,.2);font-size:11px;font-weight:800;letter-spacing:.08em;padding:4px 10px;border-radius:999px;margin-right:10px}
+.promo-strip b{font-size:20px}
+.promo-strip .btn{background:#0e1220;color:#fff}
+
+.grid--rev{grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
+.rev-card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px;box-shadow:var(--shadow)}
+.rev-card p{font-size:15px;line-height:1.5;margin:8px 0 14px;color:var(--ink-2)}
+.rev-card .rv-meta{font-size:14px}
+.rev-card .rv-date{font-size:12px}
+
+/* reveal */
+.sr-reveal{transition:opacity .55s ease, transform .55s ease}
+.sr-reveal.reveal-hide{opacity:0;transform:translateY(22px)}
+@media (prefers-reduced-motion: reduce){.sr-reveal{transition:none}.sr-reveal.reveal-hide{opacity:1;transform:none}}
+
+@media(max-width:900px){
+  .hero__grid{grid-template-columns:1fr;gap:20px}
+  .hero__media{height:240px;order:2}
+  .hero__text{order:1}
+}

@@ -153,6 +153,17 @@ function fillSearchCats(){
   s.innerHTML = '<option value="Все">Категория</option>' + CATEGORIES.map(c=>`<option value="${c}">${c}</option>`).join("");
 }
 
+/* ===== Плавное появление секций при скролле ===== */
+function initReveal(root){
+  if(!("IntersectionObserver" in window)) return;
+  const base = (root||document).querySelectorAll(".sr-reveal");
+  base.forEach(el=>el.classList.add("reveal-hide"));
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach(en=>{ if(en.isIntersecting){ en.target.classList.remove("reveal-hide"); io.unobserve(en.target); } });
+  }, {threshold:0.12});
+  base.forEach(el=>io.observe(el));
+}
+
 /* Кнопка покупа: отражает фактическое состояние корзины (не сбрасывается при перезагрузке/сбросе) */
 function skeletonCards(n){
   return Array.from({length:n}).map(()=>
