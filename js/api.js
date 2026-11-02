@@ -4,6 +4,7 @@
 
   /* Загрузка каталога из локального JSON-файла */
   async function loadLocalJson(){
+    if(location.protocol === "file:") throw new Error("file:");  // file:// не грузит fetch
     const r = await fetch("data/products.json", {cache:"no-store"});
     if(!r.ok) throw new Error("HTTP " + r.status);
     const arr = await r.json();
@@ -38,23 +39,24 @@
     document.dispatchEvent(new Event("products-ready"));
     return PRODUCTS;
   };
-  window.addEdit = function(id, data){
-    const edits = readJson(LS_EDITS).filter(e=>e.id!==id);
-    edits.push(Object.assign({ id }, data));
-    localStorage.setItem(LS_EDITS, JSON.stringify(edits));
-    window.applyCatalog(window.BASE_PRODUCTS);
-  };
+  function saveJson(k, v){
+    try{ localStorage.setItem(k, JSON.stringify(v)); return true; }
+    catch(e){ try{ toast("Ошибка сохранения: слишком большой объём данных (изображения)"); }catch(_){} return false; }
+  }
   window.addProduct = function(p){
     const extra = readJson(LS_EXTRA);
     extra.push(Object.assign({id: Date.now()}, p));
-    localStorage.setItem(LS_EXTRA, JSON.stringify(extra));
-    window.applyCatalog(window.BASE_PRODUCTS);
+    if(saveJson(LS_EXTRA, extra)) window.applyCatalog(window.BASE_PRODUCTS);
   };
   window.deleteProduct = function(id){
     const del = readJson(LS_DEL);
     if(!del.includes(id)) del.push(id);
-    localStorage.setItem(LS_DEL, JSON.stringify(del));
-    window.applyCatalog(window.BASE_PRODUCTS);
+    if(saveJson(LS_DEL, del)) window.applyCatalog(window.BASE_PRODUCTS);
+  };
+  window.addEdit = function(id, data){
+    const edits = readJson(LS_EDITS).filter(e=>e.id!==id);
+    edits.push(Object.assign({ id }, data));
+    if(saveJson(LS_EDITS, edits)) window.applyCatalog(window.BASE_PRODUCTS);
   };
 
   window.loadProducts = function(){

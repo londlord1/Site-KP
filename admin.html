@@ -83,9 +83,27 @@
       const list = Array.from(files);
       if(!list.length) return cb([]);
       const out = []; let done = 0;
-      list.forEach(f=>{ const r = new FileReader();
-        r.onload = ()=>{ out.push(r.result); if(++done===list.length) cb(out); };
-        r.readAsDataURL(f); });
+      const read = (i)=>{
+        if(i >= list.length) return cb(out);
+        const f = list[i];
+        const img = new Image();
+        const u = URL.createObjectURL(f);
+        img.onload = ()=>{
+          try{
+            const max = 1000;
+            let w = img.naturalWidth, h = img.naturalHeight;
+            if(Math.max(w,h) > max){ const k = max/Math.max(w,h); w = Math.round(w*k); h = Math.round(h*k); }
+            const cv = document.createElement("canvas"); cv.width = w; cv.height = h;
+            cv.getContext("2d").drawImage(img, 0, 0, w, h);
+            out.push(cv.toDataURL("image/jpeg", 0.8));
+          }catch(e){ /* пропустить файл */ }
+          URL.revokeObjectURL(u);
+          done++; read(i+1);
+        };
+        img.onerror = ()=>{ done++; read(i+1); };
+        img.src = u;
+      };
+      read(0);
     }
     function imgThumb(u, rmPath){
       return `<span style="position:relative"><img src="${u}" style="width:64px;height:64px;object-fit:cover;border-radius:8px;border:1px solid var(--line)">`+
