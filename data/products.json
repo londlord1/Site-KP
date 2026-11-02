@@ -8,6 +8,10 @@
     "icon": "🎸",
     "badge": "Хит",
     "img": "img/products/1.jpg",
+    "images": [
+      "img/products/1.jpg",
+      "img/products/2.jpg"
+    ],
     "desc": "Электрогитара с классическим звучанием Stratocaster: 3 сингл-катушки, 22 лада, гриф из клёна. Подходит исполнителям любых стилей — от блюза до рока."
   },
   {
@@ -19,6 +23,10 @@
     "icon": "🎶",
     "badge": null,
     "img": "img/products/2.jpg",
+    "images": [
+      "img/products/2.jpg",
+      "img/products/1.jpg"
+    ],
     "desc": "Надёжная акустика с богатым звуком и удобным грифом. Идеальна для начинающих и опытных музыкантов."
   },
   {
@@ -30,6 +38,10 @@
     "icon": "🎸",
     "badge": "-10%",
     "img": "img/products/3.jpg",
+    "images": [
+      "img/products/3.jpg",
+      "img/products/1.jpg"
+    ],
     "desc": "Компактный и лёгкий бас с мощным звуком. Отличный старт для бас-гитаристов."
   },
   {
@@ -41,6 +53,10 @@
     "icon": "🎹",
     "badge": null,
     "img": "img/products/4.jpg",
+    "images": [
+      "img/products/4.jpg",
+      "img/products/19.jpg"
+    ],
     "desc": "61 чувствительная клавиша, 622 тембра и более 200 стилей автоаккомпанемента."
   },
   {
@@ -52,6 +68,10 @@
     "icon": "🎹",
     "badge": "Хит",
     "img": "img/products/5.jpg",
+    "images": [
+      "img/products/5.jpg",
+      "img/products/4.jpg"
+    ],
     "desc": "Тонкий корпус, молоточковая механика и 18 тембров. Полноценная замена акустическому роялю."
   },
   {
@@ -63,6 +83,10 @@
     "icon": "🎛️",
     "badge": null,
     "img": "img/products/6.jpg",
+    "images": [
+      "img/products/6.jpg",
+      "img/products/4.jpg"
+    ],
     "desc": "Компактная 25-клавишная MIDI-клавиатура с пэдами и джойстиком для битмейкинга."
   },
   {
@@ -74,6 +98,10 @@
     "icon": "🥁",
     "badge": "-10%",
     "img": "img/products/7.jpg",
+    "images": [
+      "img/products/7.jpg",
+      "img/products/8.jpg"
+    ],
     "desc": "Сетчатые пэды, 40 встроенных наборов и USB-выход для записи."
   },
   {
@@ -85,6 +113,10 @@
     "icon": "🎵",
     "badge": null,
     "img": "img/products/8.jpg",
+    "images": [
+      "img/products/8.jpg",
+      "img/products/7.jpg"
+    ],
     "desc": "Классический комплект тарелок: crash, ride и hi-hat с ярким живым звуком."
   },
   {
@@ -96,6 +128,10 @@
     "icon": "🎤",
     "badge": "Хит",
     "img": "img/products/9.jpg",
+    "images": [
+      "img/products/9.jpg",
+      "img/products/10.jpg"
+    ],
     "desc": "Легендарный вокальный микрофон, стандарт сценического звука во всём мире."
   },
   {
@@ -107,6 +143,10 @@
     "icon": "🎙️",
     "badge": null,
     "img": "img/products/10.jpg",
+    "images": [
+      "img/products/10.jpg",
+      "img/products/9.jpg"
+    ],
     "desc": "USB-микрофон для записи подкастов, стримов и вокала с четырьмя полярными диаграммами."
   },
   {
@@ -118,6 +158,10 @@
     "icon": "🔊",
     "badge": null,
     "img": "img/products/11.jpg",
+    "images": [
+      "img/products/11.jpg",
+      "img/products/12.jpg"
+    ],
     "desc": "15-дюймовая активная акустика мощностью 1000 Вт для выступлений и мероприятий."
   },
   {
@@ -129,6 +173,10 @@
     "icon": "🎚️",
     "badge": null,
     "img": "img/products/12.jpg",
+    "images": [
+      "img/products/12.jpg",
+      "img/products/11.jpg"
+    ],
     "desc": "Би-ампинг мониторы для точного контроля микс-мастера в домашней студии."
   },
   {
@@ -140,6 +188,10 @@
     "icon": "🎧",
     "badge": null,
     "img": "img/products/13.jpg",
+    "images": [
+      "img/products/13.jpg",
+      "img/products/14.jpg"
+    ],
     "desc": "Открытые студийные наушники с точной передачей частот для прослушивания и сведения."
   },
   {
@@ -151,6 +203,10 @@
     "icon": "🎧",
     "badge": "Хит",
     "img": "img/products/14.jpg",
+    "images": [
+      "img/products/14.jpg",
+      "img/products/13.jpg"
+    ],
     "desc": "Лучшее шумоподавление, 30 часов работы и превосходный звук для повседневного использования."
   },
   {
@@ -162,6 +218,10 @@
     "icon": "🎛️",
     "badge": null,
     "img": "img/products/15.jpg",
+    "images": [
+      "img/products/15.jpg",
+      "img/products/20.jpg"
+    ],
     "desc": "Классический дисторшн-педаль, подарившая свой звук десяткам мировых произведений."
   },
   {
@@ -173,6 +233,10 @@
     "icon": "🎚️",
     "badge": "-10%",
     "img": "img/products/16.jpg",
+    "images": [
+      "img/products/16.jpg",
+      "img/products/21.jpg"
+    ],
     "desc": "Профессиональный USB-интерфейс с двумя инструментальными входами для записи."
   },
   {
@@ -184,6 +248,10 @@
     "icon": "🎻",
     "badge": null,
     "img": "img/products/17.jpg",
+    "images": [
+      "img/products/17.jpg",
+      "img/products/22.jpg"
+    ],
     "desc": "Современная резная скрипка 4/4 в комплекте со смычком и кейсом для начинающих."
   },
   {
@@ -195,6 +263,70 @@
     "icon": "🎼",
     "badge": null,
     "img": "img/products/18.jpg",
+    "images": [
+      "img/products/18.jpg",
+      "img/products/8.jpg"
+    ],
     "desc": "37-нотный цветной ксилофон с подставкой — яркий инструмент для педагогов и детей."
+  },
+  {
+    "id": 19,
+    "name": "Рабочая станция-синтезатор Workstation 88",
+    "cat": "Клавишные",
+    "price": 64990,
+    "oldPrice": 71990,
+    "icon": "🎹",
+    "badge": "-10%",
+    "img": "img/products/19.jpg",
+    "images": [
+      "img/products/19.jpg",
+      "img/products/4.jpg"
+    ],
+    "desc": "Профессиональная рабочая станция 88 клавиш с пэдами, множеством тембров и встроенной секвенсорной станцией."
+  },
+  {
+    "id": 20,
+    "name": "Комбоусилитель для электрогитары CR-35",
+    "cat": "Гитарные аксессуары",
+    "price": 21990,
+    "oldPrice": null,
+    "icon": "🔊",
+    "badge": null,
+    "img": "img/products/20.jpg",
+    "images": [
+      "img/products/20.jpg",
+      "img/products/15.jpg"
+    ],
+    "desc": "Транзисторный комбоусилитель 35 Вт с чистыми и перегруженными каналами и реверберацией."
+  },
+  {
+    "id": 21,
+    "name": "DJ-контроллер Traktor S3",
+    "cat": "Студийное оборудование",
+    "price": 33990,
+    "oldPrice": 37900,
+    "icon": "🎛️",
+    "badge": "-10%",
+    "img": "img/products/21.jpg",
+    "images": [
+      "img/products/21.jpg",
+      "img/products/6.jpg"
+    ],
+    "desc": "Двухдековый DJ-контроллер с пледжами, фейдерами и встроенной звуковой картой."
+  },
+  {
+    "id": 22,
+    "name": "Укулеле Kala KA-15S",
+    "cat": "Струнные",
+    "price": 7990,
+    "oldPrice": null,
+    "icon": "🎵",
+    "badge": null,
+    "img": "img/products/22.jpg",
+    "images": [
+      "img/products/22.jpg",
+      "img/products/17.jpg"
+    ],
+    "desc": "Компактная гавайская укулеле сопрано из махагони — яркий и лёгкий инструмент для начинающих."
   }
 ]
