@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Админ-панель — SoundCraft</title>
   <link rel="icon" type="image/svg+xml" href="img/favicon.svg">
-  <link rel="stylesheet" href="css/style.css?v=15">
+  <link rel="stylesheet" href="css/style.css?v=16">
 </head>
 <body>
   <section class="section">
@@ -14,9 +14,9 @@
     </div>
   </section>
 
-  <script src="js/data.js?v=15"></script>
-  <script src="js/api.js?v=15"></script>
-  <script src="js/main.js?v=15"></script>
+  <script src="js/data.js?v=16"></script>
+  <script src="js/api.js?v=16"></script>
+  <script src="js/main.js?v=16"></script>
   <script>
     renderPage("admin.html");
     renderCartCount();
@@ -65,15 +65,19 @@
         <div class="sort-bar" style="margin-bottom:0">
           <button class="btn btn--sm tab-btn active" data-tab="products">Товары</button>
           <button class="btn btn--sm tab-btn" data-tab="orders">Заказы</button>
+          <button class="btn btn--sm tab-btn" data-tab="messages">Сообщения</button>
           <button class="btn btn--ghost btn--sm" style="margin-left:auto;background:#1a1d29" onclick="sessionStorage.removeItem('sc_admin');setCurrentUser(null);location.reload()">Выйти</button>
         </div>
         <div id="tab-products" class="tab-pane"></div>
-        <div id="tab-orders" class="tab-pane" style="display:none"></div>`;
+        <div id="tab-orders" class="tab-pane" style="display:none"></div>
+        <div id="tab-messages" class="tab-pane" style="display:none"></div>`;
 
       document.querySelectorAll(".tab-btn").forEach(b=>b.addEventListener("click",()=>{
         document.querySelectorAll(".tab-btn").forEach(x=>x.classList.toggle("active", x===b));
         document.getElementById("tab-products").style.display = b.dataset.tab==="products"?"block":"none";
         document.getElementById("tab-orders").style.display = b.dataset.tab==="orders"?"block":"none";
+        document.getElementById("tab-messages").style.display = b.dataset.tab==="messages"?"block":"none";
+        if(b.dataset.tab==="messages") renderAdminMessages();
       }));
 
       renderKpis();
@@ -88,16 +92,62 @@
       const revenue = orders.reduce((s,o)=>s+(Number(o.total)||0),0);
       const active = orders.filter(o=>!["Доставлен","Отменён"].includes(o.status||"")).length;
       const cart = JSON.parse(localStorage.getItem("sc_cart")||"[]").length;
+      const msgs = JSON.parse(localStorage.getItem("sc_messages")||"[]");
+      const unreadMsgs = msgs.filter(m=>!m.read).length;
       kp.innerHTML = [
         ["Товаров в каталоге", PRODUCTS.length],
         ["Добавлено вами", (JSON.parse(localStorage.getItem("sc_extra")||"[]")).length],
         ["Удалено", (JSON.parse(localStorage.getItem("sc_deleted")||"[]")).length],
         ["Заказов всего", orders.length],
         ["Заказов в работе", active],
-        ["В корзине (демо)", cart],
+        ["Сообщений", msgs.length],
+        ["Новых сообщений", unreadMsgs],
         ["Выручка, ₽", revenue.toLocaleString("ru-RU")],
       ].map(([name,val])=>`<div class="kpi"><b>${val}</b><span>${name}</span></div>`).join("");
     }
+
+    // ---------- Сообщения (обратная связь) ----------
+    function renderAdminMessages(){
+      const pane = document.getElementById("tab-messages");
+      const msgs = JSON.parse(localStorage.getItem("sc_messages")||"[]").slice().reverse();
+      if(!msgs.length){ pane.innerHTML = `<h2 style="font-size:20px;margin:0 0 10px">Сообщения (0)</h2><div class="empty">Сообщений пока нет.</div>`; return; }
+      pane.innerHTML = `<h2 style="font-size:20px;margin:0 0 10px">Сообщения (${msgs.length})</h2>` +
+        msgs.map((m,i)=>`
+          <div class="order-item" style="margin-bottom:12px">
+            <div class="order-head" style="cursor:default">
+              <b>${escapeHtml(m.name||"Гость")}</b>
+              <span class="rv-date">${escapeHtml(m.email||"")}</span>
+              <span class="rv-date">${escapeHtml(m.date||"")}</span>
+              <span class="order-status st-${m.read?"доставлен":"новый"}" style="margin-left:auto">${m.read?"Прочитано":"Новое"}</span>
+            </div>
+            <div class="order-detail">
+              <p style="margin:0 0 8px"><b>Тема:</b> ${escapeHtml(m.topic||"—")}</p>
+              <p style="margin:0 0 12px">${escapeHtml(m.msgText||"—")}</p>
+              <div class="edit-actions">
+                ${m.read?`<button class="btn btn--sm btn--grey" onclick="toggleMsgRead(${i})">Отметить как новое</button>`:`<button class="btn btn--sm btn--grey" onclick="toggleMsgRead(${i})">Отметить прочитанным</button>`}
+                <button class="btn btn--sm btn--grey" onclick="respondMsg(${m.email})">Ответить</button>
+                <button class="btn btn--sm btn--grey" onclick="deleteMsg(${i})">Удалить</button>
+              </div>
+            </div>
+          </div>`).join("");
+    }
+    window.toggleMsgRead = function(i){
+      const msgs = JSON.parse(localStorage.getItem("sc_messages")||"[]").slice().reverse();
+      msgs[i].read = !msgs[i].read;
+      localStorage.setItem("sc_messages", JSON.stringify(msgs.slice().reverse()));
+      renderAdminMessages(); renderKpis();
+    };
+    window.respondMsg = function(email){
+      prompt("Новый email-ответ клиенту:\nОтправить письмо на " + (email||"") + "?");
+      toast("Ответ отправлен на " + (email||"адрес клиента"));
+    };
+    window.deleteMsg = function(i){
+      if(!confirm("Удалить сообщение?")) return;
+      const msgs = JSON.parse(localStorage.getItem("sc_messages")||"[]").slice().reverse();
+      msgs.splice(i,1);
+      localStorage.setItem("sc_messages", JSON.stringify(msgs.slice().reverse()));
+      renderAdminMessages(); renderKpis();
+    };
 
     // ---------- Товары: список + добавить (с фото) + редактировать/удалить ----------
     function filesToDataURLs(files, cb){
