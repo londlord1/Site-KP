@@ -420,8 +420,10 @@ input,select,textarea{font-family:inherit}
 .fav-btn.active{color:var(--err);background:#fff0f0}
 
 /* ===== Кнопка очистки поиска ===== */
-.search__row input{padding-right:34px}
-.search-clear{position:absolute;right:78px;top:50%;transform:translateY(-50%);border:none;background:rgba(255,255,255,.15);color:#fff;width:20px;height:20px;border-radius:50%;font-size:12px;line-height:1;cursor:pointer;z-index:2}
+.search__row .inp-wrap{position:relative;flex:1;display:flex;align-items:center;min-width:0}
+.search__row .inp-wrap input{width:100% !important;padding-right:34px;min-width:0}
+.search-clear{position:absolute;right:6px;top:50%;transform:translateY(-50%);width:20px;height:20px;border:none;border-radius:50%;
+  background:rgba(255,255,255,.16);color:#fff;font-size:11px;line-height:1;cursor:pointer;z-index:2;display:inline-flex;align-items:center;justify-content:center}
 .search-clear:hover{background:rgba(255,255,255,.3)}
 
 /* ===== Хлебные крошки ===== */

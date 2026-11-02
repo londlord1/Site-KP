@@ -22,10 +22,12 @@ return `
     <nav class="nav" id="topNav">${navHtml(active)}</nav>
     <div class="search" id="globalSearch">
       <div class="search__row">
+      <div class="inp-wrap">
         <input type="text" id="gsInput" placeholder="Поиск: гитара, микрофон..." autocomplete="off">
         <button class="search-clear" onclick="clearSearch()" aria-label="Очистить поиск">✕</button>
-        <select id="gsCat"><option value="Все">Категория</option>${CATEGORIES.map(c=>`<option value="${c}">${c}</option>`).join("")}</select>
       </div>
+      <select id="gsCat"><option value="Все">Категория</option>${CATEGORIES.map(c=>`<option value="${c}">${c}</option>`).join("")}</select>
+    </div>
       <div class="search-results" id="gsResults"></div>
     </div>
     <div class="header__right">
