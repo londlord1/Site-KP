@@ -30,7 +30,10 @@
       } else {
         document.getElementById("bcCat").textContent = p.cat;
         document.getElementById("product").innerHTML = `
-        <div class="product__img">${p.icon}${p.img?`<img src="${p.img}" alt="${escapeHtml(p.name)}" onerror="this.remove()">`:""}</div>
+        <div class="product__gallery">
+          <div class="product__img" id="pgMain">${p.icon}</div>
+          <div class="pg-thumbs" id="pgThumbs"></div>
+        </div>
         <div>
           <span class="card__cat">${escapeHtml(p.cat)}</span>
           <h1>${escapeHtml(p.name)}</h1>
@@ -50,6 +53,16 @@
             <button class="btn" onclick="buy(this)">Добавить в корзину</button>
           </div>
         </div>`;
+      }
+      if(p){
+        // галерея изображений товара (несколько фото)
+        const gimgs = (p.images && p.images.length ? p.images : (p.img ? [p.img] : []));
+        const main = document.getElementById("pgMain");
+        function setMain(u){ main.innerHTML = `${p.icon}<img src="${u}" alt="${escapeHtml(p.name)}" onerror="this.remove()">`; }
+        document.getElementById("pgThumbs").innerHTML = gimgs.map((u,i)=>
+          `<img class="pg-thumb${i===0?' active':''}" data-i="${i}" src="${u}" alt="" onclick="setPG(${i})">`).join("");
+        if(gimgs[0]) setMain(gimgs[0]);
+        window.setPG = function(i){ const u=gimgs[i]; if(u) setMain(u); document.querySelectorAll(".pg-thumb").forEach((t,j)=>t.classList.toggle("active", j===i)); };
       }
     });
 

@@ -12,17 +12,37 @@
   }
 
   let cache = null;
-  const LS_EXTRA = "sc_extra", LS_DEL = "sc_deleted";
+  const LS_EXTRA = "sc_extra", LS_DEL = "sc_deleted", LS_EDITS = "sc_edits";
   function readJson(k){ try{ return JSON.parse(localStorage.getItem(k)||"[]"); }catch(e){ return []; } }
 
-  /* Применить локальные изменения каталога (добавленные/удалённые товары) к базовому списку */
+  /* Применить правки товара (хранятся в sc_edits) — в т.ч. изменённые/добавленные изображения */
+  function applyEdits(list){
+    const map = {};
+    readJson(LS_EDITS).forEach(e=>{ if(e && e.id!=null) map[e.id] = e; });
+    return list.map(p=>{
+      const e = map[p.id]; if(!e) return p;
+      const np = Object.assign({}, p);
+      ["name","cat","price","oldPrice","icon","badge","desc"].forEach(k=>{ if(k in e) np[k] = e[k]; });
+      if(Array.isArray(e.images)){ np.images = e.images.slice(); np.img = e.images[0] || np.img; }
+      else if(e.img) np.img = e.img;
+      return np;
+    });
+  }
+
+  /* Применить локальные изменения каталога (добавленные/удалённые/отредактированные товары) */
   window.applyCatalog = function(base){
     const extra = readJson(LS_EXTRA);
     const del = readJson(LS_DEL);
-    PRODUCTS = base.concat(extra).filter(p => !del.includes(p.id));
+    PRODUCTS = applyEdits( base.concat(extra).filter(p => !del.includes(p.id)) );
     CATEGORIES = ["Все", ...new Set(PRODUCTS.map(p=>p.cat))];
     document.dispatchEvent(new Event("products-ready"));
     return PRODUCTS;
+  };
+  window.addEdit = function(id, data){
+    const edits = readJson(LS_EDITS).filter(e=>e.id!==id);
+    edits.push(Object.assign({ id }, data));
+    localStorage.setItem(LS_EDITS, JSON.stringify(edits));
+    window.applyCatalog(window.BASE_PRODUCTS);
   };
   window.addProduct = function(p){
     const extra = readJson(LS_EXTRA);
