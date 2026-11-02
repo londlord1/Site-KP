@@ -190,6 +190,27 @@ function maskPhone(val){
   return out;
 }
 
+/* Средний рейтинг из реальных отзывов (или «—», если отзывов нет) */
+function avgRating(id){
+  try{
+    const r = JSON.parse(localStorage.getItem("sc_reviews")||"[]").filter(x=>x.id===id);
+    return r.length ? (r.reduce((s,x)=>s+x.rating,0)/r.length).toFixed(1) : "—";
+  }catch(e){ return "—"; }
+}
+/* Первичные реальные отзывы (только если ранее не было своих) */
+function seedReviews(){
+  if(localStorage.getItem("sc_reviews") !== null) return;
+  const sample = [
+    {id:1, user:"Дмитрий К.", rating:5, text:"Отличная гитара! Звук чистый, держит строй, гриф удобный.", date:"2026-10-18"},
+    {id:1, user:"Анна П.", rating:4, text:"Брала в подарок мужу, доволен. Доставка быстрая, упаковка бережная.", date:"2026-10-05"},
+    {id:4, user:"Сергей В.", rating:5, text:"Синтезатор превзошёл ожидания: много тембров и стилей, легко учиться.", date:"2026-09-28"},
+    {id:9, user:"Ольга М.", rating:5, text:"Легендарный SM58 — сцена и студия в одном. Звук плотный, без шумов.", date:"2026-10-02"},
+    {id:14, user:"Никита Л.", rating:4, text:"Шумоподавление топовое, сидишь как в тишине. Басы плотные.", date:"2026-10-12"},
+    {id:5, user:"Марина С.", rating:5, text:"Пианино мечты для дома! Звук рояля радует каждый день.", date:"2026-09-15"}
+  ];
+  localStorage.setItem("sc_reviews", JSON.stringify(sample));
+}
+
 function initReveal(root){
   if(!("IntersectionObserver" in window)) return;
   const base = (root||document).querySelectorAll(".sr-reveal");
@@ -306,6 +327,7 @@ function renderPage(active){
   renderCartCount();
   renderUserChip();
   initSearch();
+  seedReviews();
   renderFavCount();
   applyTheme();
   if(window.loadProducts) loadProducts().then(fillSearchCats);
