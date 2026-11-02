@@ -11,6 +11,7 @@
     <div class="container">
       <nav class="breadcrumbs"><a href="index.html">Главная</a> / <a href="catalog.html">Каталог</a> / <span id="bcCat"></span></nav>
       <div class="product" id="product"></div>
+      <div class="reviews" id="reviewsBox"></div>
     </div>
   </section>
 
@@ -31,7 +32,7 @@
         document.getElementById("bcCat").textContent = p.cat;
         document.getElementById("product").innerHTML = `
         <div class="product__gallery">
-          <div class="product__img" id="pgMain">${p.icon}</div>
+          <div class="product__img" id="pgMain">${p.icon}${favBtn(p.id)}</div>
           <div class="pg-thumbs" id="pgThumbs"></div>
         </div>
         <div>
@@ -58,11 +59,43 @@
         // галерея изображений товара (несколько фото)
         const gimgs = (p.images && p.images.length ? p.images : (p.img ? [p.img] : []));
         const main = document.getElementById("pgMain");
-        function setMain(u){ main.innerHTML = `${p.icon}<img src="${u}" alt="${escapeHtml(p.name)}" onerror="this.remove()">`; }
+        function setMain(u){ main.innerHTML = `${p.icon}${favBtn(p.id)}<img src="${u}" alt="${escapeHtml(p.name)}" onerror="this.remove()">`; }
         document.getElementById("pgThumbs").innerHTML = gimgs.map((u,i)=>
           `<img class="pg-thumb${i===0?' active':''}" data-i="${i}" src="${u}" alt="" onclick="setPG(${i})">`).join("");
         if(gimgs[0]) setMain(gimgs[0]);
         window.setPG = function(i){ const u=gimgs[i]; if(u) setMain(u); document.querySelectorAll(".pg-thumb").forEach((t,j)=>t.classList.toggle("active", j===i)); };
+        // отзывы и рейтинг
+        function getReviews(){ try{ return JSON.parse(localStorage.getItem("sc_reviews")||"[]"); }catch(e){ return []; } }
+        function renderReviews(){
+          const box = document.getElementById("reviewsBox"); if(!box) return;
+          const revs = getReviews().filter(r=>r.id===p.id);
+          const avg = revs.length ? (revs.reduce((s,r)=>s+r.rating,0)/revs.length).toFixed(1) : "0";
+          const u = getCurrentUser();
+          box.innerHTML = `<div class="reviews-head"><h3>Отзывы</h3><span class="rating-sum">★ ${avg} <small>(${revs.length})</small></span></div>` +
+            (revs.length ? revs.slice().reverse().map(r=>`<div class="rv">
+              <div class="rv-meta"><b>${escapeHtml(r.user||"Гость")}</b> <span class="rv-stars">${"★".repeat(r.rating)}</span> <span class="rv-date">${escapeHtml(r.date)}</span></div>
+              <p>${escapeHtml(r.text)}</p>
+            </div>`).join("") : `<p class="no-rv">Пока нет отзывов — будьте первым!</p>`) +
+            `<form id="revForm" class="auth-wrap" style="max-width:100%;padding:14px;margin-top:18px">
+              <div class="form-msg" id="revMsg"></div>
+              <h4 style="margin:0 0 10px">Оставить отзыв</h4>
+              <div style="display:flex;gap:10px;flex-wrap:wrap">
+                <div class="field" style="flex:0 0 130px"><label>Оценка</label><select id="revRating">${[5,4,3,2,1].map(n=>`<option value="${n}">${n} ★</option>`).join("")}</select></div>
+                <div class="field" style="flex:1;min-width:200px"><label>Ваше имя</label><input id="revName" value="${escapeHtml(u?u.name:"")}" required></div>
+              </div>
+              <div class="field"><label>Текст отзыва</label><textarea id="revText" rows="3" required></textarea></div>
+              <button class="btn btn--block btn--sm" type="submit">Отправить</button>
+            </form>`;
+          const form = document.getElementById("revForm");
+          if(form) form.addEventListener("submit", ev=>{
+            ev.preventDefault();
+            const list = getReviews();
+            list.push({ id:p.id, rating:+document.getElementById("revRating").value, user:document.getElementById("revName").value.trim()||"Гость", text:document.getElementById("revText").value.trim(), date:new Date().toLocaleString("ru-RU") });
+            localStorage.setItem("sc_reviews", JSON.stringify(list));
+            toast("Отзыв добавлен"); renderReviews();
+          });
+        }
+        renderReviews();
       }
     });
 

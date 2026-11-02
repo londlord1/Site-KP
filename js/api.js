@@ -34,7 +34,8 @@
   window.applyCatalog = function(base){
     const extra = readJson(LS_EXTRA);
     const del = readJson(LS_DEL);
-    PRODUCTS = applyEdits( base.concat(extra).filter(p => !del.includes(p.id)) );
+    PRODUCTS = applyEdits( base.concat(extra).filter(p => !del.includes(p.id)) )
+      .map(p => Object.assign({ stock: 5+(p.id%15), rating: +(3.2+((p.id%5)*0.4)).toFixed(1) }, p));
     CATEGORIES = ["Все", ...new Set(PRODUCTS.map(p=>p.cat))];
     document.dispatchEvent(new Event("products-ready"));
     return PRODUCTS;

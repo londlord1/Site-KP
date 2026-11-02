@@ -175,7 +175,10 @@
         </td>
       </tr>`;
     }
-    window.delProd = function(id){ window.deleteProduct(id); toast("Товар удалён"); renderAdminProducts(); };
+    window.delProd = function(id){
+      if(!confirm("Удалить товар из каталога?")) return;
+      window.deleteProduct(id); toast("Товар удалён"); renderAdminProducts();
+    };
     window.resetCatalogChanges = function(){
       localStorage.removeItem("sc_extra");
       localStorage.removeItem("sc_deleted");

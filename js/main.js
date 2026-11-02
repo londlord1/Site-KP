@@ -15,17 +15,21 @@ function navHtml(active){
 
 function headerHtml(active){
   return `
-  <header class="header"><div class="container header__row">
+  <header class="header"><a class="skip-link" href="#content">К содержанию</a><div class="container header__row">
+    <button class="burger" onclick="document.querySelector('#topNav').classList.toggle('open')" aria-label="Меню">☰</button>
     <a class="logo" href="index.html">Sound<b>Craft</b></a>
-    <nav class="nav">${navHtml(active)}</nav>
+    <nav class="nav" id="topNav">${navHtml(active)}</nav>
     <div class="search" id="globalSearch">
       <div class="search__row">
         <input type="text" id="gsInput" placeholder="Поиск: гитара, микрофон..." autocomplete="off">
+        <button class="search-clear" onclick="clearSearch()" aria-label="Очистить поиск">✕</button>
         <select id="gsCat"><option value="Все">Категория</option>${CATEGORIES.map(c=>`<option value="${c}">${c}</option>`).join("")}</select>
       </div>
       <div class="search-results" id="gsResults"></div>
     </div>
     <div class="header__right">
+      <a class="fav-wrap" href="favorites.html" title="Избранное" aria-label="Избранное">♥<span class="fav-badge" id="favCount"></span></a>
+      <button class="toggle" onclick="toggleTheme()" title="Сменить тему">☾</button>
       <a class="cart-btn" href="cart.html">🛒 Корзина <span class="cart-count" id="cartCount"></span></a>
       <span class="user-chip" id="userChip"></span>
     </div>
@@ -63,7 +67,7 @@ function initSearch(){
   }
 
   input.addEventListener("focus", ()=>{ focused=true; run(); });
-  input.addEventListener("input", run);
+  input.addEventListener("input", ()=>{ if(!focused){focused=true;} clearTimeout(input._t); input._t = setTimeout(run, 220); });
   catSel.addEventListener("focus", ()=>{ focused=true; run(); });
   catSel.addEventListener("change", run);
   input.addEventListener("blur", ()=>{ setTimeout(()=>{ focused=false; box.classList.remove("open"); }, 150); });
@@ -197,12 +201,46 @@ window.grantAdmin = function(){
   setCurrentUser({ name:"Администратор", email: ADMIN_EMAIL });
   toast("Вход выполнен");
 };
+
+/* ===== Избранное ===== */
+function getFavs(){ try{ return JSON.parse(localStorage.getItem("sc_favs")||"[]"); }catch(e){ return []; } }
+function isFav(id){ return getFavs().includes(id); }
+function toggleFav(id){
+  let f = getFavs(); const i = f.indexOf(id);
+  if(i>=0){ f.splice(i,1); toast("Убрано из избранного"); }
+  else { f.push(id); toast("Добавлено в избранное"); }
+  localStorage.setItem("sc_favs", JSON.stringify(f));
+  renderFavCount();
+  return isFav(id);
+}
+function renderFavCount(){ const el = document.getElementById("favCount"); if(!el) return; const n = getFavs().length; el.textContent = n ? String(n) : ""; }
+function favBtn(id){ return `<button class="fav-btn ${isFav(id)?'active':''}" data-id="${id}" onclick="toggleFavBtn(this)" aria-label="В избранное" aria-pressed="${isFav(id)}">♥</button>`; }
+window.toggleFavBtn = function(btn){ const id = +btn.dataset.id; toggleFav(id); btn.classList.toggle("active", isFav(id)); btn.setAttribute("aria-pressed", isFav(id)); renderFavCount(); };
+
+/* ===== Тема (светлая/тёмная) ===== */
+window.applyTheme = function(){
+  const t = localStorage.getItem("sc_theme") || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+  document.documentElement.setAttribute("data-theme", t);
+};
+window.toggleTheme = function(){
+  const t = document.documentElement.getAttribute("data-theme")==="dark" ? "light" : "dark";
+  localStorage.setItem("sc_theme", t);
+  applyTheme();
+  toast(t==="dark" ? "Тёмная тема" : "Светлая тема");
+};
+
+/* ===== Поиск: очистить ===== */
+window.clearSearch = function(){
+  const i = document.getElementById("gsInput"); if(!i) return;
+  i.value = ""; i.focus();
+  const box = document.getElementById("gsResults"); if(box) box.classList.remove("open");
+};
 function fmtPrice(p){ return String(p).replace(/\B(?=(\d{3})+(?!\d))/g," ") + " ₽"; }
 function moneyToNum(s){ return parseFloat(String(s).replace(/[^\d.]/g,""))||0; }
 
 function toast(msg){
   let t = document.getElementById("toast");
-  if(!t){ t=document.createElement("div"); t.id="toast"; document.body.appendChild(t);
+  if(!t){ t=document.createElement("div"); t.id="toast"; t.setAttribute("role","status"); t.setAttribute("aria-live","polite"); document.body.appendChild(t);
     t.style.cssText="position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1a1d29;color:#fff;padding:13px 20px;border-radius:12px;font-weight:600;box-shadow:0 8px 24px rgba(0,0,0,.3);z-index:999;opacity:0;transition:.25s;";
   }
   t.textContent = msg; t.style.opacity="1";
@@ -217,8 +255,12 @@ function renderPage(active){
   header.innerHTML = headerHtml(active);
   bdy.insertBefore(header.firstElementChild, bdy.firstElementChild);
   bdy.insertAdjacentHTML("beforeend", footerHtml());
+  const sec = document.querySelector("main, .section");
+  if(sec && !sec.id) sec.id = "content";
   renderCartCount();
   renderUserChip();
   initSearch();
+  renderFavCount();
+  applyTheme();
   if(window.loadProducts) loadProducts().then(fillSearchCats);
 }

@@ -9,7 +9,8 @@
 <body>
   <section class="section">
     <div class="container">
-      <h1 style="margin:0 0 20px">Каталог товаров</h1>
+      <h1 style="margin:0 0 8px">Каталог товаров</h1>
+      <nav class="crumbs"><a href="index.html">Главная</a><span>·</span><span>Каталог</span></nav>
       <div class="catalog">
         <aside class="filters">
           <h3>Фильтры</h3>
@@ -39,6 +40,15 @@
               <option value="name">По алфавиту</option>
             </select>
           </div>
+          <div class="field">
+            <label>Рейтинг от</label>
+            <select id="fRating">
+              <option value="0">Любой</option>
+              <option value="4">4 ★ и выше</option>
+              <option value="4.5">4,5 ★ и выше</option>
+            </select>
+          </div>
+          <label class="check-row"><input type="checkbox" id="fInStock"> Только в наличии</label>
           <button class="btn btn--sm" style="background:var(--line);color:var(--ink);box-shadow:none" onclick="resetFilters()">Сбросить</button>
         </aside>
 
@@ -71,13 +81,17 @@
       const from = moneyToNum(document.getElementById("fPriceFrom").value);
       const to = moneyToNum(document.getElementById("fPriceTo").value);
       const sort = document.getElementById("fSort").value;
+      const ratingMin = parseFloat(document.getElementById("fRating").value)||0;
+      const inStock = document.getElementById("fInStock").checked;
 
       let arr = PRODUCTS.filter(p=>{
         const okSearch = !search || p.name.toLowerCase().includes(search) || p.cat.toLowerCase().includes(search);
         const okCat = cat==="Все" || p.cat===cat;
         const okFrom = !from || p.price >= from;
         const okTo = !to || p.price <= to;
-        return okSearch && okCat && okFrom && okTo;
+        const okRating = !ratingMin || (p.rating||0) >= ratingMin;
+        const okStock = !inStock || (p.stock==null || p.stock>0);
+        return okSearch && okCat && okFrom && okTo && okRating && okStock;
       });
 
       if(sort==="price-asc") arr = arr.sort((a,b)=>a.price-b.price);
@@ -85,6 +99,16 @@
       if(sort==="name") arr = arr.sort((a,b)=>a.name.localeCompare(b.name,"ru"));
 
       renderList(arr);
+      saveFilters();
+    }
+    function saveFilters(){
+      const p = new URLSearchParams();
+      [["fSearch","fSearch"],["fCat","fCat"],["fPriceFrom","fPriceFrom"],["fPriceTo","fPriceTo"],["fSort","fSort"],["fRating","fRating"]].forEach(([,id])=>{
+        const v = document.getElementById(id).value; if(v) p.set(id, v);
+      });
+      if(document.getElementById("fInStock").checked) p.set("fInStock","1");
+      const qs = p.toString();
+      history.replaceState(null, "", qs ? "?"+qs : location.pathname);
     }
 
     /* ==== Ленивая подгрузка товаров при прокрутке ==== */
@@ -139,6 +163,7 @@
         <a class="card__img" href="product.html?id=${p.id}">
           <span class="card__icon">${p.icon}</span>
           ${p.img?`<img class="card__photo" src="${p.img}" alt="${escapeHtml(p.name)}" loading="lazy" onerror="this.remove()">`:""}
+          ${favBtn(p.id)}
           ${badgesHtml(p)}
         </a>
         <div class="card__body">
@@ -158,13 +183,16 @@
       document.getElementById("fCat").value="Все";
       document.getElementById("fPriceFrom").value="";
       document.getElementById("fPriceTo").value="";
+      document.getElementById("fRating").value="0";
+      document.getElementById("fInStock").checked=false;
       document.getElementById("priceHint").textContent="";
       document.getElementById("fSort").value="default";
       filterProducts();
     };
 
-    ["fSearch","fPriceFrom","fPriceTo","fSort"].forEach(id=>
+    ["fSearch","fPriceFrom","fPriceTo","fSort","fRating"].forEach(id=>
       document.getElementById(id).addEventListener("input", filterProducts));
+    document.getElementById("fInStock").addEventListener("change", filterProducts);
 
     // При выборе категории поле «Цена от» = минимальная цена в этой категории
     document.getElementById("fCat").addEventListener("change", ()=>{
@@ -188,6 +216,12 @@
     loadProducts().then(()=>{
       fillSearchCats();
       catSelect.innerHTML = CATEGORIES.map(c=>`<option value="${c}">${c}</option>`).join("");
+      // применить фильтры из URL (если переход назад/с ссылкой)
+      const q = new URLSearchParams(location.search);
+      [["fSearch","fSearch"],["fCat","fCat"],["fPriceFrom","fPriceFrom"],["fPriceTo","fPriceTo"],["fSort","fSort"],["fRating","fRating"]].forEach(([,id])=>{
+        const v = q.get(id); if(v!=null) document.getElementById(id).value = v;
+      });
+      if(q.get("fInStock")==="1") document.getElementById("fInStock").checked = true;
       filterProducts();
     });
   </script>

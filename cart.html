@@ -29,8 +29,11 @@
         return;
       }
       const det = cart.map(i=>({item:i, prod:PRODUCTS.find(p=>p.id===i.id)})).filter(x=>x.prod);
-      const total = det.reduce((s,x)=>s+x.prod.price*x.item.qty,0);
+      const subtotal = det.reduce((s,x)=>s+x.prod.price*x.item.qty,0);
       const oldTotal = det.reduce((s,x)=>s+(x.prod.oldPrice||x.prod.price)*x.item.qty,0);
+      const promo = parseFloat(localStorage.getItem("sc_promo")||"0")||0;
+      const promoVal = promo>0 ? Math.round(subtotal*promo/100) : 0;
+      const total = subtotal - promoVal;
 
       wrap.innerHTML = `
       <div class="cart-layout">
@@ -69,10 +72,16 @@
         <aside class="cart-summary">
           <h3>Итого</h3>
           <div class="sum-row"><span>Товары (${det.reduce((s,x)=>s+x.item.qty,0)} шт.)</span><span>${fmtPrice(oldTotal)}</span></div>
-          ${oldTotal>total ? `<div class="sum-row"><span>Скидка</span><span class="discount">−${fmtPrice(oldTotal-total)}</span></div>`:""}
+          ${oldTotal>subtotal ? `<div class="sum-row"><span>Скидка</span><span class="discount">−${fmtPrice(oldTotal-subtotal)}</span></div>`:""}
+          ${promoVal>0 ? `<div class="sum-row"><span>Промокод</span><span class="discount">−${fmtPrice(promoVal)}</span></div>`:""}
           <div class="sum-row"><span>Доставка</span><span>Бесплатно</span></div>
           <div class="sum-row sum-row--total"><span>К оплате</span><span>${fmtPrice(total)}</span></div>
-          <a class="btn btn--block" style="margin-top:14px" href="checkout.html">Оформить заказ</a>
+          <div class="field" style="margin:12px 0 4px">
+            <input id="promoInput" placeholder="Промокод" style="width:calc(100% - 92px);display:inline-block">
+            <button class="btn btn--sm" onclick="applyPromo()" style="width:84px;vertical-align:top">OK</button>
+          </div>
+          <div class="form-msg" id="promoMsg" style="margin-bottom:10px"></div>
+          <a class="btn btn--block" href="checkout.html">Оформить заказ</a>
         </aside>
       </div>`;
     }
@@ -96,6 +105,23 @@
     };
     window.removeItem = function(id){
       safe(getCart().filter(i=>i.id!==id));
+    };
+
+    window.applyPromo = function(){
+      const code = document.getElementById("promoInput").value.trim().toUpperCase();
+      const map = { SOUND10:10, MUSIC20:20 };
+      const msg = document.getElementById("promoMsg");
+      if(map[code]){
+        localStorage.setItem("sc_promo", String(map[code]));
+        msg.className = "form-msg show form-msg--ok";
+        msg.textContent = "Промокод применён: −"+map[code]+"%";
+        renderCart();
+      } else {
+        localStorage.setItem("sc_promo", "0");
+        msg.className = "form-msg show form-msg--err";
+        msg.textContent = "Неверный промокод";
+        renderCart();
+      }
     };
 
     loadProducts().then(renderCart);

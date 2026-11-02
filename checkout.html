@@ -24,7 +24,10 @@
 
     loadProducts().then(()=>{
     const det = getCart().map(i=>({item:i, prod:PRODUCTS.find(p=>p.id===i.id)})).filter(x=>x.prod);
-    const total = det.reduce((s,x)=>s+x.prod.price*x.item.qty,0);
+    const subtotal = det.reduce((s,x)=>s+x.prod.price*x.item.qty,0);
+    const promo = parseFloat(localStorage.getItem("sc_promo")||"0")||0;
+    const promoVal = promo>0 ? Math.round(subtotal*promo/100) : 0;
+    const final = subtotal - promoVal;
 
     if(!det.length){
       document.getElementById("checkoutBody").innerHTML =
@@ -60,7 +63,7 @@
         </div>
         <div class="field"><label>Комментарий к заказу</label>
           <textarea id="oComment" rows="3" style="resize:vertical;max-width:100%" placeholder="Пожелания по доставке..."></textarea></div>
-        <div class="order-total"><span>Итого к оплате</span><b>${fmtPrice(total)}</b></div>
+        <div class="order-total"><span>Итого к оплате</span><b>${fmtPrice(final)}</b></div>
         <button class="btn btn--block" type="submit">Подтвердить заказ</button>
       </form>`;
 
@@ -104,8 +107,8 @@
           pay: document.getElementById("oPay").value,
           status: "Новый",
           comment: document.getElementById("oComment").value.trim(),
-          items: det.map(x=>({name:x.prod.name, price:x.prod.price, qty:x.item.qty})),
-          total, date: new Date().toLocaleString("ru-RU")
+          items: det.map(x=>({id:x.prod.id, name:x.prod.name, price:x.prod.price, qty:x.item.qty})),
+          promo: promoVal, total: final, date: new Date().toLocaleString("ru-RU")
         };
         const hist = JSON.parse(localStorage.getItem("sc_orders")||"[]");
         hist.push(order);
@@ -119,7 +122,7 @@
           `<div style="text-align:center;padding:20px 0">
             <div style="font-size:52px">🎸</div>
             <h3 style="margin:10px 0">Спасибо, ${escapeHtml(order.name)}!</h3>
-            <p style="color:var(--muted)">Заказ ${1000+hist.length} на сумму ${fmtPrice(total)} скоро передадим курьеру.</p>
+            <p style="color:var(--muted)">Заказ ${1000+hist.length} на сумму ${fmtPrice(final)} скоро передадим курьеру.</p>
             <a class="btn" href="catalog.html">Продолжить покупки</a>
           </div>`;
         // простая демонстрация: через toast не вставляем сюда, всё в msg

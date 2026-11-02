@@ -61,8 +61,18 @@
           <div class="sum-row" style="border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:12px;flex-wrap:wrap;gap:8px">
             <span><b>Заказ №${1000+i+1}</b><br>${escapeHtml(o.date||"")}</span>
             <span style="margin-left:auto;text-align:right"><b>${fmtPrice(o.total||0)}</b><br><span style="font-size:13px">${escapeHtml(o.pay||"")}</span></span>
-            <span style="flex-basis:100%;font-size:13px;color:var(--ok)">Статус: <b>${escapeHtml(o.status||"Новый")}</b></span>
+            <span style="flex:1 1 100%;font-size:13px;color:var(--ok)">Статус: <b>${escapeHtml(o.status||"Новый")}</b>
+              ${(o.items||[]).some(x=>x.id) ? `<button class="btn btn--sm" style="margin-left:10px" onclick="repeatOrder(${i})">Заказать снова</button>` : ""}
+            </span>
           </div>`).join("");
+      window.repeatOrder = function(i){
+        const orders = JSON.parse(localStorage.getItem("sc_orders")||"[]");
+        const o = orders[orders.length - 1 - i];   // список развёрнут: индекс i = порядок с конца
+        if(!o) return;
+        (o.items||[]).forEach(it=>{ if(it.id) addToCart(it.id, it.qty||1); });
+        toast("Товары добавлены в корзину");
+        location.href = "cart.html";
+      };
       }
     }
   </script>
