@@ -662,3 +662,22 @@ input,select,textarea{font-family:inherit}
 [data-theme="dark"] .banner__media{background:linear-gradient(120deg, rgba(23,28,38,0) 0%, #1a2130 30%, #171c26 75%)}
 [data-theme="dark"] .banner__content span{color:#9aa2b8}
 [data-theme="dark"] .banner b{color:var(--ink)}
+
+@media(max-width:900px){
+  .burger{display:none!important}
+  .nav{display:none!important}
+  .cart-btn{display:none!important}
+  .user-chip{display:none!important}
+  .header__row{height:56px;flex-wrap:nowrap;gap:10px;padding:0 12px}
+  .logo{order:1;font-size:20px;white-space:nowrap}
+  .search{order:2;flex:1 1 auto;min-width:0;max-width:none}
+  .toggle{order:3;width:32px;height:32px;font-size:15px}
+}
+[data-theme="dark"] .card__price{color:#35d49c}
+[data-theme="dark"] .product__price{color:#35d49c}
+[data-theme="dark"] .order-total b{color:#35d49c}
+[data-theme="dark"] .card__old{color:#7f8899}
+[data-theme="dark"] .field label{color:#c3c9d9}
+[data-theme="dark"] .card__name{color:var(--ink)}
+[data-theme="dark"] .empty-state{color:#9aa2b8}
+[data-theme="dark"] .header__right .toggle{color:#fff}
