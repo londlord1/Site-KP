@@ -17,6 +17,7 @@ function headerHtml(active){
 return `
   <header class="header"><a class="skip-link" href="#content">К содержанию</a>
     <div class="container header__row">
+    <button class="burger" onclick="document.querySelector('#topNav').classList.toggle('open')" aria-label="Меню">☰</button>
     <a class="logo" href="index.html">Sound<b>Craft</b></a>
     <nav class="nav" id="topNav">${navHtml(active)}</nav>
     <div class="search" id="globalSearch">
@@ -54,13 +55,15 @@ function initSearch(){
 
     if(!q && cat==="Все"){ box.classList.remove("open"); box.innerHTML=""; return; }
 
-    box.innerHTML = `<div class="sr-head">Подходящие товары</div>` +
-      (list.length ? list.map(p=>`<a class="sr-item" href="product.html?id=${p.id}">
+    const pages = SITE_PAGES.filter(([u,t])=> q && t.toLowerCase().includes(q));
+    const pagesHtml = pages.length ? `<div class="sr-head">Разделы сайта</div>` + pages.map(([u,t])=>
+      `<a class="sr-item" href="${u}"><div class="sr-item__ic">➜</div><span class="sr-item__name">Перейти: ${escapeHtml(t)}</span></a>`).join("") : "";
+    const itemsHtml = list.length ? list.map(p=>`<a class="sr-item" href="product.html?id=${p.id}">
         <div class="sr-item__ic">${p.icon}${p.img?`<img src="${p.img}" alt="" loading="lazy" onerror="this.remove()">`:""}</div>
         <span class="sr-item__name">${escapeHtml(p.name)}</span>
         <span class="sr-item__price">${fmtPrice(p.price)}</span>
-      </a>`).join("")
-      : `<div class="sr-empty">Ничего не найдено по запросу</div>`);
+      </a>`).join("") : `<div class="sr-empty">Ничего не найдено по запросу</div>`;
+    box.innerHTML = (pagesHtml ? pagesHtml + `<div class="sr-head">Товары</div>` : `<div class="sr-head">Подходящие товары</div>`) + itemsHtml;
     box.classList.add("open");
   }
 
@@ -154,6 +157,22 @@ function fillSearchCats(){
 }
 
 /* ===== Плавное появление секций при скролле ===== */
+/* Разделы сайта для поиска */
+const SITE_PAGES = [
+  ["index.html","Главная"],["catalog.html","Каталог"],["cart.html","Корзина"],
+  ["checkout.html","Оформление заказа"],["auth.html","Вход и регистрация"],
+  ["profile.html","Личный кабинет"],["admin.html","Админ-панель"],
+  ["favorites.html","Избранное"],["contacts.html","Контакты"]
+];
+
+/* Недавно просмотренные */
+function trackViewed(id){
+  const r = JSON.parse(localStorage.getItem("sc_recent")||"[]").filter(x=>x!==id);
+  r.unshift(id);
+  localStorage.setItem("sc_recent", JSON.stringify(r.slice(0,6)));
+}
+function getRecent(){ try{ return JSON.parse(localStorage.getItem("sc_recent")||"[]"); }catch(e){ return []; } }
+
 function initReveal(root){
   if(!("IntersectionObserver" in window)) return;
   const base = (root||document).querySelectorAll(".sr-reveal");

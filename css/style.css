@@ -581,3 +581,16 @@ input,select,textarea{font-family:inherit}
 .auth-socials{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
 .soc{padding:9px 6px;border:1px solid var(--line);border-radius:10px;background:#fff;color:var(--ink);font-weight:700;font-size:13px;cursor:pointer;transition:.15s}
 .soc:hover{border-color:var(--brand);color:var(--brand)}
+
+
+/* ===== Бургер-меню (мобильная навигация) ===== */
+.burger{display:none;border:none;background:rgba(255,255,255,.12);color:#fff;width:40px;height:40px;border-radius:10px;font-size:20px;cursor:pointer;line-height:1;transition:.15s}
+.burger:hover{background:rgba(255,255,255,.22)}
+@media(max-width:900px){
+  .burger{display:inline-flex;align-items:center;justify-content:center;order:0}
+  .logo{order:1}
+  .search{order:3}
+  .header__right{order:2}
+  .nav{display:none;order:5;flex-basis:100%;flex-direction:column;gap:4px;padding:10px;border-radius:12px;background:var(--ink);box-shadow:0 8px 20px rgba(0,0,0,.3)}
+  .nav.open{display:flex}
+}

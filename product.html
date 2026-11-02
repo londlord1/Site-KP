@@ -4,7 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Товар — SoundCraft</title>
-  <link rel="stylesheet" href="css/style.css?v=14">
+  <link rel="icon" type="image/svg+xml" href="img/favicon.svg">
+  <link rel="stylesheet" href="css/style.css?v=15">
 </head>
 <body>
   <section class="section">
@@ -15,9 +16,9 @@
     </div>
   </section>
 
-  <script src="js/data.js?v=14"></script>
-  <script src="js/api.js?v=14"></script>
-  <script src="js/main.js?v=14"></script>
+  <script src="js/data.js?v=15"></script>
+  <script src="js/api.js?v=15"></script>
+  <script src="js/main.js?v=15"></script>
   <script>
     renderPage("catalog.html");
 
@@ -64,6 +65,7 @@
           `<img class="pg-thumb${i===0?' active':''}" data-i="${i}" src="${u}" alt="" onclick="setPG(${i})">`).join("");
         if(gimgs[0]) setMain(gimgs[0]);
         window.setPG = function(i){ const u=gimgs[i]; if(u) setMain(u); document.querySelectorAll(".pg-thumb").forEach((t,j)=>t.classList.toggle("active", j===i)); };
+        trackViewed(p.id);
         // отзывы и рейтинг
         function getReviews(){ try{ return JSON.parse(localStorage.getItem("sc_reviews")||"[]"); }catch(e){ return []; } }
         function renderReviews(){

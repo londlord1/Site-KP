@@ -4,13 +4,16 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SoundCraft — магазин музыкальных инструментов и звукового оборудования</title>
+  <link rel="icon" type="image/svg+xml" href="img/favicon.svg">
+  <link rel="preload" as="image" href="img/hero.jpg">
   <meta name="description" content="SoundCraft — интернет-магазин музыкальных инструментов, акустики, микрофонов и студийного оборудования. Доставка по всей России.">
-  <link rel="stylesheet" href="css/style.css?v=14">
+  <link rel="stylesheet" href="css/style.css?v=15">
 </head>
 <body>
 
   <header class="header"><a class="skip-link" href="#content">К содержанию</a>
     <div class="container header__row">
+    <button class="burger" onclick="document.querySelector('#topNav').classList.toggle('open')" aria-label="Меню">☰</button>
     <a class="logo" href="index.html">Sound<b>Craft</b></a>
     <nav class="nav" id="topNav">
       <a href="index.html" class="active">Главная</a>
@@ -103,6 +106,13 @@
     </div>
   </section>
 
+  <section class="section sr-reveal" id="recentSection" style="display:none">
+    <div class="container">
+      <h2>Недавно просмотренные</h2>
+      <div class="grid grid--cards" id="recentGrid"></div>
+    </div>
+  </section>
+
   <section class="section sr-reveal" id="homeReviews">
     <div class="container">
       <h2>Отзывы покупателей</h2>
@@ -138,9 +148,9 @@
     <div class="footer__bottom">© 2026 SoundCraft. Курсовой проект: разработка клиентской части интернет-магазина</div>
   </footer>
 
-  <script src="js/data.js?v=14"></script>
-  <script src="js/api.js?v=14"></script>
-  <script src="js/main.js?v=14"></script>
+  <script src="js/data.js?v=15"></script>
+  <script src="js/api.js?v=15"></script>
+  <script src="js/main.js?v=15"></script>
   <script>
     // Шапка и подвал уже прописаны в HTML этого файла — только инициализируем их
     // Сначала пользователь и корзина (не зависят от данных каталога)
@@ -175,6 +185,12 @@
         <div class="rev-card"><div class="rv-stars">${"★".repeat(r.rating)}</div><p>«${escapeHtml((r.text||"").slice(0,120))}${(r.text||"").length>120?"…":""}»</p>
         <div class="rv-meta"><b>${escapeHtml(r.user||"Покупатель")}</b> <span class="rv-date">${escapeHtml(r.date||"")}</span></div></div>`).join("")
       : `<div class="empty-state" style="grid-column:1/-1">Пока нет отзывов — оставьте первый <a href="catalog.html" style="color:var(--brand)">после покупки</a>.</div>`;
+      // недавно просмотренные
+      const rids = getRecent();
+      if(rids.length){
+        const sec = document.getElementById("recentSection"); sec.style.display = "block";
+        document.getElementById("recentGrid").innerHTML = rids.map(id=>PRODUCTS.find(p=>p.id===id)).filter(Boolean).map(p=>cardHtml(p)).join("");
+      }
       initReveal();
     });
 
