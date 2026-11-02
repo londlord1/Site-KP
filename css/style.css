@@ -470,3 +470,13 @@ input,select,textarea{font-family:inherit}
 .edit-actions{display:flex;gap:10px;margin-top:6px;flex-wrap:wrap}
 .btn--grey{background:var(--line);color:var(--ink);box-shadow:none}
 .btn--grey:hover{background:#d8dbe4}
+
+
+/* ===== Админ: карточки-метрики, поиск по товарам ===== */
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin:0 0 20px}
+.kpi{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px}
+.kpi b{font-size:24px;display:block;color:var(--brand-dark)}
+.kpi span{color:var(--muted);font-size:13px}
+.admin-search{max-width:340px;margin:0 0 12px}
+.admin-toolbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:0 0 12px}
+.admin-toolbar .spacer{margin-left:auto}
