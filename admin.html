@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Админ-панель — SoundCraft</title>
-  <link rel="stylesheet" href="css/style.css?v=8">
+  <link rel="stylesheet" href="css/style.css?v=9">
 </head>
 <body>
   <section class="section">
@@ -13,9 +13,9 @@
     </div>
   </section>
 
-  <script src="js/data.js?v=8"></script>
-  <script src="js/api.js?v=8"></script>
-  <script src="js/main.js?v=8"></script>
+  <script src="js/data.js?v=9"></script>
+  <script src="js/api.js?v=9"></script>
+  <script src="js/main.js?v=9"></script>
   <script>
     renderPage("admin.html");
     renderCartCount();
@@ -106,8 +106,8 @@
       read(0);
     }
     function imgThumb(u, rmPath){
-      return `<span style="position:relative"><img src="${u}" style="width:64px;height:64px;object-fit:cover;border-radius:8px;border:1px solid var(--line)">`+
-        `<button type="button" style="position:absolute;top:-6px;right:-6px;background:#dc2626;color:#fff;border:none;border-radius:50%;width:18px;height:18px;line-height:1;cursor:pointer" onclick="${rmPath}">×</button></span>`;
+      return `<span class="img-cell"><img src="${u}" alt="">
+        <button type="button" class="rm" title="Убрать" onclick="${rmPath}">×</button></span>`;
     }
     function renderAdminProducts(){
       if(window.loadProducts) loadProducts().then(()=>{
@@ -115,19 +115,22 @@
         window.__pending = [];
         pane.innerHTML = `
           <h2 style="font-size:20px;margin:20px 0 10px">Добавить товар</h2>
-          <form id="addForm" class="auth-wrap" style="max-width:100%;padding:16px">
-            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px">
+          <div class="edit-card"><h2 class="edit-head" style="justify-content:flex-start">➕ Добавить товар</h2><form id="addForm">
+            <div class="edit-grid">
               <div class="field"><label>Название</label><input id="nName" required></div>
               <div class="field"><label>Категория</label><input id="nCat" placeholder="Гитары" required></div>
               <div class="field"><label>Цена, ₽</label><input id="nPrice" type="number" min="0" required></div>
               <div class="field"><label>Старая цена, ₽</label><input id="nOld" type="number" min="0" placeholder="0 = нет скидки"></div>
               <div class="field"><label>Иконка/эмодзи</label><input id="nIcon" value="🎸"></div>
             </div>
-            <div class="field"><label>Загрузить фото товара (можно несколько)</label><input id="nFiles" type="file" accept="image/*" multiple></div>
+            <div class="field"><label>Изображения товара</label>
+              <div class="img-grid" id="nPrev"></div>
+              <label class="img-add" for="nFiles" title="Загрузить фото">+</label>
+              <input id="nFiles" type="file" accept="image/*" multiple style="display:none">
+            </div>
             <div class="field"><label>Или ссылка на изображение (URL)</label><input id="nImg" placeholder="https://..."></div>
-            <div id="nPrev" style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:10px"></div>
-            <button class="btn btn--block" type="submit">Добавить товар</button>
-          </form>
+            <button class="btn btn--block" style="margin-top:6px" type="submit">Добавить товар</button>
+          </form></div>
           <div id="editWrap"></div>
           <h2 style="font-size:20px;margin:24px 0 10px;display:flex;align-items:center;gap:12px;flex-wrap:wrap">Все товары (${PRODUCTS.length})
             <button class="btn btn--sm" style="background:var(--line);color:var(--ink)" onclick="resetCatalogChanges()">Сбросить локальные изменения каталога</button>
@@ -195,25 +198,32 @@
       window.__editState = st;
       const w = document.getElementById("editWrap");
       w.innerHTML = `
-        <h2 style="font-size:20px;margin:20px 0 10px">Редактирование товара #${id}</h2>
-        <form id="editForm" class="auth-wrap" style="max-width:100%;padding:16px">
-          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px">
-            <div class="field"><label>Название</label><input id="eName" value="${escapeHtml(p.name)}"></div>
-            <div class="field"><label>Категория</label><input id="eCat" value="${escapeHtml(p.cat)}"></div>
-            <div class="field"><label>Цена, ₽</label><input id="ePrice" type="number" value="${p.price}"></div>
-            <div class="field"><label>Старая цена, ₽</label><input id="eOld" type="number" value="${p.oldPrice||0}"></div>
-            <div class="field"><label>Иконка</label><input id="eIcon" value="${escapeHtml(p.icon)}"></div>
+        <div class="edit-card">
+          <div class="edit-head">
+            <h2>✏️ Редактирование товара #${id}</h2>
+            <button class="rm" style="position:static" onclick="document.getElementById('editWrap').innerHTML=''" title="Закрыть">×</button>
           </div>
-          <div class="field"><label>Изображения товара</label>
-            <div id="ePrev" style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:8px"></div>
-            <input id="eFiles" type="file" accept="image/*" multiple>
-          </div>
-          <div class="field"><label>Добавить по ссылке (URL)</label><input id="eImg" placeholder="https://..."></div>
-          <div class="sum-row" style="justify-content:flex-start">
-            <button class="btn btn--sm" type="submit">Сохранить</button>
-            <button class="btn btn--sm" style="background:var(--line);color:var(--ink)" type="button" onclick="document.getElementById('editWrap').innerHTML=''">Отмена</button>
-          </div>
-        </form>`;
+          <form id="editForm">
+            <div class="edit-grid">
+              <div class="field"><label>Название</label><input id="eName" value="${escapeHtml(p.name)}"></div>
+              <div class="field"><label>Категория</label><input id="eCat" value="${escapeHtml(p.cat)}"></div>
+              <div class="field"><label>Цена, ₽</label><input id="ePrice" type="number" value="${p.price}"></div>
+              <div class="field"><label>Старая цена, ₽</label><input id="eOld" type="number" value="${p.oldPrice||0}"></div>
+              <div class="field"><label>Иконка</label><input id="eIcon" value="${escapeHtml(p.icon)}"></div>
+            </div>
+            <div class="field">
+              <label>Изображения товара</label>
+              <div class="img-grid" id="ePrev"></div>
+              <label class="img-add" for="eFiles" title="Загрузить фото">+</label>
+              <input id="eFiles" type="file" accept="image/*" multiple style="display:none">
+            </div>
+            <div class="field"><label>Добавить по ссылке (URL)</label><input id="eImg" placeholder="https://..."></div>
+            <div class="edit-actions">
+              <button class="btn btn--sm" type="submit">Сохранить</button>
+              <button class="btn btn--sm btn--grey" type="button" onclick="document.getElementById('editWrap').innerHTML=''">Отмена</button>
+            </div>
+          </form>
+        </div>`;
       st.render();
       document.getElementById("eFiles").addEventListener("change", e=>{
         filesToDataURLs(e.target.files, urls=>{ st.imgs.push(...urls); st.render(); });
