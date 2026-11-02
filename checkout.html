@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Оформление заказа — SoundCraft</title>
   <link rel="icon" type="image/svg+xml" href="img/favicon.svg">
-  <link rel="stylesheet" href="css/style.css?v=17">
+  <link rel="stylesheet" href="css/style.css?v=18">
 </head>
 <body>
   <section class="section">
@@ -17,9 +17,9 @@
     </div>
   </section>
 
-  <script src="js/data.js?v=17"></script>
-  <script src="js/api.js?v=17"></script>
-  <script src="js/main.js?v=17"></script>
+  <script src="js/data.js?v=18"></script>
+  <script src="js/api.js?v=18"></script>
+  <script src="js/main.js?v=18"></script>
   <script>
     renderPage("cart.html");
 
@@ -43,7 +43,7 @@
         <div class="field"><label>ФИО</label>
           <input type="text" id="oName" placeholder="Фамилия Имя Отчество" value="${escapeHtml(u?u.name:"")}" required autofocus></div>
         <div class="field"><label>Телефон</label>
-          <input type="tel" id="oPhone" placeholder="+7 (900) 000-00-00" required></div>
+          <input type="tel" id="oPhone" placeholder="+7 (___) ___-__-__" required></div>
         <div class="field"><label>Email</label>
           <input type="email" id="oEmail" placeholder="you@example.ru" value="${escapeHtml(u?u.email:"")}" required></div>
         <div class="field"><label>Адрес доставки</label>
@@ -73,9 +73,15 @@
         block.style.display = document.getElementById("oPay").value==="Картой онлайн" ? "block" : "none";
       };
       togglePay();
+      document.getElementById("oPhone").addEventListener("input", function(){
+        this.value = maskPhone(this.value);
+      });
 
       document.getElementById("orderForm").addEventListener("submit", e=>{
         e.preventDefault();
+        const msg0 = document.getElementById("msg");
+        const phoneDigits = document.getElementById("oPhone").value.replace(/\D/g,"");
+        if(phoneDigits.length !== 11){ msg0.className="form-msg show form-msg--err"; msg0.textContent="Введите корректный номер телефона (11 цифр)"; return; }
         if(document.getElementById("oPay").value==="Картой онлайн"){
           const card = document.getElementById("oCard").value.replace(/\D/g,"");
           const exp = document.getElementById("oExp").value.trim();
