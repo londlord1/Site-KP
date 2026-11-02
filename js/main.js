@@ -29,6 +29,7 @@ return `
       <div class="search-results" id="gsResults"></div>
     </div>
     <div class="header__right">
+      <button class="toggle" onclick="toggleTheme()" aria-label="Сменить тему" title="Тема">☾</button>
       <a class="cart-btn" href="cart.html">🛒 Корзина <span class="cart-count" id="cartCount"></span></a>
       <span class="user-chip" id="userChip"></span>
     </div>
@@ -260,6 +261,18 @@ function renderFavCount(){ const el = document.getElementById("favCount"); if(!e
 function favBtn(id){ return `<button class="fav-btn ${isFav(id)?'active':''}" data-id="${id}" onclick="toggleFavBtn(this)" aria-label="В избранное" aria-pressed="${isFav(id)}">♥</button>`; }
 window.toggleFavBtn = function(btn){ const id = +btn.dataset.id; toggleFav(id); btn.classList.toggle("active", isFav(id)); btn.setAttribute("aria-pressed", isFav(id)); renderFavCount(); };
 
+/* ===== Тема (светлая/тёмная) ===== */
+window.applyTheme = function(){
+  const t = localStorage.getItem("sc_theme") || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+  document.documentElement.setAttribute("data-theme", t);
+  const tb = document.querySelector(".toggle"); if(tb) tb.textContent = t==="dark" ? "☀" : "☾";
+};
+window.toggleTheme = function(){
+  const t = document.documentElement.getAttribute("data-theme")==="dark" ? "light" : "dark";
+  localStorage.setItem("sc_theme", t);
+  applyTheme();
+};
+
 /* ===== Поиск: очистить ===== */
 window.clearSearch = function(){
   const i = document.getElementById("gsInput"); if(!i) return;
@@ -292,6 +305,6 @@ function renderPage(active){
   renderUserChip();
   initSearch();
   renderFavCount();
-  
+  applyTheme();
   if(window.loadProducts) loadProducts().then(fillSearchCats);
 }

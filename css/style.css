@@ -37,7 +37,7 @@ input,select,textarea{font-family:inherit}
 /* ---------- Шапка ---------- */
 .header{background:var(--ink);color:#fff;position:sticky;top:0;z-index:50;
   box-shadow:0 2px 12px rgba(0,0,0,.25)}
-.header__row{display:flex;align-items:center;gap:24px;height:64px}
+.header__row{display:flex;align-items:center;gap:24px;height:64px;max-width:1600px;margin:0 auto;padding:0 28px}
 .logo{font-weight:800;font-size:22px;letter-spacing:.3px;white-space:nowrap}
 .logo b{color:var(--accent)}
 .nav{display:flex;gap:6px;flex:0 0 auto}
@@ -594,3 +594,34 @@ input,select,textarea{font-family:inherit}
   .nav{display:none;order:5;flex-basis:100%;flex-direction:column;gap:4px;padding:10px;border-radius:12px;background:var(--ink);box-shadow:0 8px 20px rgba(0,0,0,.3)}
   .nav.open{display:flex}
 }
+
+
+/* ===== Тёмная тема ===== */
+[data-theme="dark"]{
+  --ink:#eef0f6; --ink-2:#c8cde0; --muted:#9aa2b8;
+  --bg:#0e1117; --card:#171c26; --line:#272e3d;
+  --brand:#22c58a; --brand-dark:#0b9d6a; --brand-soft:#122a20;
+  --shadow:0 10px 30px rgba(0,0,0,.45);
+  --shadow-hover:0 16px 40px rgba(34,197,138,.18);
+  --ring:0 0 0 3px rgba(34,197,138,.25);
+}
+[data-theme="dark"] .header{background:#0c0f14;box-shadow:0 2px 14px rgba(0,0,0,.5)}
+[data-theme="dark"] .footer{background:#0c0f14}
+[data-theme="dark"] .hero{background:radial-gradient(70% 120% at 85% 0%, rgba(34,197,138,.22), transparent 55%),linear-gradient(135deg,#0c0f14,#101b16)}
+[data-theme="dark"] .search__row{background:rgba(255,255,255,.08)}
+[data-theme="dark"] .search-results{background:#171c26;color:var(--ink)}
+[data-theme="dark"] .sr-item:hover{background:#1d2430}
+[data-theme="dark"] .cart-table th{background:#1d2430}
+[data-theme="dark"] .card__img{background-color:#1d2430}
+[data-theme="dark"] .field input[type=text],[data-theme="dark"] .field input[type=search],[data-theme="dark"] .field input[type=email],
+[data-theme="dark"] .field input[type=password],[data-theme="dark"] .field input[type=tel],[data-theme="dark"] .field input[type=number],
+[data-theme="dark"] .field select,[data-theme="dark"] .field textarea{background:#10141c;border-color:var(--line);color:var(--ink)}
+[data-theme="dark"] .input-ic{background:#10141c;border-color:var(--line)}
+[data-theme="dark"] .edit-card{border-color:var(--line)}
+[data-theme="dark"] .banner{background:#171c26}
+[data-theme="dark"] .card{background:#171c26}
+[data-theme="dark"] .fav-btn{background:#20293a;color:#7d8698}
+[data-theme="dark"] .fav-btn.active{color:#ff6b6b;background:#2a1f24}
+[data-theme="dark"] .empty-state,.no-rv{color:var(--muted)}
+.toggle{width:36px;height:36px;border:none;border-radius:10px;background:rgba(255,255,255,.12);color:#fff;font-size:16px;cursor:pointer;transition:.15s;flex:none}
+.toggle:hover{background:rgba(255,255,255,.22)}
