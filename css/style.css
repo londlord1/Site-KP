@@ -543,3 +543,20 @@ input,select,textarea{font-family:inherit}
 .order-detail{padding:4px 16px 16px;border-top:1px solid var(--line)}
 .order-detail ul{margin-bottom:8px}
 .order-items{padding:8px 0}
+
+
+/* ===== Каталог: рейтинг/наличие на карточке, активные фильтры ===== */
+.card__meta{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:13px}
+.card__rating{color:var(--muted)}
+.card__rating small{color:var(--muted)}
+.card__stock{font-weight:700;padding:2px 8px;border-radius:999px;background:#eef0f6;color:var(--muted);font-size:12px}
+.card__stock.in{background:#dcfce7;color:#15803d}
+.card__stock.out{background:#fee2e2;color:#b91c1c}
+.act-filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.act-chip{display:inline-flex;align-items:center;gap:6px;background:var(--brand-soft,#e4f6ee);color:var(--brand-dark);border:1px solid rgba(11,157,106,.3);padding:5px 10px;border-radius:999px;font-size:13px;font-weight:600}
+.act-x{border:none;background:rgba(11,157,106,.15);color:var(--brand-dark);width:16px;height:16px;border-radius:50%;line-height:1;font-size:12px;cursor:pointer}
+.filters{transition:max-height .25s ease, opacity .2s ease}
+@media(max-width:900px){
+  .filters{display:none;max-height:0;overflow:hidden;opacity:0}
+  .filters.open{display:block;max-height:1200px;opacity:1;margin-bottom:16px}
+}

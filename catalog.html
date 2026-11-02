@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Каталог — SoundCraft</title>
-  <link rel="stylesheet" href="css/style.css?v=12">
+  <link rel="stylesheet" href="css/style.css?v=13">
 </head>
 <body>
   <section class="section">
@@ -38,6 +38,8 @@
               <option value="price-asc">Сначала дешевле</option>
               <option value="price-desc">Сначала дороже</option>
               <option value="name">По алфавиту</option>
+              <option value="rating">По рейтингу</option>
+              <option value="disc">По размеру скидки</option>
             </select>
           </div>
           <div class="field">
@@ -54,18 +56,22 @@
 
         <div>
           <div class="sort-bar">
+            <button class="btn btn--sm btn--grey" id="filterToggle" onclick="document.getElementById('filters').classList.toggle('open')">🧮 Фильтры</button>
+            <button class="btn btn--sm btn--grey" onclick="copyFilters()">🔗 Ссылка</button>
             <span class="result-hint" id="resultHint"></span>
           </div>
+          <div class="act-filters" id="actFilters"></div>
           <div class="grid grid--cards" id="productList"></div>
+          <div class="load-more-wrap" style="text-align:center;margin-top:16px"><button class="btn btn--sm" id="loadMoreBtn" onclick="loadMore()" style="display:none">Показать ещё</button></div>
           <div class="empty" id="emptyState" style="display:none">По вашему запросу ничего не найдено. Попробуйте изменить фильтры.</div>
         </div>
       </div>
     </div>
   </section>
 
-  <script src="js/data.js?v=12"></script>
-  <script src="js/api.js?v=12"></script>
-  <script src="js/main.js?v=12"></script>
+  <script src="js/data.js?v=13"></script>
+  <script src="js/api.js?v=13"></script>
+  <script src="js/main.js?v=13"></script>
   <script>
     renderPage("catalog.html");
 
@@ -97,10 +103,32 @@
       if(sort==="price-asc") arr = arr.sort((a,b)=>a.price-b.price);
       if(sort==="price-desc") arr = arr.sort((a,b)=>b.price-a.price);
       if(sort==="name") arr = arr.sort((a,b)=>a.name.localeCompare(b.name,"ru"));
-
+      if(sort==="rating") arr = arr.sort((a,b)=>(b.rating||0)-(a.rating||0));
+      if(sort==="disc") arr = arr.sort((a,b)=>((b.oldPrice?b.oldPrice-b.price:0)-(a.oldPrice?a.oldPrice-a.price:0)));
       renderList(arr);
+      renderActiveFilters();
       saveFilters();
     }
+    function revCountFor(id){ try{ return JSON.parse(localStorage.getItem("sc_reviews")||"[]").filter(r=>r.id===id).length; }catch(e){ return 0; } }
+    function renderActiveFilters(){
+      const box = document.getElementById("actFilters"); if(!box) return;
+      const chips = [];
+      const add = (label, clearFn)=> chips.push(`<span class="act-chip">${escapeHtml(label)} <button class="act-x" onclick="${clearFn}">×</button></span>`);
+      const v = id => document.getElementById(id).value;
+      if(v("fSearch")) add("«"+v("fSearch")+"»", "clearF('fSearch')");
+      if(v("fCat")!=="Все" && v("fCat")) add(v("fCat"), "clearF('fCat')");
+      if(v("fPriceFrom")) add("От "+fmtPrice(+v("fPriceFrom")), "clearF('fPriceFrom')");
+      if(v("fPriceTo")) add("До "+fmtPrice(+v("fPriceTo")), "clearF('fPriceTo')");
+      if(v("fRating")!=="0" && v("fRating")) add("★ "+v("fRating")+"+", "clearF('fRating')");
+      if(document.getElementById("fInStock").checked) add("В наличии", "clearF('fInStock')");
+      box.innerHTML = chips.length ? chips.join("") + `<button class="btn btn--sm btn--grey" style="margin-left:6px" onclick="resetFilters()">Сбросить всё</button>` : "";
+    }
+    window.clearF = function(id){
+      const el = document.getElementById(id);
+      if(id==="fInStock"){ el.checked = false; filterProducts(); return; }
+      if(id==="fCat") el.value = "Все"; else el.value = "";
+      filterProducts();
+    };
     function saveFilters(){
       const p = new URLSearchParams();
       [["fSearch","fSearch"],["fCat","fCat"],["fPriceFrom","fPriceFrom"],["fPriceTo","fPriceTo"],["fSort","fSort"],["fRating","fRating"]].forEach(([,id])=>{
@@ -134,6 +162,8 @@
       const slice = dataArr.slice(seen, seen + BATCH);
       if(slice.length) list.insertAdjacentHTML("beforeend", slice.map(cardHtml).join(""));
       seen += slice.length;
+      const btn = document.getElementById("loadMoreBtn");
+      if(btn) btn.style.display = (seen < dataArr.length) ? "inline-block" : "none";
       if(sentinel){
         sentinel.s.style.display = (seen >= dataArr.length) ? "none" : "block";
       }
@@ -170,6 +200,10 @@
           <span class="card__cat">${escapeHtml(p.cat)}</span>
           <a class="card__name" href="product.html?id=${p.id}">${escapeHtml(p.name)}</a>
           <div class="card__price">${fmtPrice(p.price)} ${p.oldPrice?`<s class="card__old">${fmtPrice(p.oldPrice)}</s>`:""}</div>
+          <div class="card__meta">
+            <span class="card__rating">★ ${p.rating||0} <small>(${revCountFor(p.id)})</small></span>
+            <span class="card__stock ${(p.stock==null||p.stock>0)?'in':'out'}">${(p.stock==null||p.stock>0)?'В наличии':'Нет'}</span>
+          </div>
           <div class="card__row">
             ${buyButton(p.id)}
             <a class="btn--view" href="product.html?id=${p.id}">Подробнее</a>
@@ -188,6 +222,9 @@
       document.getElementById("priceHint").textContent="";
       document.getElementById("fSort").value="default";
       filterProducts();
+    };
+    window.copyFilters = function(){
+      navigator.clipboard.writeText(location.href); toast("Ссылка на каталог скопирована");
     };
 
     ["fSearch","fPriceFrom","fPriceTo","fSort","fRating"].forEach(id=>
