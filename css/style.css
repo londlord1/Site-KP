@@ -681,3 +681,17 @@ input,select,textarea{font-family:inherit}
 [data-theme="dark"] .card__name{color:var(--ink)}
 [data-theme="dark"] .empty-state{color:#9aa2b8}
 [data-theme="dark"] .header__right .toggle{color:#fff}
+
+/* ===== Улучшения шапки: лупа, популярные запросы, избранное, аватар, blur ===== */
+.logo-mark{color:var(--brand);margin-right:4px;font-size:1.15em}
+.search-ic{opacity:.65;font-size:14px;pointer-events:none;padding-left:6px}
+.inp-wrap input{padding-left:4px!important}
+.fav-head{position:relative;color:#fff;font-size:21px;text-decoration:none;line-height:1;padding:6px 8px;border-radius:10px;transition:.15s}
+.fav-head:hover{background:rgba(255,255,255,.14)}
+.fav-badge{position:absolute;top:-2px;right:-2px;background:var(--err);color:#fff;font-size:10px;font-weight:800;min-width:16px;height:16px;border-radius:50%;display:flex;align-items:center;justify-content:center;padding:0 3px}
+.mini-avatar{width:30px;height:30px;border-radius:50%;background:var(--brand);color:#fff;font-size:13px;font-weight:800;display:inline-flex;align-items:center;justify-content:center;flex:none}
+.header.scrolled{background:rgba(12,15,20,.82);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);box-shadow:0 4px 18px rgba(0,0,0,.25)}
+[data-theme="dark"] .header.scrolled{background:rgba(10,13,18,.85)}
+.nav a.active{position:relative}
+.nav a.active::after{content:"";position:absolute;left:13px;right:13px;bottom:3px;height:2px;border-radius:2px;background:var(--brand)}
+@media (prefers-reduced-motion: reduce){.header{transition:none}}

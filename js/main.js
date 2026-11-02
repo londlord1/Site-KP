@@ -18,19 +18,21 @@ return `
   <header class="header"><a class="skip-link" href="#content">К содержанию</a>
     <div class="container header__row">
     <button class="burger" onclick="document.querySelector('#topNav').classList.toggle('open')" aria-label="Меню">☰</button>
-    <a class="logo" href="index.html">Sound<b>Craft</b></a>
+<a class="logo" href="index.html"><span class="logo-mark">♪</span>Sound<b>Craft</b></a>
     <nav class="nav" id="topNav">${navHtml(active)}</nav>
     <div class="search" id="globalSearch">
       <div class="search__row">
-      <div class="inp-wrap">
-        <input type="text" id="gsInput" placeholder="Поиск: гитара, микрофон..." autocomplete="off">
-        <button class="search-clear" onclick="clearSearch()" aria-label="Очистить поиск">✕</button>
+        <div class="inp-wrap">
+          <span class="search-ic">🔍</span>
+          <input type="text" id="gsInput" placeholder="Поиск: гитара, микрофон..." autocomplete="off">
+          <button class="search-clear" onclick="clearSearch()" aria-label="Очистить поиск">✕</button>
+        </div>
+        <select id="gsCat"><option value="Все">Категория</option>${CATEGORIES.map(c=>`<option value="${c}">${c}</option>`).join("")}</select>
       </div>
-      <select id="gsCat"><option value="Все">Категория</option>${CATEGORIES.map(c=>`<option value="${c}">${c}</option>`).join("")}</select>
-    </div>
       <div class="search-results" id="gsResults"></div>
     </div>
     <div class="header__right">
+      <a class="fav-head" href="favorites.html" title="Избранное" aria-label="Избранное">♥<span class="fav-badge" id="favCount"></span></a>
       <button class="toggle" onclick="toggleTheme()" aria-label="Сменить тему" title="Тема">☾</button>
       <a class="cart-btn" href="cart.html">🛒 Корзина <span class="cart-count" id="cartCount"></span></a>
       <span class="user-chip" id="userChip"></span>
@@ -56,7 +58,13 @@ function initSearch(){
       return okCat && okQ;
     }).slice(0,5);
 
-    if(!q && cat==="Все"){ box.classList.remove("open"); box.innerHTML=""; return; }
+    if(!q && cat==="Все"){
+      box.innerHTML = `<div class="sr-head">Популярные запросы</div>` +
+        ["гитара","микрофон","наушники","синтезатор"].map(pq=>
+          `<a class="sr-item" href="catalog.html?fSearch=${encodeURIComponent(pq)}"><div class="sr-item__ic" style="font-size:14px;font-weight:800">#</div><span class="sr-item__name">${pq}</span></a>`).join("");
+      box.classList.add("open");
+      return;
+    }
 
     const pages = SITE_PAGES.filter(([u,t])=> q && t.toLowerCase().includes(q));
     const pagesHtml = pages.length ? `<div class="sr-head">Разделы сайта</div>` + pages.map(([u,t])=>
@@ -244,11 +252,13 @@ function renderUserChip(){
   if(!chip) return;
   const u = getCurrentUser();
   if(u && (u.name || u.email)){
-    chip.innerHTML = `👤 <span class="user-name">${escapeHtml(u.name||u.email)}</span>
+    const initials = String(u.name||u.email||"U").trim().split(/\s+/).map(w=>w[0]||"").join("").substring(0,2).toUpperCase();
+    chip.innerHTML = `<span class="mini-avatar">${escapeHtml(initials)}</span>
+      <span class="user-name">${escapeHtml(u.name||u.email)}</span>
       <button class="btn-logout" onclick="logout()">Выход</button>`;
   } else {
-    if(u) setCurrentUser(null); // некорректная запись — сбрасываем
-    chip.innerHTML = `<a href="auth.html" style="color:#fff;">🔑 Войти</a>`;
+    if(u) setCurrentUser(null);
+chip.innerHTML = `<span class="mini-avatar" style="font-size:14px">👤</span><a href="auth.html" style="color:#fff;font-weight:600;white-space:nowrap">Войти</a>`;
   }
 }
 window.logout = function(){ setCurrentUser(null); toast("Вы вышли из аккаунта"); };
@@ -338,5 +348,19 @@ function renderPage(active){
   seedReviews();
   renderFavCount();
   applyTheme();
+  initHeaderGlobal();
   if(window.loadProducts) loadProducts().then(fillSearchCats);
+}
+function initHeaderGlobal(){
+  if(window.__headerInit) return;
+  window.__headerInit = true;
+  document.addEventListener("keydown", ev=>{
+    const t = document.activeElement ? document.activeElement.tagName : "";
+    if(ev.key==="/" && !/INPUT|TEXTAREA|SELECT/.test(t)){ ev.preventDefault(); const i=document.getElementById("gsInput"); if(i) i.focus(); }
+    if(ev.key==="Escape"){ const box=document.getElementById("gsResults"); if(box) box.classList.remove("open"); const i=document.getElementById("gsInput"); if(i && document.activeElement===i) i.blur(); }
+  });
+  const hd = document.querySelector(".header");
+  const onScroll = ()=>{ if(hd) hd.classList.toggle("scrolled", window.scrollY>20); };
+  window.addEventListener("scroll", onScroll, {passive:true});
+  onScroll();
 }
