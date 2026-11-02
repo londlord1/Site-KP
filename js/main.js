@@ -14,11 +14,9 @@ function navHtml(active){
 }
 
 function headerHtml(active){
-  return `
+return `
   <header class="header"><a class="skip-link" href="#content">К содержанию</a>
-    <div class="topbar">🚚 Бесплатная доставка по России · ☎ 8-800-123-45-67 · Поддержка 10:00–20:00</div>
     <div class="container header__row">
-    <button class="burger" onclick="document.querySelector('#topNav').classList.toggle('open')" aria-label="Меню">☰</button>
     <a class="logo" href="index.html">Sound<b>Craft</b></a>
     <nav class="nav" id="topNav">${navHtml(active)}</nav>
     <div class="search" id="globalSearch">
@@ -30,8 +28,6 @@ function headerHtml(active){
       <div class="search-results" id="gsResults"></div>
     </div>
     <div class="header__right">
-      <a class="fav-wrap" href="favorites.html" title="Избранное" aria-label="Избранное">♥<span class="fav-badge" id="favCount"></span></a>
-      
       <a class="cart-btn" href="cart.html">🛒 Корзина <span class="cart-count" id="cartCount"></span></a>
       <span class="user-chip" id="userChip"></span>
     </div>
