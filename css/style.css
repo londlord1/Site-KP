@@ -560,3 +560,24 @@ input,select,textarea{font-family:inherit}
   .filters{display:none;max-height:0;overflow:hidden;opacity:0}
   .filters.open{display:block;max-height:1200px;opacity:1;margin-bottom:16px}
 }
+
+
+/* ===== Авторизация: вкладки, иконки, глазок, сложность, соц.кнопки ===== */
+.auth-tabs{display:flex;gap:6px;background:var(--line);border-radius:12px;padding:4px;margin-bottom:18px}
+.atab{flex:1;border:none;background:transparent;padding:10px;border-radius:9px;font-weight:700;font-size:15px;color:var(--muted);cursor:pointer;transition:.15s}
+.atab.active{background:#fff;color:var(--ink);box-shadow:var(--shadow)}
+.input-ic{position:relative;display:flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:10px;padding:0 10px;background:#fff;color:var(--muted);font-size:14px;transition:.15s}
+.input-ic:focus-within{border-color:var(--brand);box-shadow:var(--ring)}
+.input-ic input{flex:1;border:none;outline:none;padding:10px 0;font-size:14px;background:transparent;color:var(--ink);box-shadow:none!important}
+.input-ic .eye{border:none;background:none;font-size:16px;cursor:pointer;padding:0;color:var(--muted)}
+.auth-row{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:4px 0 14px;font-size:14px}
+.strength{margin-top:8px}
+.str-track{height:6px;background:var(--line);border-radius:6px;overflow:hidden}
+.str-track i{display:block;height:100%;transition:width .3s ease}
+.strength em{font-style:normal;font-size:12px;font-weight:700;display:block;margin-top:4px}
+.auth-divider{text-align:center;color:var(--muted);font-size:13px;margin:16px 0;position:relative}
+.auth-divider::before,.auth-divider::after{content:"";position:absolute;top:50%;width:42%;height:1px;background:var(--line)}
+.auth-divider::before{left:0}.auth-divider::after{right:0}
+.auth-socials{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
+.soc{padding:9px 6px;border:1px solid var(--line);border-radius:10px;background:#fff;color:var(--ink);font-weight:700;font-size:13px;cursor:pointer;transition:.15s}
+.soc:hover{border-color:var(--brand);color:var(--brand)}

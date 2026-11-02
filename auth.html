@@ -4,104 +4,214 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Вход и регистрация — SoundCraft</title>
-  <link rel="stylesheet" href="css/style.css?v=13">
+  <meta name="description" content="Вход и регистрация в интернет-магазине музыкальных инструментов">
+  <link rel="stylesheet" href="css/style.css?v=14">
 </head>
 <body>
   <section class="section">
     <div class="auth-wrap">
-      <h1 id="authTitle">Вход в аккаунт</h1>
+      <div class="auth-tabs">
+        <button class="atab active" data-mode="login">Вход</button>
+        <button class="atab" data-mode="register">Регистрация</button>
+      </div>
+
       <div class="form-msg" id="msg"></div>
 
-      <form id="authForm">
-        <div class="field" id="regNameField" style="display:none"><label>ФИО
-          <span class="help">?<span class="tip">ФИО используется для адреса доставки и обращений к вам. После регистрации в аккаунте отображается только ваше имя — остальное останется в профиле.</span></span>
-        </label>
-          <input type="text" id="regName" placeholder="Фамилия Имя Отчество"></div>
+      <!-- Вход -->
+      <form id="loginForm">
         <div class="field"><label>Email</label>
-          <input type="email" id="email" placeholder="you@example.ru" required autofocus></div>
+          <div class="input-ic">@<input type="email" id="email" placeholder="you@example.ru" autocomplete="username" required></div>
+        </div>
         <div class="field"><label>Пароль</label>
-          <input type="password" id="pass" placeholder="Минимум 5 символов" required></div>
-        <button class="btn btn--block" type="submit" id="submitBtn">Войти</button>
+          <div class="input-ic">🔒<input type="password" id="pass" placeholder="Ваш пароль" autocomplete="current-password" required>
+            <button type="button" class="eye" onclick="togglePass('pass', this)" aria-label="Показать пароль">👁</button>
+          </div>
+        </div>
+        <div class="auth-row">
+          <label class="check-row" style="margin:0"><input type="checkbox" id="remember"> Запомнить меня</label>
+          <a class="auth-link" style="margin:0;color:var(--brand);font-weight:700" href="#" onclick="return showForgot(event)">Забыли пароль?</a>
+        </div>
+        <button class="btn btn--block" type="submit" id="loginBtn">Войти</button>
       </form>
 
-      <div class="auth-link" id="toggleLink"></div>
+      <!-- Регистрация -->
+      <form id="regForm" style="display:none">
+        <div class="field"><label>ФИО <span class="help">?<span class="tip">ФИО используется для адреса доставки и обращений к вам. После регистрации в аккаунте отображается только ваше имя.</span></span></label>
+          <div class="input-ic">👤<input type="text" id="regName" placeholder="Фамилия Имя Отчество" required></div>
+        </div>
+        <div class="field"><label>Email</label>
+          <div class="input-ic">@<input type="email" id="regEmail" placeholder="you@example.ru" autocomplete="username" required></div>
+        </div>
+        <div class="field"><label>Пароль</label>
+          <div class="input-ic">🔒<input type="password" id="regPass" placeholder="Минимум 6 символов" autocomplete="new-password" required>
+            <button type="button" class="eye" onclick="togglePass('regPass', this)" aria-label="Показать пароль">👁</button>
+          </div>
+          <div class="strength" id="strengthBar"></div>
+        </div>
+        <div class="field"><label>Подтвердите пароль</label>
+          <div class="input-ic">🔒<input type="password" id="regPass2" placeholder="Повторите пароль" autocomplete="new-password" required></div>
+        </div>
+        <button class="btn btn--block" type="submit">Создать аккаунт</button>
+      </form>
+
+      <!-- Восстановление пароля -->
+      <form id="forgotForm" style="display:none">
+        <h3 style="margin:0 0 10px">Восстановление пароля</h3>
+        <p style="color:var(--muted);font-size:14px;margin:0 0 12px">Укажите email от аккаунта — вышлем инструкцию по смене пароля.</p>
+        <div class="field"><label>Email</label><input type="email" id="forgotEmail" placeholder="you@example.ru" required></div>
+        <button class="btn btn--block" type="submit">Отправить инструкцию</button>
+        <a class="auth-link" style="display:block;text-align:center;margin-top:12px" href="#" onclick="return backToLogin(event)">← Вернуться ко входу</a>
+      </form>
+
+      <div class="auth-divider"><span>или</span></div>
+      <div class="auth-socials">
+        <button class="soc" onclick="socLogin('ВКонтакте')">ВКонтакте</button>
+        <button class="soc" onclick="socLogin('Google')">Google</button>
+        <button class="soc" onclick="socLogin('Яндекс')">Яндекс</button>
+      </div>
+      <div class="auth-link" id="switchLink">
+        Нет аккаунта? <a href="#" onclick="return switchTab(event,'register')">Зарегистрироваться</a>
+      </div>
+      <div class="auth-link" style="margin-top:14px"><a href="catalog.html" style="color:var(--muted)">Продолжить как гость →</a></div>
     </div>
   </section>
 
-  <script src="js/data.js?v=13"></script>
-  <script src="js/api.js?v=13"></script>
-  <script src="js/main.js?v=13"></script>
+  <script src="js/data.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/main.js"></script>
   <script>
-    renderPage();
+    renderPage("auth.html");
+    renderFavCount();
+    renderUserChip();
+    initSearch();
 
-    let mode = "login"; // login | register
-    const emailEl = document.getElementById("email");
-    const passEl = document.getElementById("pass");
+    let tries = 0, lockUntil = 0;
 
-    function renderForm(){
-      const isLogin = mode==="login";
-      document.getElementById("authTitle").textContent = isLogin ? "Вход в аккаунт" : "Регистрация";
-      document.getElementById("regNameField").style.display = isLogin ? "none" : "block";
-      document.getElementById("submitBtn").textContent = isLogin ? "Войти" : "Создать аккаунт";
-      document.getElementById("toggleLink").innerHTML = isLogin
-        ? "Нет аккаунта? <a href=\"#\" onclick=\"return switchMode(event)\">Зарегистрироваться</a>"
-        : "Уже есть аккаунт? <a href=\"#\" onclick=\"return switchMode(event)\">Войти</a>";
+    /* вкладки */
+    function switchTab(ev, mode){
+      if(ev && ev.preventDefault) ev.preventDefault();
+      mode = mode==="register" ? "register" : "login";
+      document.querySelectorAll(".atab").forEach(b=>b.classList.toggle("active", b.dataset.mode===mode));
+      document.getElementById("loginForm").style.display = mode==="login" ? "block" : "none";
+      document.getElementById("regForm").style.display = mode==="register" ? "block" : "none";
+      document.getElementById("forgotForm").style.display = "none";
+      const email = document.getElementById("email").value.trim() || document.getElementById("regEmail").value.trim();
+      if(email){ document.getElementById(mode==="login" ? "email" : "regEmail").value = email; }
+      document.getElementById("switchLink").innerHTML = mode==="login"
+        ? 'Нет аккаунта? <a href="#" onclick="return switchTab(event,\'register\')">Зарегистрироваться</a>'
+        : 'Уже есть аккаунт? <a href="#" onclick="return switchTab(event,\'login\')">Войти</a>';
+      document.getElementById(mode==="login" ? "email" : "regEmail").focus();
+      document.getElementById("msg").className = "form-msg"; document.getElementById("msg").textContent = "";
     }
-    window.switchMode = function(e){
-      e.preventDefault();
-      mode = mode==="login" ? "register" : "login";
-      renderForm();
-      return false;
+    window.switchTab = switchTab;
+    document.querySelectorAll(".atab").forEach(b => b.addEventListener("click", ()=> switchTab(null, b.dataset.mode)));
+    function showForgot(ev){ ev.preventDefault(); document.getElementById("loginForm").style.display="none"; document.getElementById("regForm").style.display="none"; document.getElementById("forgotForm").style.display="block"; return false; }
+    function backToLogin(ev){ ev.preventDefault(); switchTab(null,"login"); return false; }
+
+    /* глазок */
+    window.togglePass = function(id, btn){
+      const f = document.getElementById(id);
+      const show = f.type==="password";
+      f.type = show ? "text" : "password";
+      btn.textContent = show ? "🙈" : "👁";
     };
 
-    function showMsg(text, ok){
-      const m = document.getElementById("msg");
-      m.className = "form-msg show " + (ok ? "form-msg--ok" : "form-msg--err");
-      m.textContent = text;
-    }
-
-    document.getElementById("authForm").addEventListener("submit", e=>{
-      e.preventDefault();
-      const email = emailEl.value.trim().toLowerCase();
-      const pass = passEl.value;
-      const name = document.getElementById("regName").value.trim();
-
-      if(pass.length < 5){ showMsg("Пароль должен быть не короче 5 символов"); return; }
-
-      let users = getUsers();
-
-      if(mode==="register"){
-        if(!name){ showMsg("Укажите ФИО"); return; }
-        if(email===ADMIN_EMAIL){ showMsg("Этот email зарезервирован для администратора"); return; }
-        if(users.some(u=>u.email===email)){ showMsg("Пользователь с таким email уже существует. Войдите."); mode="login"; renderForm(); return; }
-        const fullName = name.trim();
-        const parts = fullName.split(/\s+/);
-        const firstName = parts.length>1 ? parts[1] : parts[0]; // показываем имя (в ФИО оно второе), а не фамилию
-        users.push({name: fullName, email, pass});
-        setUsers(users);
-        setCurrentUser({name: firstName, email});
-        toast("Аккаунт создан. Добро пожаловать, " + firstName + "!");
-        showMsg("Регистрация успешна! Вы вошли в аккаунт.", true);
-        setTimeout(()=>location.href="index.html", 900);
-        return;
-      }
-
-      if(window.adminCreds && window.adminCreds(email, pass)){
-        window.grantAdmin();
-        showMsg("Вход администратора выполнен.", true);
-        setTimeout(()=>location.href="admin.html", 900);
-        return;
-      }
-
-      const user = users.find(u=>u.email===email && u.pass===pass);
-      if(!user){ showMsg("Неверный email или пароль"); return; }
-      setCurrentUser({name:user.name, email:user.email});
-      toast("С возвращением, " + user.name + "!");
-      showMsg("Вы вошли в аккаунт.", true);
-      setTimeout(()=>location.href="index.html", 900);
+    /* индикатор сложности пароля */
+    document.getElementById("regPass").addEventListener("input", function(){
+      const v = this.value; const bar = document.getElementById("strengthBar");
+      let lvl = 0, txt="", color="#b91c1c";
+      if(v.length>=6) lvl++;
+      if(/[A-Za-zА-Яа-я]/.test(v) && /\d/.test(v)) lvl++;
+      if(v.length>=10) lvl++;
+      if(lvl<=1){ txt="Слабый"; } else if(lvl===2){ txt="Средний"; color="#b8860b";
+      } else { txt="Сильный"; color="#15803d"; }
+      bar.innerHTML = `<div class="str-track"><i style="width:${lvl/3*100}%;background:${color}"></i></div><em style="color:${color}">${txt}</em>`;
     });
 
-    renderForm();
+    /* блокировка после неудач */
+    function maybeLock(){
+      const btn = document.getElementById("loginBtn");
+      if(Date.now() < lockUntil){
+        const left = Math.ceil((lockUntil-Date.now())/1000);
+        btn.disabled = true; btn.textContent = "Подождите " + left + " с";
+        setTimeout(maybeLock, 500);
+        return true;
+      }
+      btn.disabled = false; btn.textContent = "Войти";
+      return false;
+    }
+
+    /* вход */
+    document.getElementById("loginForm").addEventListener("submit", e=>{
+      e.preventDefault();
+      if(maybeLock()) return;
+      const email = document.getElementById("email").value.trim().toLowerCase();
+      const pass = document.getElementById("pass").value;
+      const msg = document.getElementById("msg");
+      if(!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)){ msg.className="form-msg show form-msg--err"; msg.textContent="Введите корректный email"; return; }
+      if(window.adminCreds(email, pass)){ window.grantAdmin(); msg.className="form-msg show form-msg--ok"; msg.textContent="Вход администратора выполнен."; setTimeout(()=>location.href="admin.html",900); return; }
+      const user = getUsers().find(u=>u.email===email && u.pass===pass);
+      if(user){
+        setCurrentUser({name:user.name, email:user.email});
+        if(document.getElementById("remember").checked) localStorage.setItem("sc_saved_email", email);
+        toast("С возвращением, " + user.name + "!");
+        location.href = "index.html";
+      } else {
+        tries++; lockUntil = Date.now() + (tries>=3 ? 30000 : 0);
+        msg.className="form-msg show form-msg--err";
+        msg.textContent = tries>=3 ? "Слишком много попыток. Подождите 30 секунд." : "Неверный email или пароль";
+        maybeLock();
+      }
+    });
+
+    /* регистрация */
+    document.getElementById("regForm").addEventListener("submit", e=>{
+      e.preventDefault();
+      const name = document.getElementById("regName").value.trim();
+      const email = document.getElementById("regEmail").value.trim().toLowerCase();
+      const pass = document.getElementById("regPass").value;
+      const pass2 = document.getElementById("regPass2").value;
+      const msg = document.getElementById("msg");
+      if(!name){ msg.className="form-msg show form-msg--err"; msg.textContent="Укажите ФИО"; return; }
+      if(!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)){ msg.className="form-msg show form-msg--err"; msg.textContent="Введите корректный email"; return; }
+      if(email===ADMIN_EMAIL){ msg.className="form-msg show form-msg--err"; msg.textContent="Этот email зарезервирован для администратора"; return; }
+      if(pass.length<6 || !/\d/.test(pass) || !/[a-zA-Zа-яА-Я]/.test(pass)){ msg.className="form-msg show form-msg--err"; msg.textContent="Пароль должен быть минимум 6 символов и содержать буквы и цифры"; return; }
+      if(pass!==pass2){ msg.className="form-msg show form-msg--err"; msg.textContent="Пароли не совпадают"; return; }
+      const users = getUsers();
+      if(users.some(u=>u.email===email)){ msg.className="form-msg show form-msg--err"; msg.textContent="Пользователь с таким email уже существует. Войдите."; switchTab(null,"login"); return; }
+      const firstName = name.split(/\s+/).length>1 ? name.split(/\s+/)[1] : name.split(/\s+/)[0];
+      users.push({name, email, pass});
+      setUsers(users);
+      setCurrentUser({name: firstName, email});
+      toast("Аккаунт создан. Добро пожаловать, " + firstName + "!");
+      location.href = "index.html";
+    });
+
+    /* восстановление */
+    document.getElementById("forgotForm").addEventListener("submit", e=>{
+      e.preventDefault();
+      const em = document.getElementById("forgotEmail").value.trim();
+      const msg = document.getElementById("msg");
+      if(!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(em)){ msg.className="form-msg show form-msg--err"; msg.textContent="Введите корректный email"; return; }
+      msg.className="form-msg show form-msg--ok";
+      msg.textContent = "Инструкция по восстановлению отправлена на " + em;
+      setTimeout(()=>switchTab(null,"login"), 1600);
+    });
+
+    /* соц. вход (имитация) */
+    window.socLogin = function(provider){
+      const users = getUsers();
+      const email = provider.toLowerCase().replace("ё","е") + ".user@ya.ru";
+      let user = users.find(u=>u.email===email);
+      if(!user){ user = {name: "Пользователь " + provider, email, pass:"soc12345"}; users.push(user); setUsers(users); }
+      setCurrentUser({name:user.name, email:user.email});
+      toast("Вход через " + provider);
+      location.href = "index.html";
+    };
+
+    /* авто-заполнение сохранённого email */
+    const saved = localStorage.getItem("sc_saved_email");
+    if(saved) document.getElementById("email").value = saved;
   </script>
 </body>
 </html>
