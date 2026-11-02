@@ -322,6 +322,14 @@ function renderPage(active){
   header.innerHTML = headerHtml(active);
   bdy.insertBefore(header.firstElementChild, bdy.firstElementChild);
   bdy.insertAdjacentHTML("beforeend", footerHtml());
+  const mb = document.createElement("div");
+  mb.className = "mob-bar";
+  mb.innerHTML =
+    `<a href="index.html" class="${active==="index.html"?"on":""}">🏠<span>Главная</span></a>` +
+    `<a href="catalog.html" class="${active==="catalog.html"?"on":""}">🔍<span>Каталог</span></a>` +
+    `<a href="cart.html" class="${active==="cart.html"?"on":""}">🛒<span>Корзина</span></a>` +
+    `<a href="profile.html" class="${active==="profile.html"?"on":""}">👤<span>Профиль</span></a>`;
+  bdy.appendChild(mb);
   const sec = document.querySelector("main, .section");
   if(sec && !sec.id) sec.id = "content";
   renderCartCount();

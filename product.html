@@ -5,20 +5,25 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Товар — SoundCraft</title>
   <link rel="icon" type="image/svg+xml" href="img/favicon.svg">
-  <link rel="stylesheet" href="css/style.css?v=22">
+  <link rel="stylesheet" href="css/style.css?v=23">
 </head>
 <body>
   <section class="section">
     <div class="container">
       <nav class="breadcrumbs"><a href="index.html">Главная</a> / <a href="catalog.html">Каталог</a> / <span id="bcCat"></span></nav>
       <div class="product" id="product"></div>
+      <div class="reviews-acc">
+        <button class="acc-toggle" onclick="toggleAcc(this)" aria-expanded="false">Показать описание ▾</button>
+        <div class="acc-body" id="accDesc" style="display:none"></div>
+      </div>
       <div class="reviews" id="reviewsBox"></div>
+      <div class="product-sticky"><button class="btn btn--block" onclick="buy(this)">Добавить в корзину</button></div>
     </div>
   </section>
 
-  <script src="js/data.js?v=22"></script>
-  <script src="js/api.js?v=22"></script>
-  <script src="js/main.js?v=22"></script>
+  <script src="js/data.js?v=23"></script>
+  <script src="js/api.js?v=23"></script>
+  <script src="js/main.js?v=23"></script>
   <script>
     renderPage("catalog.html");
 
@@ -66,6 +71,15 @@
         if(gimgs[0]) setMain(gimgs[0]);
         window.setPG = function(i){ const u=gimgs[i]; if(u) setMain(u); document.querySelectorAll(".pg-thumb").forEach((t,j)=>t.classList.toggle("active", j===i)); };
         trackViewed(p.id);
+        const acc = document.getElementById("accDesc");
+        if(acc) acc.innerHTML = `<div class="edit-card"><h3 style="margin:0 0 8px">Описание и характеристики</h3><p style="margin:0">${escapeHtml(p.desc||"")}</p></div>`;
+        window.toggleAcc = function(btn){
+          const body = document.getElementById("accDesc");
+          const open = body.style.display!=="none";
+          body.style.display = open ? "none" : "block";
+          btn.textContent = open ? "Показать описание ▾" : "Скрыть описание ▴";
+          btn.setAttribute("aria-expanded", String(!open));
+        };
         // отзывы и рейтинг
         function getReviews(){ try{ return JSON.parse(localStorage.getItem("sc_reviews")||"[]"); }catch(e){ return []; } }
         function renderReviews(){

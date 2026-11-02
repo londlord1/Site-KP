@@ -627,3 +627,33 @@ input,select,textarea{font-family:inherit}
 [data-theme="dark"] .empty-state,.no-rv{color:var(--muted)}
 .toggle{width:36px;height:36px;border:none;border-radius:10px;background:rgba(255,255,255,.12);color:#fff;font-size:16px;cursor:pointer;transition:.15s;flex:none}
 .toggle:hover{background:rgba(255,255,255,.22)}
+
+
+/* ===== МОБИЛЬНЫЕ УЛУЧШЕНИЯ ===== */
+.mob-bar{display:none}
+@media(max-width:900px){
+  body{padding-bottom:64px}
+  .mob-bar{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:90;background:#fff;border-top:1px solid var(--line);
+    box-shadow:0 -4px 16px rgba(16,19,31,.08);padding-bottom:env(safe-area-inset-bottom)}
+  [data-theme="dark"] .mob-bar{background:#12161f;border-top-color:#272e3d}
+  .mob-bar a{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 0 6px;font-size:11px;color:var(--muted);min-height:48px;justify-content:center}
+  .mob-bar a.on{color:var(--brand);font-weight:700}
+  .mob-bar a span{line-height:1}
+  /* прилипающая кнопка покупки на товаре */
+  .product-sticky{position:fixed;left:0;right:0;bottom:0;z-index:85;background:#fff;padding:10px 14px calc(10px + env(safe-area-inset-bottom));border-top:1px solid var(--line)}
+  [data-theme="dark"] .product-sticky{background:#12161f;border-top-color:#272e3d}
+  .product-sticky .btn{width:100%}
+  /* полноэкранная панель фильтров (выезжает снизу) */
+  .filters{position:fixed;left:0;right:0;bottom:0;z-index:95;margin:0;max-height:82vh;overflow-y:auto;border-radius:18px 18px 0 0;box-shadow:0 -8px 30px rgba(0,0,0,.25);
+    transform:translateY(105%);transition:transform .28s ease;background:var(--card);padding:16px 16px calc(16px + env(safe-area-inset-bottom))}
+  .filters.open{transform:translateY(0)}
+  .filters::before{content:"Фильтры";display:block;font-weight:800;font-size:18px;margin-bottom:12px}
+  .filters::after{content:"";display:block;height:26px}
+  .filter-actions{position:sticky;bottom:0;background:var(--card);padding:10px 0 0;margin-top:10px}
+  /* тач-цели */
+  .btn--sm,.btn--buy,.btn--view{min-height:40px}
+  .fav-btn{width:40px;height:40px}
+  .search-clear{width:26px;height:26px}
+  body:has(.product-sticky){padding-bottom:118px}
+}
+@media(min-width:901px){ .product-sticky{display:none} }

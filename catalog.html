@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Каталог — SoundCraft</title>
   <link rel="icon" type="image/svg+xml" href="img/favicon.svg">
-  <link rel="stylesheet" href="css/style.css?v=22">
+  <link rel="stylesheet" href="css/style.css?v=23">
 </head>
 <body>
   <section class="section">
@@ -13,7 +13,7 @@
       <h1 style="margin:0 0 8px">Каталог товаров</h1>
       <nav class="crumbs"><a href="index.html">Главная</a><span>·</span><span>Каталог</span></nav>
       <div class="catalog">
-        <aside class="filters">
+        <aside class="filters" id="filters">
           <h3>Фильтры</h3>
           <div class="field">
             <label>Поиск</label>
@@ -52,7 +52,10 @@
             </select>
           </div>
           <label class="check-row"><input type="checkbox" id="fInStock"> Только в наличии</label>
-          <button class="btn btn--sm" style="background:var(--line);color:var(--ink);box-shadow:none" onclick="resetFilters()">Сбросить</button>
+          <div class="filter-actions">
+            <button class="btn btn--block btn--sm" onclick="closeFilters()">Показать (<span id="fCount">${PRODUCTS.length}</span>)</button>
+            <button class="btn btn--sm btn--grey" style="width:100%;margin-top:8px" onclick="resetFilters()">Сбросить фильтры</button>
+          </div>
         </aside>
 
         <div>
@@ -70,9 +73,9 @@
     </div>
   </section>
 
-  <script src="js/data.js?v=22"></script>
-  <script src="js/api.js?v=22"></script>
-  <script src="js/main.js?v=22"></script>
+  <script src="js/data.js?v=23"></script>
+  <script src="js/api.js?v=23"></script>
+  <script src="js/main.js?v=23"></script>
   <script>
     renderPage("catalog.html");
 
@@ -106,10 +109,12 @@
       if(sort==="name") arr = arr.sort((a,b)=>a.name.localeCompare(b.name,"ru"));
       if(sort==="rating") arr = arr.sort((a,b)=>numRate(b.id)-numRate(a.id));
       if(sort==="disc") arr = arr.sort((a,b)=>((b.oldPrice?b.oldPrice-b.price:0)-(a.oldPrice?a.oldPrice-a.price:0)));
-      renderList(arr);
+renderList(arr);
       renderActiveFilters();
+      const fc = document.getElementById("fCount"); if(fc) fc.textContent = arr.length;
       saveFilters();
     }
+    window.closeFilters = function(){ document.getElementById("filters").classList.remove("open"); };
     function revCountFor(id){ try{ return JSON.parse(localStorage.getItem("sc_reviews")||"[]").filter(r=>r.id===id).length; }catch(e){ return 0; } }
     function numRate(id){ const v = parseFloat(avgRating(id)); return isNaN(v) ? 0 : v; }
     function renderActiveFilters(){
