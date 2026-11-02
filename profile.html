@@ -4,76 +4,210 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Личный кабинет — SoundCraft</title>
-  <link rel="stylesheet" href="css/style.css?v=11">
+  <meta name="description" content="Личный кабинет покупателя интернет-магазина музыкальных инструментов">
+  <link rel="stylesheet" href="css/style.css?v=12">
 </head>
 <body>
   <section class="section">
     <div class="container">
-      <h1 style="margin:0 0 20px">Личный кабинет</h1>
       <div id="profileBody">
         <div class="empty">Загрузка...</div>
       </div>
     </div>
   </section>
 
-  <script src="js/data.js?v=11"></script>
-  <script src="js/api.js?v=11"></script>
-  <script src="js/main.js?v=11"></script>
+  <script src="js/data.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/main.js"></script>
   <script>
     renderPage("profile.html");
-    renderCartCount();
+    renderFavCount();
     renderUserChip();
     initSearch();
-    if(window.loadProducts) loadProducts().then(fillSearchCats);
+    loadProducts().then(fillSearchCats);
 
     const wrap = document.getElementById("profileBody");
     const u = getCurrentUser();
     if(!u){
-      wrap.innerHTML = `<div class="empty">Для доступа в личный кабинет выполните вход.
-        <br><a class="btn" style="margin-top:14px" href="auth.html">Войти или зарегистрироваться</a></div>`;
+      wrap.innerHTML = `<div class="empty-state"><div class="empty-ico">👤</div>Для доступа в личный кабинет выполните вход.<br>
+        <a class="btn btn--sm" style="margin-top:14px" href="auth.html">Войти или зарегистрироваться</a></div>`;
     } else {
-      wrap.innerHTML = `
-        <div class="info-card" style="margin-bottom:20px;max-width:420px">
-          <h3 style="margin:0 0 12px">Профиль</h3>
-          <ul class="info-list">
-            <li>👤 <b>${escapeHtml(u.name||"—")}</b></li>
-            <li>✉️ ${escapeHtml(u.email||"—")}</li>
-          </ul>
-        </div>
-        <h2 style="font-size:22px">Уведомления</h2>
-        <div id="notifsList"></div>
-        <h2 style="font-size:22px;margin-top:24px">История заказов</h2>
-        <div id="ordersList"></div>`;
+      const orders = JSON.parse(localStorage.getItem("sc_orders")||"[]");
+      const spent = orders.reduce((s,o)=>s+(Number(o.total)||0),0);
+      const initials = String(u.name||"U").trim().split(/\s+/).map(w=>w[0]||"").join("").substring(0,2).toUpperCase() || "U";
       const notifs = JSON.parse(localStorage.getItem("sc_notifications")||"[]");
-      const nl = document.getElementById("notifsList");
-      nl.innerHTML = notifs.length
-        ? notifs.slice().reverse().map(n=>`<div class="sum-row" style="border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-bottom:10px">
-            <span>🔔 ${escapeHtml(n.text||"")}</span>
-            <span style="margin-left:auto;font-size:13px;color:var(--muted)">${escapeHtml(n.date||"")}</span>
-          </div>`).join("")
-        : `<div class="empty" style="padding:12px 0">Уведомлений нет.</div>`;
-      const history = JSON.parse(localStorage.getItem("sc_orders")||"[]");
-      const ol = document.getElementById("ordersList");
-      if(!history.length){
-        ol.innerHTML = `<div class="empty" style="padding:24px 0">Заказов пока нет. <a href="catalog.html" style="color:var(--brand)">Перейти в каталог</a></div>`;
-      } else {
-        ol.innerHTML = history.reverse().map((o,i)=>`
-          <div class="sum-row" style="border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:12px;flex-wrap:wrap;gap:8px">
-            <span><b>Заказ №${1000+i+1}</b><br>${escapeHtml(o.date||"")}</span>
-            <span style="margin-left:auto;text-align:right"><b>${fmtPrice(o.total||0)}</b><br><span style="font-size:13px">${escapeHtml(o.pay||"")}</span></span>
-            <span style="flex:1 1 100%;font-size:13px;color:var(--ok)">Статус: <b>${escapeHtml(o.status||"Новый")}</b>
-              ${(o.items||[]).some(x=>x.id) ? `<button class="btn btn--sm" style="margin-left:10px" onclick="repeatOrder(${i})">Заказать снова</button>` : ""}
-            </span>
-          </div>`).join("");
-      window.repeatOrder = function(i){
-        const orders = JSON.parse(localStorage.getItem("sc_orders")||"[]");
-        const o = orders[orders.length - 1 - i];   // список развёрнут: индекс i = порядок с конца
-        if(!o) return;
-        (o.items||[]).forEach(it=>{ if(it.id) addToCart(it.id, it.qty||1); });
-        toast("Товары добавлены в корзину");
-        location.href = "cart.html";
-      };
+      const unread = notifs.filter(n=>!n.read).length;
+
+      function render(){
+        wrap.innerHTML = `
+          <div class="profile-head">
+            <div class="avatar">${escapeHtml(initials)}</div>
+            <div>
+              <h1 style="margin:0">Здравствуйте, ${escapeHtml(String(u.name||"друг").split(" ")[0])}!</h1>
+              <div class="profile-meta"><span>${escapeHtml(u.email||"")}</span></div>
+            </div>
+            <div class="profile-stats">
+              <div class="kpi"><b>${orders.length}</b><span>заказов</span></div>
+              <div class="kpi"><b>${fmtPrice(spent)}</b><span>потрачено</span></div>
+              <div class="kpi"><b>${getFavs().length}</b><span>в избранном</span></div>
+            </div>
+          </div>
+
+          <div class="sort-bar">
+            <button class="btn btn--sm ptab active" data-p="profile">Профиль</button>
+            <button class="btn btn--sm ptab" data-p="orders">Заказы <span class="pbadge">${orders.length}</span></button>
+            <button class="btn btn--sm ptab" data-p="favs">Избранное <span class="pbadge">${getFavs().length}</span></button>
+            <button class="btn btn--sm ptab" data-p="notifs">Уведомления <span class="pbadge pbadge-hot">${unread}</span></button>
+          </div>
+
+          <div id="p-profile" class="ppane"></div>
+          <div id="p-orders" class="ppane" style="display:none"></div>
+          <div id="p-favs" class="ppane" style="display:none"></div>
+          <div id="p-notifs" class="ppane" style="display:none"></div>`;
+
+        document.querySelectorAll(".ptab").forEach(bt=>bt.addEventListener("click", ()=>{
+          document.querySelectorAll(".ptab").forEach(x=>x.classList.toggle("active", x===bt));
+          ["profile","orders","favs","notifs"].forEach(k=>{ document.getElementById("p-"+k).style.display = k===bt.dataset.p ? "block" : "none"; });
+        }));
+
+        renderProfile();
+        renderOrders();
+        renderFavs();
+        renderNotifs();
       }
+
+      function renderProfile(){
+        const users = JSON.parse(localStorage.getItem("sc_users")||"[]");
+        const me = users.find(x=>x.email===u.email)||{};
+        const el = document.getElementById("p-profile");
+        el.innerHTML = `
+          <div class="edit-card" style="max-width:560px">
+            <h2 class="edit-head" style="justify-content:flex-start">👤 Данные аккаунта</h2>
+            <form id="profForm">
+              <div class="edit-grid">
+                <div class="field"><label>Имя</label><input id="pName" value="${escapeHtml(u.name||"")}"></div>
+                <div class="field"><label>Email</label><input id="pEmail" value="${escapeHtml(u.email||"")}" disabled></div>
+                <div class="field"><label>Новый пароль</label><input id="pPass" type="password" placeholder="Оставьте пустым, чтобы не менять"></div>
+              </div>
+              <div class="edit-actions"><button class="btn btn--sm" type="submit">Сохранить</button></div>
+            </form>
+            <h2 class="edit-head" style="justify-content:flex-start;margin-top:20px">📍 Адреса доставки</h2>
+            <div id="addrList"></div>
+            <form id="addrForm" style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
+              <input id="addrNew" placeholder="Город, улица, дом, кв." style="flex:1;min-width:200px">
+              <button class="btn btn--sm" type="submit">Добавить</button>
+            </form>
+          </div>`;
+        const list = document.getElementById("addrList");
+        const addrs = JSON.parse(localStorage.getItem("sc_addrs")||"[]");
+        list.innerHTML = addrs.length ? addrs.map((a,i)=>`<div class="sum-row" style="border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin-bottom:8px;flex-wrap:wrap"><span>📦 ${escapeHtml(a)}</span><span style="margin-left:auto"><button class="btn btn--sm btn--grey" onclick="delAddr(${i})">Удалить</button></span></div>`).join("")
+          : `<p class="no-rv">Адресов пока нет.</p>`;
+        window.delAddr = function(i){ const a=JSON.parse(localStorage.getItem("sc_addrs")||"[]"); a.splice(i,1); localStorage.setItem("sc_addrs", JSON.stringify(a)); renderProfile(); };
+        document.getElementById("addrForm").addEventListener("submit", e=>{ e.preventDefault(); const v=document.getElementById("addrNew").value.trim(); if(!v) return;
+          const a=JSON.parse(localStorage.getItem("sc_addrs")||"[]"); a.push(v); localStorage.setItem("sc_addrs", JSON.stringify(a)); renderProfile(); });
+        document.getElementById("profForm").addEventListener("submit", e=>{
+          e.preventDefault();
+          const name = document.getElementById("pName").value.trim() || u.name;
+          const pass = document.getElementById("pPass").value;
+          const usersArr = JSON.parse(localStorage.getItem("sc_users")||"[]");
+          const i = usersArr.findIndex(x=>x.email===u.email);
+          if(i>=0){ usersArr[i].name = name; if(pass) usersArr[i].pass = pass; localStorage.setItem("sc_users", JSON.stringify(usersArr)); }
+          setCurrentUser({name, email:u.email});
+          toast("Профиль обновлён"); location.reload();
+        });
+      }
+
+      const STATUSES = ["Новый","Подтверждён","Собран","Отправлен","Доставлен","Отменён"];
+      let myOrders = orders.slice().reverse();
+      function renderOrders(){
+        const f = document.getElementById("ordFilter") ? document.getElementById("ordFilter").value : "all";
+        const srt = document.getElementById("ordSort") ? document.getElementById("ordSort").value : "new";
+        let list = myOrders.slice();
+        if(f!=="all") list = list.filter(o=>(o.status||"Новый")===f);
+        if(srt==="old") list = list.slice().reverse();
+        const el = document.getElementById("p-orders");
+        el.innerHTML = `
+          <div class="admin-toolbar">
+            <select id="ordFilter" style="max-width:180px">${['all',...STATUSES].map(s=>`<option value="${s}" ${s===f?"selected":""}>${s==="all"?"Все статусы":s}</option>`).join("")}</select>
+            <select id="ordSort" style="max-width:140px"><option value="new" ${srt==="new"?"selected":""}>Сначала новые</option><option value="old" ${srt==="old"?"selected":""}>Сначала старые</option></select>
+            <button class="btn btn--sm btn--grey" style="margin-left:auto" onclick="exportOrders()">Экспорт заказов</button>
+          </div>
+          ${list.length ? list.map((o,i)=>orderCard(o, i)).join("") : `<div class="empty-state"><div class="empty-ico">🧾</div>Заказов пока нет.<br><a class="btn btn--sm" style="margin-top:14px" href="catalog.html">Перейти в каталог</a></div>`}`;
+        const fs = document.getElementById("ordFilter"); if(fs) fs.addEventListener("change", renderOrders);
+        const ss = document.getElementById("ordSort"); if(ss) ss.addEventListener("change", renderOrders);
+      }
+      function orderCard(o, i){
+        const num = 1000 + (orders.length-1-i); // индекс в развёрнутом списке => номер
+        const st = o.status || "Новый";
+        const canCancel = !["Доставлен","Отменён"].includes(st);
+        return `<div class="order-item">
+          <div class="order-head">
+            <b>Заказ №${num}</b> <span class="rv-date">${escapeHtml(o.date||"")}</span>
+            <span class="order-status st-${st.toLowerCase().replace("ё","е")}">${escapeHtml(st)}</span>
+            <span style="margin-left:auto;font-weight:800">${fmtPrice(o.total||0)}</span>
+            <button class="btn btn--sm btn--grey" onclick="toggleOrder(this)">Детали ▾</button>
+          </div>
+          <div class="order-detail" style="display:none">
+            <ul class="info-list">
+              <li>👤 ${escapeHtml(o.name||"")}</li>
+              <li>📞 ${escapeHtml(o.phone||"")}</li>
+              <li>✉️ ${escapeHtml(o.email||"")}</li>
+              <li>📍 ${escapeHtml(o.addr||"—")}</li>
+              <li>💳 ${escapeHtml(o.pay||"—")}${o.promo?` · промо −${o.promo}₽`:""}</li>
+            </ul>
+            <div class="order-items">${(o.items||[]).map(it=>`<div class="sum-row"><span>${escapeHtml(it.name)} × ${it.qty}</span><span>${fmtPrice((it.price||0)*it.qty)}</span></div>`).join("")}</div>
+            <div class="edit-actions">
+              <button class="btn btn--sm" onclick="repeatOrder(${i})">Заказать снова</button>
+              ${canCancel?`<button class="btn btn--sm btn--grey" onclick="cancelOrder(${i})">Отменить заказ</button>`:""}
+            </div>
+          </div>
+        </div>`;
+      }
+      window.toggleOrder = function(btn){ const d=btn.closest(".order-item").querySelector(".order-detail"); const open=d.style.display!=="none"; d.style.display= open?"none":"block"; btn.textContent = open?"Детали ▾":"Скрыть ▴"; };
+      window.cancelOrder = function(i){
+        if(!confirm("Отменить заказ?")) return;
+        const list = JSON.parse(localStorage.getItem("sc_orders")||"[]");
+        list[list.length-1-i].status = "Отменён";
+        localStorage.setItem("sc_orders", JSON.stringify(list));
+        toast("Заказ отменён"); location.reload();
+      };
+      window.repeatOrder = function(i){
+        const list = JSON.parse(localStorage.getItem("sc_orders")||"[]");
+        const o = list[list.length-1-i]; if(!o) return;
+        (o.items||[]).forEach(it=>{ if(it.id) addToCart(it.id, it.qty||1); });
+        toast("Товары добавлены в корзину"); location.href="cart.html";
+      };
+      window.exportOrders = function(){
+        const blob = new Blob([JSON.stringify(orders,null,2)], {type:"application/json"});
+        const a = document.createElement("a"); a.href=URL.createObjectURL(blob); a.download="orders.json"; a.click();
+      };
+
+      function renderFavs(){
+        const favs = getFavs();
+        const items = PRODUCTS.filter(p=>favs.includes(p.id));
+        const el = document.getElementById("p-favs");
+        el.innerHTML = items.length ? items.map(p=>`<div class="sum-row" style="border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin-bottom:8px;flex-wrap:wrap">
+            <span>${p.icon} <b>${escapeHtml(p.name)}</b> — ${fmtPrice(p.price)}</span>
+            <span style="margin-left:auto">
+              <button class="btn btn--sm" onclick="location.href='product.html?id=${p.id}'">К товару</button>
+              <button class="btn btn--sm btn--grey" onclick="removeFavHere(${p.id})">Убрать</button>
+            </span></div>`).join("")
+          : `<div class="empty-state"><div class="empty-ico">♥</div>В избранном пусто.<br><a class="btn btn--sm" style="margin-top:14px" href="catalog.html">В каталог</a></div>`;
+        window.removeFavHere = function(id){ toggleFav(id); renderFavs(); };
+      }
+
+      function renderNotifs(){
+        const el = document.getElementById("p-notifs");
+        const list = notifs.slice().reverse();
+        el.innerHTML = list.length ? list.map((n,i)=>`<div class="sum-row" style="border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-bottom:8px;flex-wrap:wrap;background:${n.read?"var(--card)":"#eefaf4"}">
+            <span>🔔 ${escapeHtml(n.text||"")}</span>
+            <span style="margin-left:auto;font-size:12px;color:var(--muted)">${escapeHtml(n.date||"")}</span>
+          </div>`).join("") + `<button class="btn btn--sm btn--grey" style="margin-top:10px" onclick="clearNotifs()">Очистить уведомления</button>`
+          : `<div class="empty-state"><div class="empty-ico">🔕</div>Уведомлений нет.</div>`;
+        window.clearNotifs = function(){ localStorage.setItem("sc_notifications", JSON.stringify(notifs.map(n=>({...n, read:true})))); location.reload(); };
+      }
+
+      render();
     }
   </script>
 </body>

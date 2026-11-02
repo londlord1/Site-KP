@@ -520,3 +520,26 @@ input,select,textarea{font-family:inherit}
   .hero__media{height:240px;order:2}
   .hero__text{order:1}
 }
+
+
+/* ===== Личный кабинет ===== */
+.profile-head{display:flex;align-items:center;gap:18px;flex-wrap:wrap;margin-bottom:20px}
+.avatar{width:64px;height:64px;border-radius:50%;background:var(--brand);color:#fff;font-size:24px;font-weight:800;display:flex;align-items:center;justify-content:center;flex:none}
+.profile-meta{color:var(--muted);font-size:14px;margin-top:4px}
+.profile-stats{display:flex;gap:10px;margin-left:auto;flex-wrap:wrap}
+.ptab{position:relative}
+.pbadge{display:inline-flex;align-items:center;justify-content:center;min-width:18px;height:18px;border-radius:10px;background:var(--line);color:var(--ink);font-size:11px;font-weight:800;padding:0 5px;margin-left:6px}
+.pbadge-hot{background:var(--err);color:#fff}
+.order-item{border:1px solid var(--line);border-radius:14px;background:var(--card);margin-bottom:12px;overflow:hidden}
+.order-head{display:flex;align-items:center;gap:12px;padding:14px 16px;flex-wrap:wrap;cursor:pointer}
+.order-head .btn{cursor:pointer}
+.order-status{font-size:13px;font-weight:700;padding:3px 10px;border-radius:999px}
+.st-новый{background:#eef2ff;color:#3b5bdb}
+.st-подтверждён{background:#e8f7ff;color:#0b6bcb}
+.st-собран{background:#fff7e0;color:#b8860b}
+.st-отправлен{background:#f3e8ff;color:#9333ea}
+.st-доставлен{background:#dcfce7;color:#15803d}
+.st-отменён{background:#fee2e2;color:#b91c1c}
+.order-detail{padding:4px 16px 16px;border-top:1px solid var(--line)}
+.order-detail ul{margin-bottom:8px}
+.order-items{padding:8px 0}
