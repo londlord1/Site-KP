@@ -15,7 +15,9 @@ function navHtml(active){
 
 function headerHtml(active){
   return `
-  <header class="header"><a class="skip-link" href="#content">К содержанию</a><div class="container header__row">
+  <header class="header"><a class="skip-link" href="#content">К содержанию</a>
+    <div class="topbar">🚚 Бесплатная доставка по России · ☎ 8-800-123-45-67 · Поддержка 10:00–20:00</div>
+    <div class="container header__row">
     <button class="burger" onclick="document.querySelector('#topNav').classList.toggle('open')" aria-label="Меню">☰</button>
     <a class="logo" href="index.html">Sound<b>Craft</b></a>
     <nav class="nav" id="topNav">${navHtml(active)}</nav>
