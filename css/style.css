@@ -39,7 +39,7 @@ input,select,textarea{font-family:inherit}
   box-shadow:0 2px 14px rgba(0,0,0,.28)}
 .topbar{background:var(--brand);color:#fff;text-align:center;font-size:13px;font-weight:600;
   padding:7px 12px;letter-spacing:.2px}
-.header__row{display:flex;align-items:center;gap:20px;height:74px;max-width:1320px;margin:0 auto;padding:0 16px}
+.header__row{display:flex;align-items:center;gap:20px;height:74px;max-width:1600px;margin:0 auto;padding:0 28px}
 .logo{font-weight:800;font-size:25px;letter-spacing:.3px;white-space:nowrap}
 .logo b{color:var(--accent)}
 .nav{display:flex;gap:4px;flex:0 0 auto}
