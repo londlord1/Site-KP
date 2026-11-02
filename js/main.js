@@ -4,6 +4,8 @@
 const NAV_LINKS = [
   ["index.html","Главная"],
   ["catalog.html","Каталог"],
+  ["profile.html","Кабинет"],
+  ["admin.html","Админ"],
 ];
 
 function navHtml(active){
