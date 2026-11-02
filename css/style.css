@@ -657,3 +657,8 @@ input,select,textarea{font-family:inherit}
   body:has(.product-sticky){padding-bottom:118px}
 }
 @media(min-width:901px){ .product-sticky{display:none} }
+
+[data-theme="dark"] .banner{background:var(--card);border-color:var(--line)}
+[data-theme="dark"] .banner__media{background:linear-gradient(120deg, rgba(23,28,38,0) 0%, #1a2130 30%, #171c26 75%)}
+[data-theme="dark"] .banner__content span{color:#9aa2b8}
+[data-theme="dark"] .banner b{color:var(--ink)}
