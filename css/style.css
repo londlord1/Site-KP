@@ -747,3 +747,17 @@ input,select,textarea{font-family:inherit}
 /* кнопка «Фильтры» — только на мобильных */
 .sort-bar #filterToggle{display:none}
 @media(max-width:900px){.sort-bar #filterToggle{display:inline-flex}}
+
+/* ===== Тёмная тема: кнопки +- , выдача поиска, промокод ===== */
+[data-theme="dark"] .qty{border-color:var(--line)}
+[data-theme="dark"] .qty button{background:#20293a;color:var(--ink);border-color:var(--line)}
+[data-theme="dark"] .qty button:hover{background:#2a3346}
+[data-theme="dark"] .qty input{background:#10141c;color:var(--ink)}
+[data-theme="dark"] .sr-head{background:#1d2430;color:#9aa2b8}
+[data-theme="dark"] .sr-item{background:transparent;color:var(--ink)}
+[data-theme="dark"] .sr-item:hover{background:#1d2430}
+[data-theme="dark"] .sr-item__ic{background:#20293a}
+[data-theme="dark"] .sr-item__name{color:var(--ink)}
+[data-theme="dark"] #promoInput{background:#10141c;color:var(--ink);border-color:var(--line)}
+[data-theme="dark"] .cart-summary{background:var(--card);border-color:var(--line)}
+[data-theme="dark"] .cart-table,.cart-table tr{background:var(--card)}
