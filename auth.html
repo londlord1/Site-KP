@@ -6,7 +6,7 @@
   <title>Вход и регистрация — SoundCraft</title>
   <link rel="icon" type="image/svg+xml" href="img/favicon.svg">
   <meta name="description" content="Вход и регистрация в интернет-магазине музыкальных инструментов">
-  <link rel="stylesheet" href="css/style.css?v=29">
+  <link rel="stylesheet" href="css/style.css?v=30">
 </head>
 <body>
   <section class="section">
@@ -64,12 +64,6 @@
         <a class="auth-link" style="display:block;text-align:center;margin-top:12px" href="#" onclick="return backToLogin(event)">← Вернуться ко входу</a>
       </form>
 
-      <div class="auth-divider"><span>или</span></div>
-      <div class="auth-socials">
-        <button class="soc" onclick="socLogin('ВКонтакте')">ВКонтакте</button>
-        <button class="soc" onclick="socLogin('Google')">Google</button>
-        <button class="soc" onclick="socLogin('Яндекс')">Яндекс</button>
-      </div>
       <div class="auth-link" id="switchLink">
         Нет аккаунта? <a href="#" onclick="return switchTab(event,'register')">Зарегистрироваться</a>
       </div>
@@ -83,7 +77,7 @@
   <script>
     renderPage("auth.html");
     renderFavCount();
-    renderUserChip();
+    renderUserMenu();
     initSearch();
 
     let tries = 0, lockUntil = 0;
@@ -198,17 +192,6 @@
       msg.textContent = "Инструкция по восстановлению отправлена на " + em;
       setTimeout(()=>switchTab(null,"login"), 1600);
     });
-
-    /* соц. вход (имитация) */
-    window.socLogin = function(provider){
-      const users = getUsers();
-      const email = provider.toLowerCase().replace("ё","е") + ".user@ya.ru";
-      let user = users.find(u=>u.email===email);
-      if(!user){ user = {name: "Пользователь " + provider, email, pass:"soc12345"}; users.push(user); setUsers(users); }
-      setCurrentUser({name:user.name, email:user.email});
-      toast("Вход через " + provider);
-      location.href = "index.html";
-    };
 
     /* авто-заполнение сохранённого email */
     const saved = localStorage.getItem("sc_saved_email");

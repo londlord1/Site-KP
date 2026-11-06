@@ -724,3 +724,26 @@ input,select,textarea{font-family:inherit}
 @keyframes floaty{0%,100%{transform:translateY(0) rotate(-5deg)}50%{transform:translateY(-18px) rotate(5deg)}}
 @media (prefers-reduced-motion: reduce){.h3d-float{animation:none}.h3d-rotor{transition:none}}
 @media(max-width:900px){.hero-3d{height:250px}}
+
+/* ===== Тёмная тема: комплексные фиксы ===== */
+[data-theme="dark"] .btn--buy{background:var(--brand);color:#fff}
+[data-theme="dark"] .qty input{background:#10141c;color:var(--ink);color-scheme:dark}
+[data-theme="dark"] input[type=number]{color-scheme:dark}
+[data-theme="dark"] .order-total{background:#141a24;border:1px solid var(--line)}
+[data-theme="dark"] .atab.active{background:#1d2430;color:var(--ink);box-shadow:none}
+[data-theme="dark"] .help{background:#2a2f3e;color:#c3c9d9}
+[data-theme="dark"] .search-results{background:#171c26}
+[data-theme="dark"] .search__row select{background:#20293a;color:#eef0f6}
+[data-theme="dark"] .search__row select option{color:#eef0f6;background:#171c26}
+[data-theme="dark"] .soc{background:#10141c;color:var(--ink);border-color:var(--line)}
+[data-theme="dark"] .cart-item__thumb img{background:#1d2430}
+[data-theme="dark"] .promo-strip .btn{background:#0e1220;color:#fff}
+[data-theme="dark"] .auth-wrap .input-ic{background:#10141c}
+[data-theme="dark"] .input-ic input{color:var(--ink)}
+[data-theme="dark"] .input-ic input::placeholder{color:#7f8899}
+/* правая часть полей входа/регистрации аккуратнее */
+.auth-wrap .input-ic input{padding-right:6px}
+.auth-wrap .input-ic .eye{margin-left:6px}
+/* кнопка «Фильтры» — только на мобильных */
+.sort-bar #filterToggle{display:none}
+@media(max-width:900px){.sort-bar #filterToggle{display:inline-flex}}

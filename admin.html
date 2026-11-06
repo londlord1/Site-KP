@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Админ-панель — SoundCraft</title>
   <link rel="icon" type="image/svg+xml" href="img/favicon.svg">
-  <link rel="stylesheet" href="css/style.css?v=29">
+  <link rel="stylesheet" href="css/style.css?v=30">
 </head>
 <body>
   <section class="section">
@@ -14,13 +14,13 @@
     </div>
   </section>
 
-  <script src="js/data.js?v=29"></script>
-  <script src="js/api.js?v=29"></script>
-  <script src="js/main.js?v=29"></script>
+  <script src="js/data.js?v=30"></script>
+  <script src="js/api.js?v=30"></script>
+  <script src="js/main.js?v=30"></script>
   <script>
     renderPage("admin.html");
     renderCartCount();
-    renderUserChip();
+    renderUserMenu();
 
     // ---------- Вход в админку (admin@ya.ru / admin@ya.ru) ----------
     window.isAdmin = () => sessionStorage.getItem("sc_admin")==="1";
