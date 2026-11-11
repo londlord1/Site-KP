@@ -38,6 +38,7 @@ function H2(text,o={}){
     children:[new TextRun({text,font:FONT,size:o.size||sz,bold:true,color:BLUE})],
     alignment:AlignmentType.LEFT,
     spacing:{before:o.before||220,after:o.after||180,line:360,lineRule:"auto"},
+    indent:{firstLine:709},
   });
 }
 function H3(text,o={}){
@@ -45,6 +46,7 @@ function H3(text,o={}){
     children:[new TextRun({text,font:FONT,size:o.size||sz,bold:true,color:BLUE})],
     alignment:AlignmentType.LEFT,
     spacing:{before:o.before||160,after:o.after||120,line:360,lineRule:"auto"},
+    indent:{firstLine:709},
   });
 }
 function FIG(text){
