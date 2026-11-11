@@ -6,7 +6,7 @@
   <title>Личный кабинет — SoundCraft</title>
   <link rel="icon" type="image/svg+xml" href="img/favicon.svg">
   <meta name="description" content="Личный кабинет покупателя интернет-магазина музыкальных инструментов">
-  <link rel="stylesheet" href="css/style.css?v=32">
+  <link rel="stylesheet" href="css/style.css?v=33">
 </head>
 <body>
   <section class="section">
@@ -45,7 +45,7 @@
             <div class="avatar">${escapeHtml(initials)}</div>
             <div>
               <h1 style="margin:0">Здравствуйте, ${escapeHtml(String(u.name||"друг").split(" ")[0])}!</h1>
-              <div class="profile-meta"><span>${escapeHtml(u.email||"")}</span></div>
+              <div class="profile-meta"><span>${escapeHtml(u.email||"")}</span>${u.phone?` · ${escapeHtml(u.phone)}`:""}</div>
             </div>
             <div class="profile-stats">
               <div class="kpi"><b>${orders.length}</b><span>заказов</span></div>
@@ -88,6 +88,7 @@
               <div class="edit-grid">
                 <div class="field"><label>Имя</label><input id="pName" value="${escapeHtml(u.name||"")}"></div>
                 <div class="field"><label>Email</label><input id="pEmail" value="${escapeHtml(u.email||"")}" disabled></div>
+                <div class="field"><label>Телефон</label><input id="pPhone" value="${maskPhone(u.phone||"")}" placeholder="+7 (___) ___-__-__"></div>
                 <div class="field"><label>Новый пароль</label><input id="pPass" type="password" placeholder="Оставьте пустым, чтобы не менять"></div>
               </div>
               <div class="edit-actions"><button class="btn btn--sm" type="submit">Сохранить</button></div>
@@ -106,14 +107,17 @@
         window.delAddr = function(i){ const a=JSON.parse(localStorage.getItem("sc_addrs")||"[]"); a.splice(i,1); localStorage.setItem("sc_addrs", JSON.stringify(a)); renderProfile(); };
         document.getElementById("addrForm").addEventListener("submit", e=>{ e.preventDefault(); const v=document.getElementById("addrNew").value.trim(); if(!v) return;
           const a=JSON.parse(localStorage.getItem("sc_addrs")||"[]"); a.push(v); localStorage.setItem("sc_addrs", JSON.stringify(a)); renderProfile(); });
+        const pPhoneEl = document.getElementById("pPhone");
+        if(pPhoneEl) pPhoneEl.addEventListener("input", function(){ this.value = maskPhone(this.value); });
         document.getElementById("profForm").addEventListener("submit", e=>{
           e.preventDefault();
           const name = document.getElementById("pName").value.trim() || u.name;
+          const phone = document.getElementById("pPhone").value.trim();
           const pass = document.getElementById("pPass").value;
           const usersArr = JSON.parse(localStorage.getItem("sc_users")||"[]");
           const i = usersArr.findIndex(x=>x.email===u.email);
-          if(i>=0){ usersArr[i].name = name; if(pass) usersArr[i].pass = pass; localStorage.setItem("sc_users", JSON.stringify(usersArr)); }
-          setCurrentUser({name, email:u.email});
+          if(i>=0){ usersArr[i].name = name; if(phone) usersArr[i].phone = phone; if(pass) usersArr[i].pass = pass; localStorage.setItem("sc_users", JSON.stringify(usersArr)); }
+          setCurrentUser({name, email:u.email, phone});
           toast("Профиль обновлён"); location.reload();
         });
       }
@@ -200,12 +204,23 @@
       function renderNotifs(){
         const el = document.getElementById("p-notifs");
         const list = notifs.slice().reverse();
-        el.innerHTML = list.length ? list.map((n,i)=>`<div class="sum-row" style="border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-bottom:8px;flex-wrap:wrap;background:${n.read?"var(--card)":"#eefaf4"}">
+        el.innerHTML = list.length ? list.map((n,i)=>`<div class="notif-row ${n.read?"":"unread"}">
             <span>🔔 ${escapeHtml(n.text||"")}</span>
-            <span style="margin-left:auto;font-size:12px;color:var(--muted)">${escapeHtml(n.date||"")}</span>
+            <span class="nf-actions"><span style="font-size:12px;color:var(--muted)">${escapeHtml(n.date||"")}</span>
+            ${n.read?`<button class="btn btn--sm btn--grey" onclick="markUnread(${i})">Как новое</button>`:`<button class="btn btn--sm btn--grey" onclick="markRead(${i})">Прочитано</button>`}
+            </span>
           </div>`).join("") + `<button class="btn btn--sm btn--grey" style="margin-top:10px" onclick="clearNotifs()">Очистить уведомления</button>`
           : `<div class="empty-state"><div class="empty-ico">🔕</div>Уведомлений нет.</div>`;
-        window.clearNotifs = function(){ localStorage.setItem("sc_notifications", JSON.stringify(notifs.map(n=>({...n, read:true})))); location.reload(); };
+        window.markRead = function(i){ setNotifRead(i, true); };
+        window.markUnread = function(i){ setNotifRead(i, false); };
+        window.setNotifRead = function(i, read){
+          const arr = JSON.parse(localStorage.getItem("sc_notifications")||"[]");
+          const rev = arr.slice().reverse();
+          if(rev[i]) rev[i].read = read;
+          localStorage.setItem("sc_notifications", JSON.stringify(rev.slice().reverse()));
+          renderNotifs();
+        };
+        window.clearNotifs = function(){ localStorage.setItem("sc_notifications", JSON.stringify([])); render(); };
       }
 
       render();

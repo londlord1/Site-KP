@@ -769,3 +769,18 @@ input,select,textarea{font-family:inherit}
   outline:none;border-color:var(--brand);box-shadow:0 0 0 3px rgba(11,157,106,.14)}
 [data-theme="dark"] .edit-grid input,[data-theme="dark"] .edit-grid select,
 [data-theme="dark"] .edit-card input,[data-theme="dark"] .admin-search{background:#10141c;color:var(--ink);border-color:var(--line)}
+
+/* ===== Уведомления: тёмная тема + аккуратные строки ===== */
+.notif-row{display:flex;justify-content:space-between;gap:10px;border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-bottom:8px;flex-wrap:wrap;background:var(--card)}
+.notif-row.unread{background:#eefaf4}
+.notif-row .nf-actions{display:flex;gap:8px;align-items:center}
+[data-theme="dark"] .sum-row{background:var(--card);border-color:var(--line)}
+[data-theme="dark"] .order-item{background:var(--card);border-color:var(--line)}
+[data-theme="dark"] .notif-row.unread{background:#10261d}
+[data-theme="dark"] .order-detail .info-list li{color:var(--ink-2)}
+
+/* ===== Добавить картинку: аккуратнее ===== */
+.admin-file{display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border:1.5px dashed var(--line);border-radius:10px;color:var(--muted);cursor:pointer;transition:.15s;background:transparent;font-size:14px;font-weight:600}
+.admin-file:hover{border-color:var(--brand);color:var(--brand)}
+[data-theme="dark"] .admin-file{border-color:var(--line)}
+[data-theme="dark"] .img-cell img{background:#1d2430}

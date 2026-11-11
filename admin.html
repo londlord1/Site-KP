@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Админ-панель — SoundCraft</title>
   <link rel="icon" type="image/svg+xml" href="img/favicon.svg">
-  <link rel="stylesheet" href="css/style.css?v=32">
+  <link rel="stylesheet" href="css/style.css?v=33">
 </head>
 <body>
   <section class="section">
@@ -14,9 +14,9 @@
     </div>
   </section>
 
-  <script src="js/data.js?v=32"></script>
-  <script src="js/api.js?v=32"></script>
-  <script src="js/main.js?v=32"></script>
+  <script src="js/data.js?v=33"></script>
+  <script src="js/api.js?v=33"></script>
+  <script src="js/main.js?v=33"></script>
   <script>
     renderPage("admin.html");
     renderCartCount();
@@ -189,16 +189,19 @@
           <div class="edit-card"><h2 class="edit-head" style="justify-content:flex-start">➕ Добавить товар</h2><form id="addForm">
             <div class="edit-grid">
               <div class="field"><label>Название</label><input id="nName" required></div>
-              <div class="field"><label>Категория</label><input id="nCat" placeholder="Гитары" required></div>
+              <div class="field"><label>Категория</label>
+                <input id="nCat" list="catList" placeholder="Выберите или введите категорию" required>
+                <datalist id="catList">${CATEGORIES.filter(c=>c!=="Все").map(c=>`<option value="${escapeHtml(c)}"></option>`).join("")}</datalist>
+              </div>
               <div class="field"><label>Цена, ₽</label><input id="nPrice" type="number" min="0" required></div>
               <div class="field"><label>Старая цена, ₽</label><input id="nOld" type="number" min="0" placeholder="0 = нет скидки"></div>
               <div class="field"><label>Иконка/эмодзи</label><input id="nIcon" value="🎸"></div>
             </div>
-            <div class="field"><label>Изображения товара</label>
-              <div class="img-grid" id="nPrev"></div>
-              <label class="img-add" for="nFiles" title="Загрузить фото">+</label>
-              <input id="nFiles" type="file" accept="image/*" multiple style="display:none">
-            </div>
+<div class="field"><label>Изображения товара</label>
+            <div class="img-grid" id="ePrev"></div>
+            <label class="admin-file" for="eFiles">📷 Загрузить / добавить фото</label>
+            <input id="eFiles" type="file" accept="image/*" multiple style="display:none">
+          </div>
             <div class="field"><label>Или ссылка на изображение (URL)</label><input id="nImg" placeholder="https://..."></div>
             <button class="btn btn--block" style="margin-top:6px" type="submit">Добавить товар</button>
           </form></div>
@@ -223,17 +226,19 @@
         }
         // поиск по товарам
         const ps = document.getElementById("proSearch");
-        ps.addEventListener("input", ()=>{
+        if(ps) ps.addEventListener("input", ()=>{
           const q = ps.value.trim().toLowerCase();
           const list = PRODUCTS.filter(p=>!q || p.name.toLowerCase().includes(q) || p.cat.toLowerCase().includes(q) || String(p.id).includes(q));
           document.getElementById("proCount").textContent = list.length;
           document.getElementById("proBody").innerHTML = list.map(prodRow).join("");
         });
-        document.getElementById("nFiles").addEventListener("change", e=>{
+        const nfEl = document.getElementById("nFiles");
+        if(nfEl) nfEl.addEventListener("change", e=>{
           filesToDataURLs(e.target.files, urls=>{ window.__pending = urls; renderPendingPrev(); });
         });
 
-        document.getElementById("addForm").addEventListener("submit", e=>{
+        const af = document.getElementById("addForm");
+        if(af) af.addEventListener("submit", e=>{
           e.preventDefault();
           const url = document.getElementById("nImg").value.trim();
           const images = window.__pending.length ? window.__pending.slice() : (url ? [url] : []);
@@ -332,7 +337,8 @@
           </form>
         </div>`;
       st.render();
-      document.getElementById("eFiles").addEventListener("change", e=>{
+      const efEl = document.getElementById("eFiles");
+      if(efEl) efEl.addEventListener("change", e=>{
         filesToDataURLs(e.target.files, urls=>{ st.imgs.push(...urls); st.render(); });
       });
       document.getElementById("editForm").addEventListener("submit", ev=>{
@@ -375,7 +381,7 @@
       const st = o.status || "Новый";
       return `<tr>
         <td>${num}</td><td>${escapeHtml(o.date||"")}</td><td>${escapeHtml(o.name||"")}</td>
-        <td>${(o.items||[]).map(it=>escapeHtml(it.name)+" ×"+it.qty).join("; ")}</td>
+        <td>${(o.items||[]).map(it=>escapeHtml(it.name)+" ×"+it.qty).join("; ")}${o.comment?`<br><small style="color:var(--muted)">📝 ${escapeHtml(o.comment)}</small>`:""}</td>
         <td>${fmtPrice(o.total||0)}</td>
         <td><select onchange="setStatus(${i},this.value)">
           ${STATUSES.map(s=>`<option value="${s}" ${s===st?"selected":""}>${s}</option>`).join("")}
