@@ -761,3 +761,11 @@ input,select,textarea{font-family:inherit}
 [data-theme="dark"] #promoInput{background:#10141c;color:var(--ink);border-color:var(--line)}
 [data-theme="dark"] .cart-summary{background:var(--card);border-color:var(--line)}
 [data-theme="dark"] .cart-table,.cart-table tr{background:var(--card)}
+
+/* ===== Админ: гарантированные стили полей ===== */
+.edit-grid input,.edit-grid select,.edit-card input,.edit-card select,.admin-search{
+  width:100%;border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-size:14px;font-family:inherit;background:#fff;color:var(--ink)}
+.edit-grid input:focus,.edit-grid select:focus,.edit-card input:focus,.admin-search:focus{
+  outline:none;border-color:var(--brand);box-shadow:0 0 0 3px rgba(11,157,106,.14)}
+[data-theme="dark"] .edit-grid input,[data-theme="dark"] .edit-grid select,
+[data-theme="dark"] .edit-card input,[data-theme="dark"] .admin-search{background:#10141c;color:var(--ink);border-color:var(--line)}
